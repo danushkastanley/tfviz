@@ -1,0 +1,14 @@
+# Synthetic secrets planted in fixture inputs. None may appear in any report,
+# emitted JSON, stdout or stderr. One literal per line; '#' starts a comment.
+# Each entry is a prefix, so derived values such as "<password>-rotated" are
+# covered too.
+
+# Marked sensitive (sensitive variables and provider-sensitive attributes)
+CANARY-DB-PASSWORD-a41c
+CANARY-KAFKA-PASSWORD-e07b
+
+# Not marked sensitive by the producer: removal relies on projection allowlists
+CANARY-SSM-INSECURE-VALUE-2b8e
+CANARY-USERDATA-TOKEN-5d1f
+CANARY-TAG-OWNER-7f3a
+CANARY-SG-DESCRIPTION-91c2
