@@ -55,7 +55,8 @@ export function layoutArchitecture(model: CanvasModel, index: ReportIndex): Plac
   };
 
   const roots = row([...(model.childGroups.get("") ?? [])].map((id) => ({ id, ...dims(size(id)) })), TOP_GAP);
-  const loose = grid(model.members.get("") ?? [], model, 2);
+  const looseIds = model.members.get("") ?? [];
+  const loose = grid(looseIds, model, balancedColumns(looseIds.length, 2));
   emit(undefined, [...roots.children, ...loose.children.map((c) => ({ ...c, y: c.y + roots.height + TOP_GAP }))]);
   return out;
 }
@@ -67,16 +68,16 @@ function sizeGroup(id: string, model: CanvasModel, index: ReportIndex, size: (id
   const groups = model.childGroups.get(id) ?? [];
   switch (group?.kind) {
     case "subnet":
-      return frame(column(leaves, model));
+      return frame(grid(leaves, model, balancedColumns(leaves.length, 1)));
     case "vpc":
       return frame(vpcContent(leaves, groups, model, index, size));
     case "regional_services":
     case "global_services":
     case "unplaced":
     case "module":
-      return frame(grid(leaves, model, 2));
+      return frame(grid(leaves, model, balancedColumns(leaves.length, 2)));
     default:
-      return frame(stack([row(groups.map((g) => ({ id: g, ...dims(size(g)) })), SECTION_GAP), grid(leaves, model, 3)]));
+      return frame(stack([row(groups.map((g) => ({ id: g, ...dims(size(g)) })), SECTION_GAP), grid(leaves, model, balancedColumns(leaves.length, 3))]));
   }
 }
 
@@ -84,19 +85,25 @@ function vpcContent(leaves: readonly string[], groups: readonly string[], model:
   const subnets = groups.filter((g) => groupOf(model, g)?.kind === "subnet");
   const others = groups.filter((g) => !subnets.includes(g));
   const subnetGrid = azGrid(subnets, model, index, size);
-  const width = Math.max(subnetGrid.width, BAND_MIN_COLUMNS * CARD.width + (BAND_MIN_COLUMNS - 1) * GAP);
-  const columns = Math.max(1, Math.floor((width + GAP) / (CARD.width + GAP)));
-  const band = (ids: string[]) => grid(ids, model, columns);
   const familyOf = (leaf: string) => {
     const item = model.items.get(leaf);
     return item?.kind === "resource" ? item.resource.family : undefined;
   };
+  const edge = leaves.filter((l) => familyOf(l) === "network");
+  const workloads = leaves.filter((l) => familyOf(l) !== "network" && familyOf(l) !== "security");
+  const security = leaves.filter((l) => familyOf(l) === "security");
+  // All bands share one column count so they align: at least the subnet grid's
+  // width, and wider when a band is large enough to become a tall ribbon.
+  const width = Math.max(subnetGrid.width, BAND_MIN_COLUMNS * CARD.width + (BAND_MIN_COLUMNS - 1) * GAP);
+  const fitsGrid = Math.max(1, Math.floor((width + GAP) / (CARD.width + GAP)));
+  const columns = balancedColumns(Math.max(edge.length, workloads.length, security.length), fitsGrid);
+  const band = (ids: string[]) => grid(ids, model, columns);
   return stack([
-    band(leaves.filter((l) => familyOf(l) === "network")),
+    band(edge),
     subnetGrid,
     row(others.map((g) => ({ id: g, ...dims(size(g)) })), SECTION_GAP),
-    band(leaves.filter((l) => familyOf(l) !== "network" && familyOf(l) !== "security")),
-    band(leaves.filter((l) => familyOf(l) === "security")),
+    band(workloads),
+    band(security),
   ]);
 }
 
@@ -143,6 +150,16 @@ function availabilityZone(subnet: Resource | undefined): string {
   const field = subnet?.metadata.find((f) => f.key === "availability_zone");
   const value = field?.after ?? field?.before;
   return value?.status === "known" && typeof value.value === "string" ? value.value : "~unknown";
+}
+
+/**
+ * Columns that give a landscape block (about 3:2) for `count` cards, and
+ * never fewer than `minimum`. Small groups keep their natural shape; large
+ * ones widen instead of becoming a single tall ribbon.
+ */
+export function balancedColumns(count: number, minimum: number): number {
+  const ideal = Math.ceil(Math.sqrt((1.5 * count * (CARD.height + GAP)) / (CARD.width + GAP)));
+  return Math.max(minimum, ideal);
 }
 
 function groupOf(model: CanvasModel, id: string): Group | undefined {

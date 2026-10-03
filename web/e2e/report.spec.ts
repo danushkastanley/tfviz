@@ -84,6 +84,13 @@ test("a 500-resource report reaches a useful view within the budget", async ({ p
   info.annotations.push({ type: "layout-ms", description: String(layoutMs) });
   console.log(`[${info.project.name}] 500 resources: first useful view ${firstView} ms, layout ${layoutMs} ms`);
   expect(firstView).toBeLessThan(3000);
+
+  // Useful, not just fast: no haze of lines at rest, and an explanation.
+  await expect(page.locator(".react-flow__edge")).toHaveCount(0);
+  await expect(page.getByText(/relationships are hidden at this size/)).toBeVisible();
+  await page.locator('.react-flow__node[data-id="r20"]').click();
+  await expect.poll(() => page.locator(".react-flow__edge").count()).toBeGreaterThan(0);
+  expect(await page.locator(".react-flow__edge").count()).toBeLessThan(40);
   expectCleanAndOffline(watch, REPORTS.large);
 });
 

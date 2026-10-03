@@ -4,6 +4,7 @@ import { loadSample } from "../test/sample";
 import { buildCanvasModel } from "./canvasModel";
 import { layoutArchitecture, type Placed } from "./architectureLayout";
 import { edgePath } from "./edgePath";
+import { largeReport } from "../../e2e/largeReport";
 
 const index = indexReport(loadSample());
 const layout = (view: "changes" | "before" | "after" = "changes") => layoutArchitecture(buildCanvasModel(index, view), index);
@@ -51,6 +52,33 @@ describe("layoutArchitecture", () => {
     expect(pubB.x).toBeLessThan(pubC.x);
     expect(privA.x).toBe(pubA.x);
     expect(privA.y).toBeGreaterThan(pubA.y);
+  });
+});
+
+describe("layoutArchitecture at scale", () => {
+  const large = indexReport(largeReport(loadSample()));
+  const placed = layoutArchitecture(buildCanvasModel(large, "changes"), large);
+  const roots = placed.filter((p) => !p.parent);
+  const width = Math.max(...roots.map((p) => p.x + p.width));
+  const height = Math.max(...roots.map((p) => p.y + p.height));
+
+  it("keeps a 500-resource stack landscape rather than a tall ribbon", () => {
+    // Regression: subnets and bands once stacked hundreds of cards in 1–3 columns.
+    expect(width / height).toBeGreaterThan(0.6);
+    expect(width / height).toBeLessThan(4);
+  });
+
+  it("places every entity resource exactly once without sibling overlaps", () => {
+    const ids = placed.map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    const siblings = new Map<string, Placed[]>();
+    for (const p of placed) siblings.set(p.parent ?? "", [...(siblings.get(p.parent ?? "") ?? []), p]);
+    for (const group of siblings.values()) {
+      const sorted = [...group].sort((a, b) => a.y - b.y || a.x - b.x);
+      for (let i = 0; i < sorted.length; i++)
+        for (let j = i + 1; j < sorted.length && (sorted[j] as Placed).y < (sorted[i] as Placed).y + (sorted[i] as Placed).height; j++)
+          expect(overlaps(sorted[i] as Placed, sorted[j] as Placed)).toBe(false);
+    }
   });
 });
 
