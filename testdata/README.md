@@ -1,0 +1,50 @@
+# Test data
+
+Everything here is synthetic. It uses the AWS documentation account `111122223333`, the TEST-NET ranges and `.invalid` DNS names. No real infrastructure or credentials appear anywhere.
+
+| Path | Contents |
+| --- | --- |
+| `stacks/aws-review/` | Terraform configuration for the review stack: VPC, subnets, routing, security groups, ALB, RDS, MSK, a Secrets Manager secret with an MSK SCRAM association, an SSM parameter and an EC2 instance. `var.phase` switches between the recorded (`prior`) and proposed (`proposed`) variants. |
+| `producer/<tool>-<version>/plan.json` | Real `show -json` output for the proposed change |
+| `producer/<tool>-<version>/state.json` | Real `show -json` output for the prior state |
+| `producer/<tool>-<version>/prior.tfstate` | Synthetic raw version-4 state; the fixture for the raw-state reader |
+| `producer/<tool>-<version>/VERSIONS` | Producer and AWS provider versions used |
+| `canaries.txt` | Planted secret literals that must never reach a report |
+
+## Coverage of the proposed plan
+
+| Action | Example |
+| --- | --- |
+| create | New SCRAM secret, its version and the MSK association (inside `module.streaming`) |
+| update | MSK broker type, RDS instance class and rotated password (sensitive value changed) |
+| delete | Plaintext Kafka ingress rule (`count` index removed) |
+| replace, delete first | NAT gateway moved to another subnet |
+| replace, create first | Application security group renamed with `create_before_destroy` |
+| read | Data source whose input is unknown until apply |
+| no-op | 26 unchanged context resources |
+
+Unknown values appear in replaced and created resources and in dependants such as the private route table.
+
+## Regenerating
+
+```bash
+make fixtures
+```
+
+The `scripts/fixturegen` tool works as follows:
+
+1. It plans the `prior` variant against an empty state.
+2. It "applies" synthetically, filling each resource's own computed attributes with deterministic fake values. The producer itself propagates those values to dependants on the next plan.
+3. When the synthetic state re-plans as all no-ops, it plans the `proposed` variant against that state.
+
+Only `init` has network access, to download the pinned provider. Every other producer command runs with fake credentials and a dead HTTPS proxy, scoped to that child process. Any attempted AWS call therefore fails instead of leaving the machine. Ambient `AWS_*` variables are removed from the producer environment.
+
+## Producer observations
+
+These are findings from generating the fixtures; the readers must handle them.
+
+- Both producers emit `format_version` `1.2` for plans and `1.0` for state.
+- Terraform 1.16 emits `complete` and `applyable`; OpenTofu 1.13 omits both. Readers must treat completeness as "not reported" when it is absent, never as complete.
+- `relevant_attributes` is emitted in non-deterministic order between runs, so treat it as an unordered set. Apart from that and `timestamp`, regeneration is deterministic.
+- Plans contain sensitive values in plaintext: in `variables`, in `before`/`after`, and in `prior_state`. Exported JSON must therefore be treated as secret-bearing input.
+- `provider_name` differs by producer: `registry.terraform.io/hashicorp/aws` or `registry.opentofu.org/hashicorp/aws`. Match providers on `namespace/type`, not on the registry host.
