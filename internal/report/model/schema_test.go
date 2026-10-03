@@ -104,3 +104,34 @@ func TestSchemaRejectsSensitivePayload(t *testing.T) {
 		t.Fatal("schema accepted a generic attribute map")
 	}
 }
+
+func TestIconsMatchSchema(t *testing.T) {
+	data, err := os.ReadFile(repoPath(t, "testdata/golden/terraform-1.16-plan.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	schema := compileSchema(t)
+	withIcons := func(images, byType map[string]string) []byte {
+		var doc map[string]any
+		if err := json.Unmarshal(data, &doc); err != nil {
+			t.Fatal(err)
+		}
+		doc["icons"] = map[string]any{"images": images, "by_type": byType}
+		out, _ := json.Marshal(doc)
+		return out
+	}
+	valid := withIcons(map[string]string{"ic1": "data:image/svg+xml;base64,PHN2Zy8+"}, map[string]string{"aws_vpc": "ic1"})
+	if err := validate(t, schema, valid); err != nil {
+		t.Fatalf("icons rejected: %v", err)
+	}
+	for name, doc := range map[string][]byte{
+		"html data URI": withIcons(map[string]string{"ic1": "data:text/html;base64,PHN2Zy8+"}, map[string]string{"aws_vpc": "ic1"}),
+		"remote URL":    withIcons(map[string]string{"ic1": "https://example.com/a.svg"}, map[string]string{"aws_vpc": "ic1"}),
+		"bad type name": withIcons(map[string]string{"ic1": "data:image/svg+xml;base64,PHN2Zy8+"}, map[string]string{"<script>": "ic1"}),
+		"bad icon id":   withIcons(map[string]string{"icon one": "data:image/svg+xml;base64,PHN2Zy8+"}, map[string]string{"aws_vpc": "ic1"}),
+	} {
+		if validate(t, schema, doc) == nil {
+			t.Errorf("%s accepted", name)
+		}
+	}
+}

@@ -6,6 +6,7 @@ import { HOSTILE_TEXT, hostilePlan, largePlan } from "./syntheticPlan";
 
 const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 const fixturePlan = fileURLToPath(new URL("../../testdata/producer/terraform-1.16/plan.json", import.meta.url));
+const placeholderIcons = fileURLToPath(new URL("../../testdata/icons/aws", import.meta.url));
 
 /** Renders every e2e report with the real tfviz CLI. */
 export default function globalSetup() {
@@ -16,6 +17,7 @@ export default function globalSetup() {
 
   tfviz(fixturePlan, REPORTS.sample, "--title", "aws-review · proposed change");
   tfviz(fixturePlan, REPORTS.safeShare, "--safe-share", "--title", "aws-review · proposed change");
+  tfviz(fixturePlan, REPORTS.icons, "--icons", placeholderIcons);
   for (const [html, doc, extra] of [
     [REPORTS.hostile, hostilePlan(), ["--title", HOSTILE_TEXT]],
     [REPORTS.large, largePlan(), []],

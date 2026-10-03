@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import type { ReportIndex } from "../report/view";
 import { DEFAULT_FILTER, familiesIn, filterResources, type ChangeFilter, type Family, type ResourceFilter } from "../report/filter";
 import { ACTION_ORDER, presentChange, type Action } from "../theme/changes";
-import { FamilyIcon } from "../icons/FamilyIcon";
+import { ResourceIcon } from "../icons/ResourceIcon";
 
 interface Props {
   index: ReportIndex;
@@ -102,7 +102,7 @@ export function Navigator({ index, selectedId, onSelect }: Props) {
                     aria-current={r.id === selectedId ? "true" : undefined}
                     onClick={() => onSelect(r.id)}
                   >
-                    <FamilyIcon family={r.family} size={14} />
+                    <ResourceIcon resource={r} size={14} />
                     <span className="resource-list__label">{r.label}</span>
                     <span className="resource-list__address">{r.address}</span>
                   </button>

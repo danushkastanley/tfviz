@@ -23,6 +23,7 @@ type reportOptions struct {
 	strict    bool
 	offline   bool
 	safeShare bool
+	icons     string
 	s3        s3Flags
 }
 
@@ -43,6 +44,7 @@ func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOp
 	fs.BoolVar(&opts.strict, "strict", false, "fail if any resource, action or input cannot be fully interpreted")
 	fs.BoolVar(&opts.offline, "offline", false, "refuse any input that would need network access")
 	fs.BoolVar(&opts.safeShare, "safe-share", false, "replace names, IDs, ARNs, accounts, addresses and network details with stand-ins")
+	fs.StringVar(&opts.icons, "icons", "", iconsHelp)
 	if kind == input.KindState {
 		fs.StringVar(&opts.s3.profile, "aws-profile", "", "AWS profile for s3:// inputs (uses the standard credential chain)")
 		fs.StringVar(&opts.s3.region, "aws-region", "", "region of the state bucket for s3:// inputs")
@@ -136,6 +138,11 @@ func buildReport(kind input.SnapshotKind, opts reportOptions, env Env) (*model.R
 	if opts.safeShare {
 		report = safeshare.Apply(report)
 	}
+	if opts.icons != "" {
+		if report.Icons, err = loadIcons(opts.icons, report); err != nil {
+			return nil, err
+		}
+	}
 	return report, nil
 }
 
@@ -176,6 +183,9 @@ func describe(path string, r *model.Report) string {
 	}
 	if n := len(r.Unresolved); n > 0 {
 		line += fmt.Sprintf(". %d unresolved reference(s)", n)
+	}
+	if r.Icons != nil {
+		line += fmt.Sprintf(". Icons for %d resource type(s)", len(r.Icons.ByType))
 	}
 	return line + "."
 }

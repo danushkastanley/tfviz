@@ -134,3 +134,17 @@ test("a safe-share report shows no original names anywhere in the page", async (
   await expect(page.getByRole("complementary", { name: /Inspector: MSK cluster 1/ })).toBeVisible();
   expectCleanAndOffline(watch, REPORTS.safeShare);
 });
+
+test("icons from --icons render offline under the CSP, with symbols as the fallback", async ({ page }) => {
+  const watch = await open(page, REPORTS.icons);
+  const nat = page.locator(".react-flow__node").filter({ hasText: "NAT gateway main" }).first();
+  const icon = nat.locator("img.resource-icon");
+  await expect(icon).toHaveAttribute("src", /^data:image\/svg\+xml;base64,/);
+  await expect(icon).toHaveAttribute("alt", "");
+  expect(await icon.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  // Security groups have no official icon and keep tfviz's symbol.
+  const group = page.locator(".react-flow__node").filter({ hasText: "aws_security_group" }).first();
+  await expect(group.locator("svg")).toHaveCount(1);
+  await expect(group.locator("img")).toHaveCount(0);
+  expectCleanAndOffline(watch, REPORTS.icons);
+});

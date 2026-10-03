@@ -31,6 +31,7 @@ func parseExploreFlags(args []string, env Env) (exploreOptions, error) {
 	fs.StringVar(&r.title, "title", "", "report title")
 	fs.StringVar(&r.view, "view", "architecture", "structure the explorer opens in: architecture or modules")
 	fs.BoolVar(&r.safeShare, "safe-share", false, "replace names, IDs, ARNs, accounts, addresses and network details with stand-ins")
+	fs.StringVar(&r.icons, "icons", "", iconsHelp)
 	fs.BoolVar(&r.offline, "offline", false, "refuse any input that would need network access")
 	fs.StringVar(&r.s3.profile, "aws-profile", "", "AWS profile for s3:// state")
 	fs.StringVar(&r.s3.region, "aws-region", "", "region of the state bucket")

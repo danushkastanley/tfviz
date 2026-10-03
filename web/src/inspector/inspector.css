@@ -195,3 +195,12 @@
 
 .relationship-item.presence-before .relationship-item__presence { color: var(--change-delete); }
 .relationship-item.presence-after .relationship-item__presence { color: var(--change-create); }
+
+.inspector-header__icon:has(.resource-icon) {
+  background: none;
+}
+
+.inspector-header__icon .resource-icon {
+  width: 36px;
+  height: 36px;
+}

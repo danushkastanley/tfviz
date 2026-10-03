@@ -23,9 +23,29 @@
     "relationships": { "type": "array", "items": { "$ref": "#/$defs/Relationship" } },
     "unresolved": { "type": "array", "items": { "$ref": "#/$defs/UnresolvedReference" } },
     "groups": { "type": "array", "items": { "$ref": "#/$defs/Group" } },
-    "warnings": { "type": "array", "items": { "$ref": "#/$defs/Warning" } }
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/Warning" } },
+    "icons": { "$ref": "#/$defs/Icons" }
   },
   "$defs": {
+    "Icons": {
+      "description": "Images from an icon pack the user supplied with --icons. tfviz does not ship provider icons.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["images", "by_type"],
+      "properties": {
+        "images": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/Id" },
+          "additionalProperties": { "type": "string", "maxLength": 100000, "pattern": "^data:image/svg\\+xml;base64,[A-Za-z0-9+/]+=*$" }
+        },
+        "by_type": {
+          "description": "Resource type to icon id.",
+          "type": "object",
+          "propertyNames": { "type": "string", "pattern": "^[a-z0-9_]{1,128}$" },
+          "additionalProperties": { "$ref": "#/$defs/Id" }
+        }
+      }
+    },
     "Id": { "description": "Opaque report-local identifier.", "type": "string", "pattern": "^[a-z]{1,3}[0-9]{1,6}$" },
     "Tool": {
       "type": "object",

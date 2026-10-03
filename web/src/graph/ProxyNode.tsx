@@ -1,5 +1,5 @@
 import type { NodeProps } from "@xyflow/react";
-import { FamilyIcon } from "../icons/FamilyIcon";
+import { ResourceIcon } from "../icons/ResourceIcon";
 import { emphasisClass, useCanvasState } from "./canvasState";
 import type { CanvasNode } from "./layout";
 
@@ -16,7 +16,7 @@ export function ProxyNode({ data }: NodeProps<CanvasNode>) {
   const note = PRESENCE_NOTE[relationship.presence];
   return (
     <div className={`proxy-node presence-${relationship.presence} ${emphasisClass(state, [resource.id])}`}>
-      <FamilyIcon family={resource.family} size={13} />
+      <ResourceIcon resource={resource} size={13} />
       <span className="proxy-node__label">{resource.label}</span>
       {note && <span className="proxy-node__note">{note}</span>}
     </div>
