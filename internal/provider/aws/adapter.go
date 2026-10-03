@@ -37,6 +37,10 @@ type Placement struct {
 	SubnetHome bool
 	// Regional resources sit with the region's services, outside any VPC.
 	Regional bool
+	// Follow places a resource beside the resource referenced by this
+	// attribute, such as a listener beside its load balancer.
+	Follow        string
+	FollowTargets []string
 }
 
 // Relation evidences a relationship from a recorded attribute.
@@ -56,6 +60,10 @@ type Relation struct {
 	Through bool
 }
 
+func (p Placement) unset() bool {
+	return p.VPCField == "" && !p.SubnetHome && !p.Regional && p.Follow == ""
+}
+
 var registry = map[string]Adapter{}
 
 func register(resourceType string, a Adapter) {
@@ -67,6 +75,14 @@ func register(resourceType string, a Adapter) {
 	}
 	if len(a.LabelFrom) == 0 {
 		a.LabelFrom = []string{"tags.Name", "name"}
+	}
+	// Association resources sit beside the first resource they connect.
+	if a.Role == model.RoleAssociation && a.Placement.unset() && len(a.Relations) > 0 {
+		rel := a.Relations[0]
+		a.Placement.Follow, a.Placement.FollowTargets = rel.From, rel.FromTargets
+		if rel.From == "" {
+			a.Placement.Follow, a.Placement.FollowTargets = rel.Field, rel.Targets
+		}
 	}
 	registry[resourceType] = a
 }

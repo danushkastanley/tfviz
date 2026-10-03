@@ -4,7 +4,7 @@ import type { Relationship, Report, Resource } from "./schema.gen";
 export type ViewMode = "changes" | "before" | "after";
 
 const ABSENT_BEFORE: ReadonlySet<Resource["change"]["action"]> = new Set(["create", "read"]);
-const ABSENT_AFTER: ReadonlySet<Resource["change"]["action"]> = new Set(["delete"]);
+const ABSENT_AFTER: ReadonlySet<Resource["change"]["action"]> = new Set(["delete", "forget"]);
 
 export function resourceInView(resource: Resource, view: ViewMode): boolean {
   if (view === "before") return !ABSENT_BEFORE.has(resource.change.action);

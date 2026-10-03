@@ -11,7 +11,7 @@ interface Props {
   onThemeChange: (theme: ThemePreference) => void;
 }
 
-const SUMMARY_ACTIONS: readonly (Action & keyof Report["summary"])[] = ["create", "update", "replace", "delete", "read"];
+const SUMMARY_ACTIONS: readonly (Action & keyof Report["summary"])[] = ["create", "update", "replace", "delete", "forget", "read"];
 const VIEWS: readonly { id: ViewMode; label: string }[] = [
   { id: "changes", label: "Changes" },
   { id: "before", label: "Before" },

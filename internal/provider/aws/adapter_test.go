@@ -29,8 +29,8 @@ func TestNoApprovedFieldIsSecretShaped(t *testing.T) {
 	for _, typ := range Types() {
 		a, _ := Lookup(typ)
 		for _, f := range a.Fields {
-			if f.Withheld {
-				continue
+			if f.Withheld || f.ChangeOnly {
+				continue // never exports a payload
 			}
 			names := append([]string{f.Key, strings.Join(f.Path, ".")}, f.Inputs...)
 			for _, name := range names {
@@ -109,7 +109,7 @@ func TestPlanChangeStatuses(t *testing.T) {
 		after        string
 	}{
 		{"aws_db_instance.orders", "instance_class", model.ChangeChanged, `{"status":"known","value":"db.t4g.medium"}`, `{"status":"known","value":"db.r7g.large"}`},
-		{"aws_db_instance.orders", "password", model.ChangeUnchanged, "null", `{"status":"omitted"}`},
+		{"aws_db_instance.orders", "password", model.ChangeChanged, `{"status":"sensitive"}`, `{"status":"sensitive"}`},
 		{"aws_db_instance.orders", "engine", model.ChangeUnchanged, "null", `{"status":"known","value":"postgres"}`},
 		{"module.streaming.aws_msk_cluster.events", "broker_node_group_info.instance_type", model.ChangeChanged, `{"status":"known","value":"kafka.m7g.large"}`, `{"status":"known","value":"kafka.m7g.xlarge"}`},
 		{"aws_nat_gateway.main", "id", model.ChangeUnknown, `{"status":"known","value":"nat-0` + "", `{"status":"unknown"}`},

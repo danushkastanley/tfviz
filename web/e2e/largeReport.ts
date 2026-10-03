@@ -98,7 +98,7 @@ export function largeReport(base: Report, resourceCount = 500): Report {
     }
   }
 
-  const summary = { create: 0, update: 0, delete: 0, replace: 0, read: 0, no_op: 0, unsupported: 0 };
+  const summary = { create: 0, update: 0, delete: 0, replace: 0, read: 0, forget: 0, no_op: 0, unsupported: 0 };
   for (const r of resources) summary[r.change.action] += 1;
   return {
     ...base,

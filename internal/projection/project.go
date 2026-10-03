@@ -26,6 +26,9 @@ func Project(r input.Resource, fields []Field, plan bool) []model.MetadataField 
 
 func projectField(r input.Resource, f Field, plan bool) model.MetadataField {
 	field := model.MetadataField{Key: f.Key, Label: f.Label}
+	if f.ChangeOnly {
+		return changeOnly(r, f, plan)
+	}
 	if f.Withheld || f.denied() {
 		v := model.Omitted()
 		field.After = &v
@@ -58,6 +61,51 @@ func projectField(r input.Resource, f Field, plan bool) model.MetadataField {
 		field.Before, field.After = b, a
 	}
 	return field
+}
+
+// changeOnly reports a secret as sensitive, never with a payload. Its change
+// comes from the reader's comparison (for marked values) or from comparing
+// known values here, which discloses only whether they differ.
+func changeOnly(r input.Resource, f Field, plan bool) model.MetadataField {
+	field := model.MetadataField{Key: f.Key, Label: f.Label}
+	sensitive := model.Sensitive()
+	if !plan {
+		field.After = &sensitive
+		return field
+	}
+	before, after := r.Before.Path(f.path()...), r.After.Path(f.path()...)
+	switch {
+	case !r.HasBefore && r.HasAfter:
+		field.After, field.ChangeStatus = &sensitive, model.ChangeAdded
+	case r.HasBefore && !r.HasAfter:
+		field.Before, field.ChangeStatus = &sensitive, model.ChangeRemoved
+	default:
+		field.Before, field.After = &sensitive, &sensitive
+		field.ChangeStatus = secretChange(before, after)
+		if field.ChangeStatus == model.ChangeUnchanged {
+			field.Before = nil
+		}
+	}
+	return field
+}
+
+func secretChange(before, after input.Value) model.ChangeStatus {
+	if before.Kind() == input.KindSensitive || after.Kind() == input.KindSensitive {
+		return sensitiveChange(before, after)
+	}
+	if before.Kind() == input.KindUnknown || after.Kind() == input.KindUnknown {
+		return model.ChangeUnknown
+	}
+	b, bok := before.String()
+	a, aok := after.String()
+	switch {
+	case bok && aok && a == b, before.Kind() == input.KindNull && after.Kind() == input.KindNull:
+		return model.ChangeUnchanged
+	case bok || aok:
+		return model.ChangeChanged
+	default:
+		return model.ChangeUnknown
+	}
 }
 
 // locate returns the value the field reads: the attribute itself, or for a

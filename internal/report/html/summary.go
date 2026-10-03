@@ -30,6 +30,7 @@ var actionLabels = map[model.Action]string{
 	model.ActionDelete:      "Destroyed",
 	model.ActionReplace:     "Replaced",
 	model.ActionRead:        "Read during apply",
+	model.ActionForget:      "Removed from state (not destroyed)",
 	model.ActionUnsupported: "Unsupported action",
 	model.ActionNoOp:        "Unchanged",
 }
@@ -44,6 +45,7 @@ func summarise(report *model.Report) summaryView {
 			{actionLabels[model.ActionUpdate], s.Update},
 			{actionLabels[model.ActionReplace], s.Replace},
 			{actionLabels[model.ActionDelete], s.Delete},
+			{actionLabels[model.ActionForget], s.Forget},
 			{actionLabels[model.ActionRead], s.Read},
 			{actionLabels[model.ActionUnsupported], s.Unsupported},
 		} {

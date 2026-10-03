@@ -101,9 +101,17 @@ func (c *Config) References(r Resource, attr string) []string {
 	if !ok {
 		return nil
 	}
+	// Attributes written as blocks (such as `route` or `ingress`) record
+	// their references on the whole attribute, so fall back to the nearest
+	// ancestor expression. Callers filter matches by resource type.
+	refs, ok := res.refs[attr]
+	for path := attr; !ok && strings.Contains(path, "."); {
+		path = path[:strings.LastIndex(path, ".")]
+		refs, ok = res.refs[path]
+	}
 	seen := map[string]bool{}
 	var out []string
-	c.resolve(r.Module, res.refs[attr], seen, &out, 0)
+	c.resolve(r.Module, refs, seen, &out, 0)
 	sort.Strings(out)
 	return out
 }

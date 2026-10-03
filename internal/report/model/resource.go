@@ -68,12 +68,14 @@ type ResourceGroups struct {
 type Action string
 
 const (
-	ActionNoOp        Action = "no_op"
-	ActionCreate      Action = "create"
-	ActionUpdate      Action = "update"
-	ActionDelete      Action = "delete"
-	ActionReplace     Action = "replace"
-	ActionRead        Action = "read"
+	ActionNoOp    Action = "no_op"
+	ActionCreate  Action = "create"
+	ActionUpdate  Action = "update"
+	ActionDelete  Action = "delete"
+	ActionReplace Action = "replace"
+	ActionRead    Action = "read"
+	// ActionForget removes a resource from state without destroying it.
+	ActionForget      Action = "forget"
 	ActionUnsupported Action = "unsupported"
 )
 

@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	stdhtml "html"
 	"os"
 	"regexp"
 	"strings"
@@ -43,29 +44,39 @@ func TestCSPHashesMatchInlinedContent(t *testing.T) {
 	if len(matches) != 2 {
 		t.Fatalf("expected one inline script and one stylesheet, found %d", len(matches))
 	}
+	csp := policy(t, page)
 	for _, m := range matches {
 		sum := sha256.Sum256([]byte(m[3]))
-		want := "sha256-" + base64.StdEncoding.EncodeToString(sum[:])
-		if !strings.Contains(page, want) {
+		want := "'sha256-" + base64.StdEncoding.EncodeToString(sum[:]) + "'"
+		if !strings.Contains(csp, want) {
 			t.Errorf("CSP does not allow the inlined %s (missing %s)", m[1], want)
 		}
 	}
 }
 
 func TestCSPDeniesNetworkAndEval(t *testing.T) {
-	page := render(t, loadSample(t))
-	for _, required := range []string{"default-src &#39;none&#39;", "connect-src &#39;none&#39;", "base-uri &#39;none&#39;", "form-action &#39;none&#39;"} {
-		if !strings.Contains(page, required) {
+	csp := policy(t, render(t, loadSample(t)))
+	for _, required := range []string{"default-src 'none'", "connect-src 'none'", "base-uri 'none'", "form-action 'none'"} {
+		if !strings.Contains(csp, required) {
 			t.Errorf("CSP is missing %q", required)
 		}
 	}
-	for _, forbidden := range []string{"unsafe-eval", "unsafe-inline", "http://", "https://"} {
-		csp := page[strings.Index(page, "Content-Security-Policy"):]
-		csp = csp[:strings.Index(csp, ">")]
+	for _, forbidden := range []string{"unsafe-eval", "unsafe-inline", "http:", "https:", "*"} {
 		if strings.Contains(csp, forbidden) {
 			t.Errorf("CSP contains %q", forbidden)
 		}
 	}
+}
+
+// policy returns the CSP as a browser reads it: the meta content attribute
+// with HTML character references decoded.
+func policy(t *testing.T, page string) string {
+	t.Helper()
+	m := regexp.MustCompile(`http-equiv="Content-Security-Policy" content="([^"]*)"`).FindStringSubmatch(page)
+	if m == nil {
+		t.Fatal("no Content-Security-Policy meta element")
+	}
+	return stdhtml.UnescapeString(m[1])
 }
 
 func TestHostileLabelsCannotEscapeTheirContext(t *testing.T) {
