@@ -1,0 +1,151 @@
+/* Design tokens. Light is the default; dark follows the system unless the
+   viewer chooses a theme explicitly (data-theme on <html>). */
+:root {
+  color-scheme: light;
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  --surface-app: #f4f4f2;
+  --surface-panel: #fbfbfa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #ececea;
+  --surface-hover: #f0f0ee;
+  --surface-selected: #e8eefb;
+  --border-subtle: #e2e2df;
+  --border-strong: #cfcfcb;
+  --text-primary: #1d1d1f;
+  --text-secondary: #5c5c61;
+  --text-tertiary: #86868b;
+  --accent: #2f6fdb;
+  --focus-ring: #2f6fdb;
+
+  --group-account: rgba(0, 0, 0, 0.015);
+  --group-region: rgba(0, 0, 0, 0.02);
+  --group-vpc: rgba(47, 111, 219, 0.035);
+  --group-subnet-public: rgba(37, 140, 103, 0.05);
+  --group-subnet-private: rgba(0, 0, 0, 0.03);
+  --group-services: rgba(120, 88, 200, 0.04);
+  --group-unresolved: rgba(0, 0, 0, 0.02);
+
+  --edge: #b3b3b0;
+  --edge-strong: #6e6e73;
+  --edge-trace: #2f6fdb;
+
+  --change-create: #1f8a5b;
+  --change-create-bg: #e6f4ec;
+  --change-update: #a86400;
+  --change-update-bg: #fbf0dc;
+  --change-delete: #c2352b;
+  --change-delete-bg: #fbe7e5;
+  --change-replace: #7a4fd0;
+  --change-replace-bg: #efe8fb;
+  --change-read: #2a6fa8;
+  --change-read-bg: #e4eff8;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.03);
+  --shadow-selected: 0 0 0 2px var(--accent), 0 6px 18px rgba(47, 111, 219, 0.18);
+  --radius-card: 10px;
+  --radius-group: 14px;
+  --radius-control: 8px;
+
+  --motion-fast: 140ms;
+  --motion-medium: 260ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface-app: #161617;
+    --surface-panel: #1c1c1e;
+    --surface-raised: #242426;
+    --surface-sunken: #121213;
+    --surface-hover: #2a2a2d;
+    --surface-selected: #1e2a40;
+    --border-subtle: #2e2e31;
+    --border-strong: #3d3d41;
+    --text-primary: #f2f2f4;
+    --text-secondary: #a8a8ae;
+    --text-tertiary: #7c7c82;
+    --accent: #6d9cf0;
+    --focus-ring: #6d9cf0;
+    --group-account: rgba(255, 255, 255, 0.012);
+    --group-region: rgba(255, 255, 255, 0.018);
+    --group-vpc: rgba(109, 156, 240, 0.05);
+    --group-subnet-public: rgba(80, 190, 140, 0.06);
+    --group-subnet-private: rgba(255, 255, 255, 0.025);
+    --group-services: rgba(160, 130, 230, 0.06);
+    --group-unresolved: rgba(255, 255, 255, 0.02);
+    --edge: #4a4a4f;
+    --edge-strong: #9a9aa0;
+    --edge-trace: #6d9cf0;
+    --change-create: #4cc38a;
+    --change-create-bg: #15301f;
+    --change-update: #e0a33a;
+    --change-update-bg: #33270f;
+    --change-delete: #f0766b;
+    --change-delete-bg: #3a1a17;
+    --change-replace: #a98bf0;
+    --change-replace-bg: #2a2140;
+    --change-read: #68a8e0;
+    --change-read-bg: #142636;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-selected: 0 0 0 2px var(--accent), 0 6px 18px rgba(0, 0, 0, 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-app: #161617;
+  --surface-panel: #1c1c1e;
+  --surface-raised: #242426;
+  --surface-sunken: #121213;
+  --surface-hover: #2a2a2d;
+  --surface-selected: #1e2a40;
+  --border-subtle: #2e2e31;
+  --border-strong: #3d3d41;
+  --text-primary: #f2f2f4;
+  --text-secondary: #a8a8ae;
+  --text-tertiary: #7c7c82;
+  --accent: #6d9cf0;
+  --focus-ring: #6d9cf0;
+  --group-account: rgba(255, 255, 255, 0.012);
+  --group-region: rgba(255, 255, 255, 0.018);
+  --group-vpc: rgba(109, 156, 240, 0.05);
+  --group-subnet-public: rgba(80, 190, 140, 0.06);
+  --group-subnet-private: rgba(255, 255, 255, 0.025);
+  --group-services: rgba(160, 130, 230, 0.06);
+  --group-unresolved: rgba(255, 255, 255, 0.02);
+  --edge: #4a4a4f;
+  --edge-strong: #9a9aa0;
+  --edge-trace: #6d9cf0;
+  --change-create: #4cc38a;
+  --change-create-bg: #15301f;
+  --change-update: #e0a33a;
+  --change-update-bg: #33270f;
+  --change-delete: #f0766b;
+  --change-delete-bg: #3a1a17;
+  --change-replace: #a98bf0;
+  --change-replace-bg: #2a2140;
+  --change-read: #68a8e0;
+  --change-read-bg: #142636;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-selected: 0 0 0 2px var(--accent), 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.motion-reduced,
+.motion-reduced * {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
