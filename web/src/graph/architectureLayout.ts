@@ -5,6 +5,7 @@ import type { CanvasModel } from "./canvasModel";
 export const CARD = { width: 232, height: 64 } as const;
 export const PROXY = { width: 232, height: 30 } as const;
 export const HEADER = 40;
+export const COLLAPSED = { width: 264, height: 76 } as const;
 const PAD = 16;
 const GAP = 12;
 const SECTION_GAP = 28;
@@ -29,7 +30,7 @@ interface Sized {
 }
 
 /**
- * Deterministic architecture layout. Containment has known semantics, so it
+ * Deterministic structural layout for both views. Containment has known semantics, so it
  * is arranged directly instead of being inferred by a generic graph layout:
  * subnets form a grid of availability zones (columns) by public, private and
  * unclassified tiers (rows), with the network edge above and workloads and
@@ -64,6 +65,9 @@ export function layoutArchitecture(model: CanvasModel, index: ReportIndex): Plac
 function sizeGroup(id: string, model: CanvasModel, index: ReportIndex, size: (id: string) => Sized): Sized {
   const item = model.items.get(id);
   const group = item?.kind === "group" ? item.group : undefined;
+  if (item?.kind === "group" && item.collapsed) {
+    return { ...COLLAPSED, children: [] };
+  }
   const leaves = model.members.get(id) ?? [];
   const groups = model.childGroups.get(id) ?? [];
   switch (group?.kind) {
@@ -74,8 +78,9 @@ function sizeGroup(id: string, model: CanvasModel, index: ReportIndex, size: (id
     case "regional_services":
     case "global_services":
     case "unplaced":
-    case "module":
       return frame(grid(leaves, model, balancedColumns(leaves.length, 2)));
+    case "module":
+      return frame(stack([grid(leaves, model, balancedColumns(leaves.length, 3)), row(groups.map((g) => ({ id: g, ...dims(size(g)) })), SECTION_GAP)]));
     default:
       return frame(stack([row(groups.map((g) => ({ id: g, ...dims(size(g)) })), SECTION_GAP), grid(leaves, model, balancedColumns(leaves.length, 3))]));
   }

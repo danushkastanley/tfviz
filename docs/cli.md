@@ -43,6 +43,7 @@ A state report shows Terraform's recorded snapshot. It does not prove that the i
 | `--input <file\|->` | plan, state | Exported JSON (or, for `state`, a version-4 `.tfstate` file), or `-` for standard input. Required. |
 | `--output <file>` | plan, state | HTML report to write. Required. Written atomically with permissions `0600`. |
 | `--title <text>` | plan, state | Report title. |
+| `--view architecture\|modules` | plan, state | The structure the report opens in. Viewers can switch at any time. Defaults to `architecture`. |
 | `--force` | plan, state | Replace the output file if it exists. Without it, an existing file is never touched. |
 | `--strict` | plan, state | Fail if anything cannot be fully interpreted: unsupported resource types, unrecognised actions, a plan the producer reported as incomplete, skipped deposed objects, or a newer JSON format. No report is written. |
 

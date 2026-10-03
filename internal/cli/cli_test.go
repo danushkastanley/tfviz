@@ -101,6 +101,7 @@ func TestExitCodes(t *testing.T) {
 		{"missing file", []string{"plan", "--input", filepath.Join(dir, "nope.json"), "--output", filepath.Join(dir, "d.html")}, ExitFailure, "cannot read"},
 		{"directory input", []string{"plan", "--input", dir, "--output", filepath.Join(dir, "e.html")}, ExitUnsupported, "regular file"},
 		{"strict", []string{"plan", "--input", plan, "--output", filepath.Join(dir, "f.html"), "--strict"}, ExitUnsupported, "unsupported resource"},
+		{"bad view", []string{"plan", "--input", plan, "--output", filepath.Join(dir, "g.html"), "--view", "graph"}, ExitUnsupported, "--view"},
 		{"inapplicable option", []string{"version", "--input", plan}, ExitOK, ""},
 	}
 	for _, tt := range tests {

@@ -75,6 +75,10 @@ export interface Report {
    */
   disclosure: "internal" | "safe_share";
   title: string;
+  /**
+   * The structure the interface opens in.
+   */
+  initial_view?: "architecture" | "modules";
   generated_at: string;
   tool: Tool;
   producer: Producer;

@@ -24,3 +24,15 @@ export function emphasisClass(state: CanvasState, ids: readonly string[]): strin
   if (ids.includes(state.selectedId)) return "is-selected";
   return ids.some((id) => state.related.has(id)) ? "is-related" : "is-dimmed";
 }
+
+/** Canvas actions available to nodes. */
+export interface CanvasActions {
+  toggleGroup: (groupId: string) => void;
+  focusGroup: (groupId: string) => void;
+}
+
+export const CanvasActionsContext = createContext<CanvasActions>({ toggleGroup: () => undefined, focusGroup: () => undefined });
+
+export function useCanvasActions(): CanvasActions {
+  return useContext(CanvasActionsContext);
+}

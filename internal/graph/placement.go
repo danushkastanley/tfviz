@@ -43,16 +43,26 @@ func place(res *resolver, g *Graph, snap *input.Snapshot) ([]model.Group, map[st
 		}
 	}
 	// Resources that follow another are placed last, beside their anchor.
+	// Placement can depend on where other resources sit (for example their
+	// security groups), so anything unplaced on the first pass gets a second.
+	var retry []*Node
 	for _, n := range g.Nodes {
 		if n.Adapter.DefinesGroup == "" && n.Adapter.Placement.Follow == "" {
 			p.nodeIn[n.ID] = p.home(n)
+			if p.nodeIn[n.ID] == "unplaced" && n.Supported {
+				retry = append(retry, n)
+			}
 		}
+	}
+	for _, n := range retry {
+		p.nodeIn[n.ID] = p.home(n)
 	}
 	for _, n := range g.Nodes {
 		if n.Adapter.DefinesGroup == "" && n.Adapter.Placement.Follow != "" {
 			p.nodeIn[n.ID] = p.follow(n)
 		}
 	}
+	p.dropEmptyUnplaced()
 	groups, ids := p.emit()
 	modules, moduleIDs := moduleGroups(g.Nodes, len(groups))
 	placement := map[string]model.ResourceGroups{}
@@ -138,6 +148,11 @@ func (p *placer) home(n *Node) string {
 		}
 		return p.region(p.loc.locate(n))
 	}
+	// Attached security groups must belong to the resource's own VPC, so they
+	// evidence the VPC when no subnets are recorded.
+	if vpc, ok := p.vpcOfSecurityGroups(n); ok {
+		return vpc
+	}
 	if n.Adapter.Placement.VPCField != "" {
 		if key, ok := p.vpcOf(n); ok {
 			return key
@@ -176,6 +191,17 @@ func (p *placer) follow(n *Node) string {
 	return p.unplaced()
 }
 
+// dropEmptyUnplaced removes the unplaced group when every resource that
+// first landed there was placed on the second pass.
+func (p *placer) dropEmptyUnplaced() {
+	for _, home := range p.nodeIn {
+		if home == "unplaced" {
+			return
+		}
+	}
+	delete(p.containers, "unplaced")
+}
+
 func (p *placer) unplaced() string {
 	return p.ensure(container{key: "unplaced", kind: model.GroupUnplaced, label: "Placement not established", placement: model.PlacementUnresolved})
 }
@@ -191,6 +217,26 @@ func (p *placer) subnetsOf(n *Node) []string {
 		}
 	}
 	return out
+}
+
+// vpcOfSecurityGroups returns the single VPC that holds every security group
+// attached to a resource on its current side.
+func (p *placer) vpcOfSecurityGroups(n *Node) (string, bool) {
+	vpcs := map[string]bool{}
+	for _, rel := range p.g.Relationships {
+		if rel.Source != n.ID || rel.Type != model.RelSecurityGroupAttachment || !p.current(n, rel.Presence) {
+			continue
+		}
+		home, ok := p.nodeIn[rel.Target]
+		if !ok || p.containers[home] == nil || p.containers[home].kind != model.GroupVPC {
+			return "", false
+		}
+		vpcs[home] = true
+	}
+	if len(vpcs) != 1 {
+		return "", false
+	}
+	return only(vpcs), true
 }
 
 // current reports whether a relationship exists on the node's current side.
