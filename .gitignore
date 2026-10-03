@@ -1,0 +1,33 @@
+# Build output
+/bin/
+/dist/
+/internal/report/assets/dist/
+/web/dist/
+/web/node_modules/
+/web/test-results/
+/web/playwright-report/
+/web/.vite/
+*.html.tmp
+
+# Generated reports outside testdata
+/out/
+
+# Terraform working files used during fixture generation
+.terraform/
+.terraform.lock.hcl
+*.tfplan
+tfplan
+crash.log
+
+# Never commit real state; synthetic prior state lives under testdata only.
+*.tfstate
+*.tfstate.backup
+!testdata/producer/**/prior.tfstate
+
+# OS and editors
+.DS_Store
+.idea/
+.vscode/
+
+# Fixture generation working directories and provider caches
+/.cache/
