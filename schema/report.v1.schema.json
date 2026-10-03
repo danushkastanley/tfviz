@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/danushkastanley/tfviz/schema/report.v1.schema.json",
+  "title": "Report",
+  "description": "Sanitised tfviz report model, version 1. Only approved, projected metadata appears here; there is deliberately no generic attribute map.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "disclosure", "title", "generated_at", "tool", "producer", "source", "completeness", "summary", "coverage", "resources", "relationships", "unresolved", "groups", "warnings"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "mode": { "enum": ["plan", "state"] },
+    "disclosure": { "description": "safe_share replaces identifying values with report-local pseudonyms.", "enum": ["internal", "safe_share"] },
+    "title": { "type": "string", "maxLength": 200 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "tool": { "$ref": "#/$defs/Tool" },
+    "producer": { "$ref": "#/$defs/Producer" },
+    "source": { "$ref": "#/$defs/Source" },
+    "completeness": { "$ref": "#/$defs/Completeness" },
+    "summary": { "$ref": "#/$defs/Summary" },
+    "coverage": { "$ref": "#/$defs/Coverage" },
+    "resources": { "type": "array", "items": { "$ref": "#/$defs/Resource" } },
+    "relationships": { "type": "array", "items": { "$ref": "#/$defs/Relationship" } },
+    "unresolved": { "type": "array", "items": { "$ref": "#/$defs/UnresolvedReference" } },
+    "groups": { "type": "array", "items": { "$ref": "#/$defs/Group" } },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/Warning" } }
+  },
+  "$defs": {
+    "Id": { "description": "Opaque report-local identifier.", "type": "string", "pattern": "^[a-z]{1,3}[0-9]{1,6}$" },
+    "Tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "tfviz" },
+        "version": { "type": "string", "maxLength": 64 }
+      }
+    },
+    "Producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "format_version"],
+      "properties": {
+        "name": { "enum": ["terraform", "opentofu", "unknown"] },
+        "version": { "type": "string", "maxLength": 64 },
+        "format_version": { "type": "string", "maxLength": 16 }
+      }
+    },
+    "Source": {
+      "description": "Where the input came from. The timestamp describes the input, never the live infrastructure.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "timestamp_status"],
+      "properties": {
+        "kind": { "enum": ["file", "stdin", "s3"] },
+        "timestamp_status": { "enum": ["known", "unavailable"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Completeness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "description": "not_reported means the producer gave no completeness signal; it must not be shown as complete.", "enum": ["complete", "incomplete", "not_reported"] }
+      }
+    },
+    "Summary": {
+      "description": "Counts of resource changes. Replacements are counted separately, not as an addition plus a destruction.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["create", "update", "delete", "replace", "read", "no_op", "unsupported"],
+      "properties": {
+        "create": { "$ref": "#/$defs/Count" },
+        "update": { "$ref": "#/$defs/Count" },
+        "delete": { "$ref": "#/$defs/Count" },
+        "replace": { "$ref": "#/$defs/Count" },
+        "read": { "$ref": "#/$defs/Count" },
+        "no_op": { "$ref": "#/$defs/Count" },
+        "unsupported": { "$ref": "#/$defs/Count" }
+      }
+    },
+    "Coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resources_total", "resources_supported", "resources_generic"],
+      "properties": {
+        "resources_total": { "$ref": "#/$defs/Count" },
+        "resources_supported": { "$ref": "#/$defs/Count" },
+        "resources_generic": { "$ref": "#/$defs/Count" }
+      }
+    },
+    "Count": { "type": "integer", "minimum": 0 },
+    "Resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "address", "label", "type", "family", "role", "mode", "module", "provider", "support", "change", "groups", "metadata"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "address": { "description": "Full Terraform address, including count/for_each keys and module instances.", "type": "string", "maxLength": 1024 },
+        "label": { "type": "string", "maxLength": 256 },
+        "type": { "type": "string", "pattern": "^[a-z0-9_]{1,128}$" },
+        "family": { "$ref": "#/$defs/Family" },
+        "role": { "description": "association resources exist to connect two others (route table associations, rule and attachment resources). They are counted like any resource and may be drawn as connectors.", "enum": ["entity", "association"] },
+        "mode": { "enum": ["managed", "data"] },
+        "module": { "description": "Module instance address; empty for the root module.", "type": "string", "maxLength": 1024 },
+        "provider": { "description": "Provider namespace/type, without the registry host.", "type": "string", "maxLength": 128 },
+        "support": { "description": "generic resources receive a deliberately limited card with no projected metadata.", "enum": ["supported", "generic"] },
+        "change": { "$ref": "#/$defs/Change" },
+        "groups": { "$ref": "#/$defs/ResourceGroups" },
+        "metadata": { "type": "array", "items": { "$ref": "#/$defs/MetadataField" } }
+      }
+    },
+    "Family": { "enum": ["network", "security", "compute", "load_balancing", "database", "streaming", "secrets", "encryption", "observability", "storage", "messaging", "configuration", "other"] },
+    "ResourceGroups": {
+      "description": "Primary placement in each view. Multi-subnet membership is expressed through relationships, never by duplicating the resource.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["architecture", "modules"],
+      "properties": {
+        "architecture": { "$ref": "#/$defs/Id" },
+        "modules": { "$ref": "#/$defs/Id" }
+      }
+    },
+    "Change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "producer_actions"],
+      "properties": {
+        "action": { "enum": ["no_op", "create", "update", "delete", "replace", "read", "unsupported"] },
+        "replace_order": { "enum": ["delete_first", "create_first"] },
+        "producer_actions": { "type": "array", "maxItems": 4, "items": { "type": "string", "maxLength": 32 } },
+        "reason": { "type": "string", "maxLength": 64 },
+        "replace_fields": { "description": "Approved field keys that force replacement; unapproved paths are counted, not named.", "type": "array", "items": { "type": "string", "maxLength": 128 } },
+        "replace_fields_omitted": { "$ref": "#/$defs/Count" },
+        "annotations": { "type": "array", "items": { "enum": ["imported", "moved", "forgotten"] } },
+        "previous_address": { "type": "string", "maxLength": 1024 }
+      }
+    },
+    "MetadataField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label"],
+      "properties": {
+        "key": { "type": "string", "pattern": "^[a-z0-9_.]{1,128}$" },
+        "label": { "type": "string", "maxLength": 128 },
+        "before": { "$ref": "#/$defs/FieldValue" },
+        "after": { "$ref": "#/$defs/FieldValue" },
+        "change_status": { "description": "Present in plan mode. unknown means the comparison could not be established.", "enum": ["unchanged", "changed", "added", "removed", "unknown"] }
+      }
+    },
+    "FieldValue": {
+      "description": "A value carries a payload only when its status is known. Sensitive values never carry a payload, a hash or a fingerprint.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "value"],
+          "properties": {
+            "status": { "const": "known" },
+            "value": { "$ref": "#/$defs/DisplayValue" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status"],
+          "properties": {
+            "status": { "enum": ["sensitive", "unknown", "absent", "omitted"] }
+          }
+        }
+      ]
+    },
+    "DisplayValue": {
+      "oneOf": [
+        { "type": "string", "maxLength": 2048 },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "array", "maxItems": 256, "items": { "type": "string", "maxLength": 2048 } }
+      ]
+    },
+    "Relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "target", "type", "presence", "evidence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "source": { "$ref": "#/$defs/Id" },
+        "target": { "$ref": "#/$defs/Id" },
+        "type": { "$ref": "#/$defs/RelationshipType" },
+        "presence": { "description": "Whether the association exists before the change, after it, or in both.", "enum": ["before", "after", "both"] },
+        "evidence": { "$ref": "#/$defs/Evidence" }
+      }
+    },
+    "RelationshipType": { "enum": ["subnet_membership", "security_group_attachment", "security_group_rule", "routing", "route_association", "service_reference", "secret_association", "encryption_key", "log_destination"] },
+    "Evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "field"],
+      "properties": {
+        "kind": { "description": "attribute: a recorded attribute value matched the target's identifier. configuration: an unambiguous configuration reference. association_resource: a dedicated association resource.", "enum": ["attribute", "configuration", "association_resource"] },
+        "field": { "type": "string", "maxLength": 128 },
+        "via": { "$ref": "#/$defs/Id" }
+      }
+    },
+    "UnresolvedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "type", "field", "reason"],
+      "properties": {
+        "source": { "$ref": "#/$defs/Id" },
+        "type": { "$ref": "#/$defs/RelationshipType" },
+        "field": { "type": "string", "maxLength": 128 },
+        "reason": { "enum": ["unknown_until_apply", "external", "ambiguous", "sensitive"] }
+      }
+    },
+    "Group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "view", "kind", "label", "placement"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Id" },
+        "view": { "enum": ["architecture", "modules"] },
+        "kind": { "enum": ["account", "region", "vpc", "availability_zone", "subnet", "regional_services", "global_services", "unplaced", "module"] },
+        "label": { "type": "string", "maxLength": 256 },
+        "parent": { "$ref": "#/$defs/Id" },
+        "placement": { "description": "unresolved groups collect resources whose placement could not be established.", "enum": ["known", "unresolved"] },
+        "resource": { "description": "The resource that defines this group, such as the VPC or subnet itself.", "$ref": "#/$defs/Id" },
+        "classification": { "description": "Subnet classification, labelled public or private only when route-table evidence supports it.", "enum": ["public", "private", "unknown"] }
+      }
+    },
+    "Warning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "enum": ["unsupported_action", "unsupported_resource", "unknown_format_minor", "completeness_not_reported", "incomplete_plan", "unresolved_relationship", "limit_reached"] },
+        "message": { "type": "string", "maxLength": 512 },
+        "resource": { "$ref": "#/$defs/Id" }
+      }
+    }
+  }
+}
