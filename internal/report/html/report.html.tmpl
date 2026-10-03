@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="{{.CSP}}">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="tfviz">
+<title>{{.Title}}</title>
+<style>{{.Style}}</style>
+</head>
+<body>
+<div id="root"></div>
+<section id="static-summary" class="static-summary" aria-label="Report summary">
+<h1>{{.Title}}</h1>
+<p>{{.Summary.Mode}} · {{.Summary.Total}} resources. The interactive diagram needs JavaScript; this summary lists every change.</p>
+{{- if .Summary.Counts}}
+<ul>{{range .Summary.Counts}}<li>{{.Count}} {{.Label}}</li>{{end}}</ul>
+{{- end}}
+{{- if .Summary.Changes}}
+<table>
+<thead><tr><th scope="col">Change</th><th scope="col">Address</th><th scope="col">Type</th></tr></thead>
+<tbody>{{range .Summary.Changes}}<tr><td>{{.Change}}</td><td><code>{{.Address}}</code></td><td>{{.Type}}</td></tr>{{end}}</tbody>
+</table>
+{{- end}}
+</section>
+<script type="application/json" id="tfviz-report">{{.Data}}</script>
+<script type="module">{{.Script}}</script>
+<template id="tfviz-notices"><pre>{{.Notices}}</pre></template>
+</body>
+</html>

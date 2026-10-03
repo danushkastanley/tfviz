@@ -24,9 +24,16 @@ terraform show -json tfplan | tfviz plan --input - --output infra-report.html
 Requirements: Go 1.27+, Node 26+, pnpm 12+. Fixture regeneration also needs Terraform and OpenTofu.
 
 ```bash
-make test     # Go and web checks
-make build    # build the web bundle, then the Go binary
-make e2e      # offline browser checks with Playwright
+make test     # Go and web checks (builds the web bundle first)
+make build    # web bundle plus the Go binary in bin/
+make e2e      # renders reports and opens them offline via file:// in three browsers
+```
+
+In M0 the only binary is `tfviz-spike`. It renders a report model JSON file to HTML:
+
+```bash
+make build
+bin/tfviz-spike -in testdata/reports/aws-review.sample.json -out out/sample-report.html
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).

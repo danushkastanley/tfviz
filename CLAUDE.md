@@ -15,9 +15,13 @@ Read [docs/implementation-plan.md](docs/implementation-plan.md) before you make 
 ## Commands
 
 - `make test`: runs Go vet and tests, then web typecheck, lint and unit tests.
-- `make build`: builds the web bundle and copies it into `internal/report/assets/dist`, then builds the Go binary.
-- `make e2e`: runs Playwright under `file://` in Chromium, Firefox and WebKit.
+- `make build`: builds the web bundle and copies it into `internal/report/html/dist` (embedded by the Go renderer), then builds the binary into `bin/`.
+- `make e2e`: renders reports with the Go exporter and opens them under `file://` in Chromium, Firefox and WebKit. First run: `pnpm --dir web exec playwright install chromium firefox webkit`.
 - `make fixtures`: regenerates producer JSON with Terraform and OpenTofu. It uses fake credentials and makes no AWS calls.
+
+## Decisions
+
+Material deviations from the plan are recorded in `docs/decisions/` (ADRs).
 
 ## Git
 

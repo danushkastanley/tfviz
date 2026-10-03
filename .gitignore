@@ -1,7 +1,7 @@
 # Build output
 /bin/
 /dist/
-/internal/report/assets/dist/
+/internal/report/html/dist/
 /web/dist/
 /web/node_modules/
 /web/test-results/
