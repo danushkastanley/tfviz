@@ -230,3 +230,28 @@ func TestDeletedResourcesHaveNoAfterValue(t *testing.T) {
 		t.Fatalf("a deleted resource has only a before value: before=%v after=%v", r.HasBefore, r.HasAfter)
 	}
 }
+
+// Variables passed through nested modules resolve to the root resource,
+// and module-local references are made absolute for the right instance.
+func TestReferencesThroughNestedModules(t *testing.T) {
+	doc := `{"format_version":"1.2",
+	 "resource_changes":[
+	  {"address":"aws_subnet.s","mode":"managed","type":"aws_subnet","name":"s","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"],"before":{},"after":{}}},
+	  {"address":"module.a[\"x\"].module.b.aws_lb.lb","module_address":"module.a[\"x\"].module.b","mode":"managed","type":"aws_lb","name":"lb","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"before":null,"after":{},"after_unknown":{"subnets":true}}}],
+	 "configuration":{"root_module":{
+	  "resources":[{"address":"aws_subnet.s","mode":"managed","type":"aws_subnet","name":"s","expressions":{}}],
+	  "module_calls":{"a":{"expressions":{"subnet":{"references":["aws_subnet.s.id","aws_subnet.s"]}},"module":{
+	   "module_calls":{"b":{"expressions":{"ids":{"references":["var.subnet"]}},"module":{
+	    "resources":[{"address":"aws_lb.lb","mode":"managed","type":"aws_lb","name":"lb","expressions":{"subnets":{"references":["var.ids"]},"security_groups":{"references":["aws_security_group.local.id"]}}}]}}}}}}}}}`
+	snap, err := Read([]byte(doc), KindPlan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lb := resource(t, snap, `module.a["x"].module.b.aws_lb.lb`)
+	if refs := snap.Config.References(lb, "subnets"); !contains(refs, "aws_subnet.s.id") {
+		t.Fatalf("subnets refs = %v", refs)
+	}
+	if refs := snap.Config.References(lb, "security_groups"); !contains(refs, `module.a["x"].module.b.aws_security_group.local.id`) {
+		t.Fatalf("local refs = %v", refs)
+	}
+}

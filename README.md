@@ -2,7 +2,7 @@
 
 Turn Terraform and OpenTofu plans and state into calm, interactive infrastructure diagrams: a single, self-contained HTML file you can open offline or download from CI.
 
-> **Status: pre-alpha.** Plan and state reports work end to end for the supported AWS resource types, tested against synthetic Terraform 1.16 and OpenTofu 1.13 fixtures. Interfaces may still change. See [docs/implementation-plan.md](docs/implementation-plan.md).
+> **Status: alpha candidate.** Plan reports, state reports (local, raw `.tfstate` or S3), the local explorer and safe-share work end to end for the [supported AWS resource types](docs/support.md). They are tested against synthetic Terraform 1.16 and OpenTofu 1.13 fixtures. No release has been published yet. See [docs/status.md](docs/status.md).
 
 ## Principles
 
@@ -45,6 +45,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 - [Supported resource types](docs/support.md)
 - [Tested compatibility](docs/compatibility.md)
 - [Security model](docs/security-model.md)
+- [Implementation status](docs/status.md)
 
 ## Licence
 
