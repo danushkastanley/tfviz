@@ -15,8 +15,8 @@ import (
 // VPC's main route table, which is not evidenced here, so it stays unknown.
 func (p *placer) classify(subnet *Node) model.Classification {
 	var verdicts []model.Classification
-	for _, rel := range p.g.Relationships {
-		if rel.Type != model.RelRouteAssociation || rel.Target != subnet.ID || !p.current(subnet, rel.Presence) {
+	for _, rel := range p.byTarget[subnet.ID] {
+		if rel.Type != model.RelRouteAssociation || !p.current(subnet, rel.Presence) {
 			continue
 		}
 		verdicts = append(verdicts, p.routeTableClass(rel.Source))
@@ -36,23 +36,16 @@ func (p *placer) classify(subnet *Node) model.Classification {
 // private when its gateway targets are all known and none is an internet
 // gateway; unknown otherwise.
 func (p *placer) routeTableClass(tableID string) model.Classification {
-	var table *Node
-	for _, n := range p.g.Nodes {
-		if n.ID == tableID {
-			table = n
-		}
-	}
-	if table == nil {
+	table, ok := p.nodes[tableID]
+	if !ok {
 		return model.ClassificationUnknown
 	}
-	for _, rel := range p.g.Relationships {
-		if rel.Source != tableID || rel.Type != model.RelRouting || !p.current(table, rel.Presence) {
+	for _, rel := range p.bySource[tableID] {
+		if rel.Type != model.RelRouting || !p.current(table, rel.Presence) {
 			continue
 		}
-		for _, n := range p.g.Nodes {
-			if n.ID == rel.Target && n.Resource.Type == "aws_internet_gateway" {
-				return model.ClassificationPublic
-			}
+		if target, ok := p.nodes[rel.Target]; ok && target.Resource.Type == "aws_internet_gateway" {
+			return model.ClassificationPublic
 		}
 	}
 	for _, gateway := range collect(table.current(), []string{"route", "gateway_id"}) {

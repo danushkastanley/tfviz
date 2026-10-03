@@ -20,7 +20,11 @@ type container struct {
 }
 
 type placer struct {
-	g          *Graph
+	g *Graph
+	// Relationship and node indexes keep placement linear in large stacks.
+	bySource   map[string][]model.Relationship
+	byTarget   map[string][]model.Relationship
+	nodes      map[string]*Node
 	res        *resolver
 	loc        *locator
 	containers map[string]*container
@@ -30,7 +34,15 @@ type placer struct {
 // place builds the architecture and module groups and assigns every
 // resource a primary group in each view.
 func place(res *resolver, g *Graph, snap *input.Snapshot) ([]model.Group, map[string]model.ResourceGroups) {
-	p := &placer{g: g, res: res, loc: newLocator(snap, g.Nodes), containers: map[string]*container{}, nodeIn: map[string]string{}}
+	p := &placer{g: g, res: res, loc: newLocator(snap, g.Nodes), containers: map[string]*container{}, nodeIn: map[string]string{},
+		bySource: map[string][]model.Relationship{}, byTarget: map[string][]model.Relationship{}, nodes: map[string]*Node{}}
+	for _, rel := range g.Relationships {
+		p.bySource[rel.Source] = append(p.bySource[rel.Source], rel)
+		p.byTarget[rel.Target] = append(p.byTarget[rel.Target], rel)
+	}
+	for _, n := range g.Nodes {
+		p.nodes[n.ID] = n
+	}
 	// VPCs first, then subnets, so other resources can find their containers.
 	for _, n := range g.Nodes {
 		if n.Adapter.DefinesGroup == model.GroupVPC {
@@ -209,8 +221,8 @@ func (p *placer) unplaced() string {
 // subnetsOf lists subnets a resource belongs to on its current side.
 func (p *placer) subnetsOf(n *Node) []string {
 	var out []string
-	for _, rel := range p.g.Relationships {
-		if rel.Source == n.ID && rel.Type == model.RelSubnetMembership && p.current(n, rel.Presence) {
+	for _, rel := range p.bySource[n.ID] {
+		if rel.Type == model.RelSubnetMembership && p.current(n, rel.Presence) {
 			if _, ok := p.containers["subnet|"+rel.Target]; ok {
 				out = append(out, rel.Target)
 			}
@@ -223,8 +235,8 @@ func (p *placer) subnetsOf(n *Node) []string {
 // attached to a resource on its current side.
 func (p *placer) vpcOfSecurityGroups(n *Node) (string, bool) {
 	vpcs := map[string]bool{}
-	for _, rel := range p.g.Relationships {
-		if rel.Source != n.ID || rel.Type != model.RelSecurityGroupAttachment || !p.current(n, rel.Presence) {
+	for _, rel := range p.bySource[n.ID] {
+		if rel.Type != model.RelSecurityGroupAttachment || !p.current(n, rel.Presence) {
 			continue
 		}
 		home, ok := p.nodeIn[rel.Target]
