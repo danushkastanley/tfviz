@@ -165,6 +165,31 @@ select {
   background: var(--surface-raised);
 }
 
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.filter-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+.filter-row select {
+  min-width: 0;
+  padding: 4px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
 .toggle-row {
   display: flex;
   gap: 6px;

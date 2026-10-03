@@ -125,7 +125,7 @@ test("the module view keeps the same resources", async ({ page }) => {
 test("a safe-share report shows no original names anywhere in the page", async ({ page }) => {
   const watch = await open(page, REPORTS.safeShare);
   await expect(page.getByText("Safe-share", { exact: true })).toBeVisible();
-  await page.getByRole("checkbox", { name: "Show unchanged resources" }).check();
+  await page.getByLabel("Show").selectOption("all");
   const text = await page.locator("body").innerText();
   for (const original of ["review-orders", "review-events", "review-platform", "aws-review", "111122223333", "fixture.invalid"]) {
     expect(text).not.toContain(original);
