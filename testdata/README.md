@@ -10,6 +10,7 @@ Everything here is synthetic. It uses the AWS documentation account `11112222333
 | `producer/<tool>-<version>/prior.tfstate` | Synthetic raw version-4 state; the fixture for the raw-state reader |
 | `producer/<tool>-<version>/VERSIONS` | Producer and AWS provider versions used |
 | `canaries.txt` | Planted secret literals that must never reach a report |
+| `reports/aws-review.sample.json` | Hand-authored report (schema v1) for the Terraform proposed plan. It drives the UI prototype until the engine generates reports. |
 
 ## Coverage of the proposed plan
 
