@@ -54,7 +54,8 @@
       "properties": {
         "kind": { "enum": ["file", "stdin", "s3"] },
         "timestamp_status": { "enum": ["known", "unavailable"] },
-        "timestamp": { "type": "string", "format": "date-time" }
+        "timestamp": { "type": "string", "format": "date-time" },
+        "object_version": { "description": "S3 object version, when the input was read from a versioned bucket.", "type": "string", "maxLength": 1024 }
       }
     },
     "Completeness": {

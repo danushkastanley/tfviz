@@ -84,6 +84,7 @@ type Source struct {
 	Kind            SourceKind      `json:"kind"`
 	TimestampStatus TimestampStatus `json:"timestamp_status"`
 	Timestamp       *time.Time      `json:"timestamp,omitempty"`
+	ObjectVersion   string          `json:"object_version,omitempty"`
 }
 
 type CompletenessStatus string

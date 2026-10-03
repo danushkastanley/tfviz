@@ -5,8 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
-	"os"
 	"strings"
 
 	"github.com/danushkastanley/tfviz/internal/input"
@@ -16,12 +14,14 @@ import (
 )
 
 type reportOptions struct {
-	input  string
-	output string
-	title  string
-	view   string
-	force  bool
-	strict bool
+	input   string
+	output  string
+	title   string
+	view    string
+	force   bool
+	strict  bool
+	offline bool
+	s3      s3Flags
 }
 
 func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOptions, error) {
@@ -29,12 +29,23 @@ func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOp
 	fs := flag.NewFlagSet("tfviz "+string(kind), flag.ContinueOnError)
 	fs.SetOutput(env.Stderr)
 	noun := map[input.SnapshotKind]string{input.KindPlan: "plan", input.KindState: "state"}[kind]
-	fs.StringVar(&opts.input, "input", "", "exported "+noun+" JSON file, or - for standard input (required)")
+	inputHelp := "exported " + noun + " JSON file, or - for standard input (required)"
+	if kind == input.KindState {
+		inputHelp = "state: show -json output, a version-4 .tfstate file, s3://bucket/key, or - for standard input (required)"
+	}
+	fs.StringVar(&opts.input, "input", "", inputHelp)
 	fs.StringVar(&opts.output, "output", "", "HTML report to write (required)")
 	fs.StringVar(&opts.title, "title", "", "report title")
 	fs.StringVar(&opts.view, "view", "architecture", "structure the report opens in: architecture or modules")
 	fs.BoolVar(&opts.force, "force", false, "replace the output file if it exists")
 	fs.BoolVar(&opts.strict, "strict", false, "fail if any resource, action or input cannot be fully interpreted")
+	fs.BoolVar(&opts.offline, "offline", false, "refuse any input that would need network access")
+	if kind == input.KindState {
+		fs.StringVar(&opts.s3.profile, "aws-profile", "", "AWS profile for s3:// inputs (uses the standard credential chain)")
+		fs.StringVar(&opts.s3.region, "aws-region", "", "region of the state bucket for s3:// inputs")
+		fs.StringVar(&opts.s3.version, "s3-version", "", "read this version of the s3:// object (needs s3:GetObjectVersion)")
+		fs.StringVar(&opts.s3.owner, "expected-bucket-owner", "", "fail unless the s3:// bucket belongs to this account ID")
+	}
 	fs.Usage = func() {
 		fmt.Fprintf(env.Stderr, "Usage: tfviz %s --input <file|-> --output <report.html> [options]\n\nOptions:\n", kind)
 		fs.PrintDefaults()
@@ -56,6 +67,8 @@ func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOp
 		return opts, &usageError{"--view must be architecture or modules"}
 	case opts.output == "-":
 		return opts, &usageError{"--output must be a file path; reports are not written to standard output"}
+	case kind == input.KindPlan && strings.HasPrefix(opts.input, "s3://"):
+		return opts, &usageError{"plans are read from a file or standard input; export the plan with show -json first"}
 	}
 	return opts, nil
 }
@@ -82,16 +95,19 @@ func generate(kind input.SnapshotKind, opts reportOptions, env Env) (string, err
 	if err := checkOutput(opts.output, opts.force); err != nil {
 		return "", err
 	}
-	data, source, err := readInput(opts.input, env.Stdin)
+	in, err := readInput(opts, env)
 	if err != nil {
 		return "", err
 	}
-	snap, err := input.Read(data, kind)
-	data = nil // the raw, secret-bearing input is not needed beyond this point
+	snap, err := input.Read(in.data, kind)
+	in.data = nil // the raw, secret-bearing input is not needed beyond this point
 	if err != nil {
 		return "", err
 	}
-	report := build.Report(snap, build.Options{Title: opts.title, View: model.View(opts.view), Source: source, GeneratedAt: env.Now(), ToolVersion: env.Version})
+	report := build.Report(snap, build.Options{
+		Title: opts.title, View: model.View(opts.view), Source: in.kind, SourceTime: in.time, SourceVersion: in.version,
+		GeneratedAt: env.Now(), ToolVersion: env.Version,
+	})
 	if opts.strict {
 		if problems := strictProblems(report); len(problems) > 0 {
 			return "", &usageError{"--strict: " + strings.Join(problems, "; ")}
@@ -105,27 +121,6 @@ func generate(kind input.SnapshotKind, opts reportOptions, env Env) (string, err
 		return "", err
 	}
 	return describe(opts.output, report), nil
-}
-
-func readInput(path string, stdin io.Reader) ([]byte, model.SourceKind, error) {
-	if path == "-" {
-		data, err := input.ReadBounded(stdin)
-		return data, model.SourceStdin, err
-	}
-	info, err := os.Stat(path)
-	if err != nil {
-		return nil, "", fmt.Errorf("cannot read the input file: %w", errors.Unwrap(err))
-	}
-	if !info.Mode().IsRegular() {
-		return nil, "", &usageError{"the input must be a regular file or - for standard input"}
-	}
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, "", fmt.Errorf("cannot read the input file: %w", errors.Unwrap(err))
-	}
-	defer f.Close()
-	data, err := input.ReadBounded(f)
-	return data, model.SourceFile, err
 }
 
 // strictProblems lists interpretation gaps that --strict turns into failure.

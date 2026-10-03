@@ -24,6 +24,8 @@ type Env struct {
 	Stderr  io.Writer
 	Now     func() time.Time
 	Version string
+	// S3Endpoint overrides the S3 endpoint; tests only.
+	S3Endpoint string
 }
 
 // Run executes tfviz with arguments (excluding the program name) and
@@ -70,7 +72,7 @@ type usageError struct{ message string }
 func (e *usageError) Error() string { return e.message }
 
 // exitCode classifies an error: unsupported input and invalid arguments are
-// exit code 2; everything else is a processing failure.
+// exit code 2; everything else, including S3 retrieval, is a processing failure.
 func exitCode(err error) int {
 	var inputErr *input.Error
 	var use *usageError
