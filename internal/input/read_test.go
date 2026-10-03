@@ -221,3 +221,11 @@ func TestNewerMinorFormatIsReadWithNotice(t *testing.T) {
 		t.Fatalf("notices = %+v", snap.Notices)
 	}
 }
+
+func TestDeletedResourcesHaveNoAfterValue(t *testing.T) {
+	snap := mustRead(t, "terraform-1.16/plan.json", KindPlan)
+	r := resource(t, snap, "aws_vpc_security_group_ingress_rule.msk_plaintext[0]")
+	if r.HasAfter || !r.HasBefore {
+		t.Fatalf("a deleted resource has only a before value: before=%v after=%v", r.HasBefore, r.HasAfter)
+	}
+}
