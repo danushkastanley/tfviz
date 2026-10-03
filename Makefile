@@ -8,7 +8,7 @@ GO ?= go
 test: web-test go-test
 
 build: web
-	$(GO) build -trimpath -o bin/tfviz-spike ./cmd/tfviz-spike
+	$(GO) build -trimpath -o bin/tfviz ./cmd/tfviz
 
 go-test: web fmt-check
 	$(GO) vet ./...

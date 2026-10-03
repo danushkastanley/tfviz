@@ -137,3 +137,34 @@ func TestSummaryAndWarnings(t *testing.T) {
 		t.Error("missing completeness warning for OpenTofu")
 	}
 }
+
+// Regression: an input with no relationships once produced "unresolved": null,
+// which violates the schema and stops the interface from opening the report.
+func TestEmptyCollectionsAreArrays(t *testing.T) {
+	for _, doc := range []string{
+		`{"format_version":"1.2","resource_changes":[]}`,
+		`{"format_version":"1.0"}`,
+	} {
+		kind := input.KindPlan
+		if !bytes.Contains([]byte(doc), []byte("resource_changes")) {
+			kind = input.KindState
+		}
+		snap, err := input.Read([]byte(doc), kind)
+		if err != nil {
+			t.Fatal(err)
+		}
+		out, _ := json.Marshal(Report(snap, Options{Source: model.SourceFile, GeneratedAt: generatedAt, ToolVersion: "test"}))
+		if bytes.Contains(out, []byte("null")) {
+			t.Fatalf("report contains null: %s", out)
+		}
+		compiler := jsonschema.NewCompiler()
+		schema, err := compiler.Compile(testutil.RepoPath("schema/report.v1.schema.json"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		parsed, _ := jsonschema.UnmarshalJSON(bytes.NewReader(out))
+		if err := schema.Validate(parsed); err != nil {
+			t.Fatalf("empty report does not match the schema: %v", err)
+		}
+	}
+}

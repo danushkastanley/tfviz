@@ -12,8 +12,8 @@ async function loadReport(): Promise<LoadResult> {
   const embedded = readEmbeddedReport(document);
   if (embedded) return embedded;
   if (import.meta.env.DEV) {
-    // Development only: production builds never include sample data.
-    const sample = await import("../../testdata/reports/aws-review.sample.json?raw");
+    // Development only: production builds never include report data.
+    const sample = await import("../../testdata/golden/terraform-1.16-plan.json?raw");
     const { parseReport } = await import("./report/load");
     return parseReport(sample.default);
   }

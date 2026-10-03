@@ -14,9 +14,9 @@ import (
 	"github.com/danushkastanley/tfviz/internal/report/model"
 )
 
-func loadSample(t *testing.T) *model.Report {
+func loadReport(t *testing.T) *model.Report {
 	t.Helper()
-	raw, err := os.ReadFile("../../../testdata/reports/aws-review.sample.json")
+	raw, err := os.ReadFile("../../../testdata/golden/terraform-1.16-plan.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func render(t *testing.T, report *model.Report) string {
 var inlineElement = regexp.MustCompile(`(?s)<(script|style)( type="module")?>(.*?)</(?:script|style)>`)
 
 func TestCSPHashesMatchInlinedContent(t *testing.T) {
-	page := render(t, loadSample(t))
+	page := render(t, loadReport(t))
 	matches := inlineElement.FindAllStringSubmatch(page, -1)
 	if len(matches) != 2 {
 		t.Fatalf("expected one inline script and one stylesheet, found %d", len(matches))
@@ -55,7 +55,7 @@ func TestCSPHashesMatchInlinedContent(t *testing.T) {
 }
 
 func TestCSPDeniesNetworkAndEval(t *testing.T) {
-	csp := policy(t, render(t, loadSample(t)))
+	csp := policy(t, render(t, loadReport(t)))
 	for _, required := range []string{"default-src 'none'", "connect-src 'none'", "base-uri 'none'", "form-action 'none'"} {
 		if !strings.Contains(csp, required) {
 			t.Errorf("CSP is missing %q", required)
@@ -81,9 +81,9 @@ func policy(t *testing.T, page string) string {
 
 func TestHostileLabelsCannotEscapeTheirContext(t *testing.T) {
 	// The bundled interface itself contains strings such as "<script", so
-	// compare markup counts with a render of the untouched sample.
-	baseline := render(t, loadSample(t))
-	report := loadSample(t)
+	// compare markup counts with a render of the untouched report.
+	baseline := render(t, loadReport(t))
+	report := loadReport(t)
 	hostile := "</script><script>alert(1)</script><img src=x onerror=alert(2)><!-- \u2028\u2029 ]]>"
 	report.Title = hostile
 	report.Resources[0].Label = hostile
@@ -111,7 +111,7 @@ func TestHostileLabelsCannotEscapeTheirContext(t *testing.T) {
 }
 
 func TestStaticSummaryListsEveryChange(t *testing.T) {
-	report := loadSample(t)
+	report := loadReport(t)
 	page := render(t, report)
 	for _, r := range report.Resources {
 		if r.Change.Action == model.ActionNoOp {
@@ -124,7 +124,7 @@ func TestStaticSummaryListsEveryChange(t *testing.T) {
 }
 
 func TestNoticesAreInertAndPresent(t *testing.T) {
-	page := render(t, loadSample(t))
+	page := render(t, loadReport(t))
 	if !strings.Contains(page, `<template id="tfviz-notices"><pre>`) || !strings.Contains(page, "react-dom") {
 		t.Fatal("third-party notices are missing")
 	}
@@ -133,7 +133,7 @@ func TestNoticesAreInertAndPresent(t *testing.T) {
 func TestRejectsAssetsThatWouldCloseTheirElement(t *testing.T) {
 	assets := BundledAssets()
 	assets.Script = append([]byte("var a='</SCRIPT>';"), assets.Script...)
-	if err := Render(&bytes.Buffer{}, loadSample(t), assets); err == nil {
+	if err := Render(&bytes.Buffer{}, loadReport(t), assets); err == nil {
 		t.Fatal("rendered a script containing </script")
 	}
 }

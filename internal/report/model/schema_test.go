@@ -37,20 +37,20 @@ func validate(t *testing.T, schema *jsonschema.Schema, data []byte) error {
 	return schema.Validate(doc)
 }
 
-func TestSampleReportMatchesSchema(t *testing.T) {
-	data, err := os.ReadFile(repoPath(t, "testdata/reports/aws-review.sample.json"))
+func TestGoldenReportMatchesSchema(t *testing.T) {
+	data, err := os.ReadFile(repoPath(t, "testdata/golden/terraform-1.16-plan.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := validate(t, compileSchema(t), data); err != nil {
-		t.Fatalf("sample report does not match schema: %v", err)
+		t.Fatalf("golden report does not match schema: %v", err)
 	}
 }
 
-// The Go types must round-trip the sample without loss and still validate,
+// The Go types must round-trip an engine report without loss and still validate,
 // which keeps the hand-written structs aligned with the schema.
-func TestGoTypesRoundTripSample(t *testing.T) {
-	original, err := os.ReadFile(repoPath(t, "testdata/reports/aws-review.sample.json"))
+func TestGoTypesRoundTripReport(t *testing.T) {
+	original, err := os.ReadFile(repoPath(t, "testdata/golden/terraform-1.16-plan.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -79,7 +79,7 @@ func TestGoTypesRoundTripSample(t *testing.T) {
 
 func TestSchemaRejectsSensitivePayload(t *testing.T) {
 	schema := compileSchema(t)
-	data, err := os.ReadFile(repoPath(t, "testdata/reports/aws-review.sample.json"))
+	data, err := os.ReadFile(repoPath(t, "testdata/golden/terraform-1.16-plan.json"))
 	if err != nil {
 		t.Fatal(err)
 	}

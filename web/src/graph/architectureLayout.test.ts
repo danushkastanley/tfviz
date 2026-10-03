@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { indexReport } from "../report/view";
-import { loadSample } from "../test/sample";
+import { groupId, loadSample } from "../test/sample";
 import { buildCanvasModel } from "./canvasModel";
 import { layoutArchitecture, type Placed } from "./architectureLayout";
 import { edgePath } from "./edgePath";
@@ -46,8 +46,8 @@ describe("layoutArchitecture", () => {
 
   it("arranges subnets by availability zone columns with public above private", () => {
     const byId = new Map(layout().map((p) => [p.id, p]));
-    const at = (id: string) => byId.get(id) as Placed;
-    const [pubA, pubB, pubC, privA] = [at("g4"), at("g5"), at("g6"), at("g7")];
+    const at = (label: string) => byId.get(groupId(index.report, label)) as Placed;
+    const [pubA, pubB, pubC, privA] = [at("public-a"), at("public-b"), at("public-c"), at("private-a")];
     expect(pubA.x).toBeLessThan(pubB.x);
     expect(pubB.x).toBeLessThan(pubC.x);
     expect(privA.x).toBe(pubA.x);
