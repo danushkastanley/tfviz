@@ -1,30 +1,38 @@
 import type { Edge, Node } from "@xyflow/react";
 import type { Relationship } from "../report/schema.gen";
 import type { ReportIndex, ViewMode } from "../report/view";
-import { buildCanvasModel, type CanvasItem } from "./canvasModel";
+import { buildCanvasModel, type CanvasItem, type Structure } from "./canvasModel";
 import { layoutArchitecture, type Placed } from "./architectureLayout";
 import { edgePath, type Rect } from "./edgePath";
+import type { CanvasLookup } from "./selection";
 
 export type CanvasNodeData = { item: CanvasItem };
-export type CanvasEdgeData = { relationship: Relationship; path: string };
+/** One drawn edge may carry several relationships when groups collapse. */
+export type CanvasEdgeData = { relationships: Relationship[]; path: string };
 export type CanvasNode = Node<CanvasNodeData>;
 export type CanvasEdge = Edge<CanvasEdgeData>;
 
 export interface CanvasLayout {
   nodes: CanvasNode[];
   edges: CanvasEdge[];
+  lookup: CanvasLookup;
   /** Milliseconds spent computing the layout, for the performance budget. */
   layoutMs: number;
 }
 
-export function layoutCanvas(index: ReportIndex, view: ViewMode): CanvasLayout {
+export function layoutCanvas(
+  index: ReportIndex,
+  view: ViewMode,
+  structure: Structure,
+  collapsed: ReadonlySet<string>,
+): CanvasLayout {
   const started = performance.now();
-  const model = buildCanvasModel(index, view);
+  const model = buildCanvasModel(index, view, structure, collapsed);
   const placed = layoutArchitecture(model, index);
 
   const absolute = new Map<string, Rect>();
   const nodes: CanvasNode[] = [];
-  // layoutArchitecture emits parents before children, as React Flow requires.
+  // The layout emits parents before children, as React Flow requires.
   for (const p of placed) {
     const item = model.items.get(p.id);
     if (!item) continue;
@@ -44,12 +52,13 @@ export function layoutCanvas(index: ReportIndex, view: ViewMode): CanvasLayout {
       source: edge.source,
       target: edge.target,
       type: "trace",
-      data: { relationship: edge.relationship, path },
+      data: { relationships: edge.relationships, path },
       zIndex: 2,
       selectable: false,
     });
   }
-  return { nodes, edges, layoutMs: performance.now() - started };
+  const lookup = { groupOfResource: model.groupOfResource, representative: model.representative };
+  return { nodes, edges, lookup, layoutMs: performance.now() - started };
 }
 
 function toNode(p: Placed, item: CanvasItem): CanvasNode {

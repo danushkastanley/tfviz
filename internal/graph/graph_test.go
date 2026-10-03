@@ -215,3 +215,29 @@ func TestSensitiveReferencesSuppressRelationships(t *testing.T) {
 		t.Fatalf("unresolved = %+v", g.Unresolved)
 	}
 }
+
+// Attached security groups belong to the resource's VPC, so they place a
+// resource that records no subnets.
+func TestSecurityGroupsEvidenceTheVPC(t *testing.T) {
+	doc := `{"format_version":"1.2","resource_changes":[
+	 {"address":"aws_vpc.main","mode":"managed","type":"aws_vpc","name":"main","provider_name":"registry.terraform.io/hashicorp/aws",
+	  "change":{"actions":["no-op"],"before":{"id":"vpc-1"},"after":{"id":"vpc-1"},"after_unknown":{},"before_sensitive":{},"after_sensitive":{}}},
+	 {"address":"aws_security_group.db","mode":"managed","type":"aws_security_group","name":"db","provider_name":"registry.terraform.io/hashicorp/aws",
+	  "change":{"actions":["no-op"],"before":{"id":"sg-1","vpc_id":"vpc-1"},"after":{"id":"sg-1","vpc_id":"vpc-1"},"after_unknown":{},"before_sensitive":{},"after_sensitive":{}}},
+	 {"address":"aws_db_instance.x","mode":"managed","type":"aws_db_instance","name":"x","provider_name":"registry.terraform.io/hashicorp/aws",
+	  "change":{"actions":["no-op"],"before":{"id":"db-1","vpc_security_group_ids":["sg-1"]},"after":{"id":"db-1","vpc_security_group_ids":["sg-1"]},"after_unknown":{},"before_sensitive":{},"after_sensitive":{}}}]}`
+	snap, err := input.Read([]byte(doc), input.KindPlan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	g := Build(snap)
+	db := node(t, g, "aws_db_instance.x")
+	if grp := group(g, g.Placement[db.ID].Architecture); grp.Kind != model.GroupVPC {
+		t.Fatalf("placed in %+v, want the security group's VPC", grp)
+	}
+	for _, grp := range g.Groups {
+		if grp.Kind == model.GroupUnplaced {
+			t.Fatal("an empty unplaced group was left in the report")
+		}
+	}
+}

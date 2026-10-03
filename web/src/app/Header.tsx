@@ -1,5 +1,6 @@
 import type { Report } from "../report/schema.gen";
 import type { ViewMode } from "../report/view";
+import type { Structure } from "../graph/canvasModel";
 import { presentChange, type Action } from "../theme/changes";
 import type { ThemePreference } from "./preferences";
 
@@ -7,11 +8,18 @@ interface Props {
   report: Report;
   view: ViewMode;
   onViewChange: (view: ViewMode) => void;
+  structure: Structure;
+  onStructureChange: (structure: Structure) => void;
   theme: ThemePreference;
   onThemeChange: (theme: ThemePreference) => void;
 }
 
 const SUMMARY_ACTIONS: readonly (Action & keyof Report["summary"])[] = ["create", "update", "replace", "delete", "forget", "read"];
+const STRUCTURES: readonly { id: Structure; label: string }[] = [
+  { id: "architecture", label: "Architecture" },
+  { id: "modules", label: "Modules" },
+];
+
 const VIEWS: readonly { id: ViewMode; label: string }[] = [
   { id: "changes", label: "Changes" },
   { id: "before", label: "Before" },
@@ -28,7 +36,7 @@ function freshness(report: Report): string {
   return `${noun} from ${dateFormat.format(new Date(report.source.timestamp))} UTC`;
 }
 
-export function Header({ report, view, onViewChange, theme, onThemeChange }: Props) {
+export function Header({ report, view, onViewChange, structure, onStructureChange, theme, onThemeChange }: Props) {
   return (
     <header className="app-header">
       <div className="app-header__title">
@@ -54,6 +62,13 @@ export function Header({ report, view, onViewChange, theme, onThemeChange }: Pro
       )}
 
       <div className="app-header__controls">
+        <div className="segmented" role="radiogroup" aria-label="Organise by">
+          {STRUCTURES.map((s) => (
+            <button key={s.id} type="button" role="radio" aria-checked={structure === s.id} onClick={() => onStructureChange(s.id)}>
+              {s.label}
+            </button>
+          ))}
+        </div>
         {report.mode === "plan" && (
           <div className="segmented" role="radiogroup" aria-label="Diagram view">
             {VIEWS.map((v) => (

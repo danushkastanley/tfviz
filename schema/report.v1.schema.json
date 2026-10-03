@@ -11,6 +11,7 @@
     "mode": { "enum": ["plan", "state"] },
     "disclosure": { "description": "safe_share replaces identifying values with report-local pseudonyms.", "enum": ["internal", "safe_share"] },
     "title": { "type": "string", "maxLength": 200 },
+    "initial_view": { "description": "The structure the interface opens in.", "enum": ["architecture", "modules"] },
     "generated_at": { "type": "string", "format": "date-time" },
     "tool": { "$ref": "#/$defs/Tool" },
     "producer": { "$ref": "#/$defs/Producer" },

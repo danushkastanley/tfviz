@@ -19,6 +19,7 @@ type reportOptions struct {
 	input  string
 	output string
 	title  string
+	view   string
 	force  bool
 	strict bool
 }
@@ -31,6 +32,7 @@ func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOp
 	fs.StringVar(&opts.input, "input", "", "exported "+noun+" JSON file, or - for standard input (required)")
 	fs.StringVar(&opts.output, "output", "", "HTML report to write (required)")
 	fs.StringVar(&opts.title, "title", "", "report title")
+	fs.StringVar(&opts.view, "view", "architecture", "structure the report opens in: architecture or modules")
 	fs.BoolVar(&opts.force, "force", false, "replace the output file if it exists")
 	fs.BoolVar(&opts.strict, "strict", false, "fail if any resource, action or input cannot be fully interpreted")
 	fs.Usage = func() {
@@ -50,6 +52,8 @@ func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOp
 		return opts, &usageError{"--input is required (use - for standard input)"}
 	case opts.output == "":
 		return opts, &usageError{"--output is required"}
+	case opts.view != "architecture" && opts.view != "modules":
+		return opts, &usageError{"--view must be architecture or modules"}
 	case opts.output == "-":
 		return opts, &usageError{"--output must be a file path; reports are not written to standard output"}
 	}
@@ -87,7 +91,7 @@ func generate(kind input.SnapshotKind, opts reportOptions, env Env) (string, err
 	if err != nil {
 		return "", err
 	}
-	report := build.Report(snap, build.Options{Title: opts.title, Source: source, GeneratedAt: env.Now(), ToolVersion: env.Version})
+	report := build.Report(snap, build.Options{Title: opts.title, View: model.View(opts.view), Source: source, GeneratedAt: env.Now(), ToolVersion: env.Version})
 	if opts.strict {
 		if problems := strictProblems(report); len(problems) > 0 {
 			return "", &usageError{"--strict: " + strings.Join(problems, "; ")}

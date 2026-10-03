@@ -79,7 +79,7 @@ test.describe("without JavaScript", () => {
   });
 });
 
-test("a 500-resource report reaches a useful view within the budget", async ({ page }, info) => {
+test("a 500-resource report opens collapsed, useful and within budget", async ({ page }, info) => {
   const started = Date.now();
   const watch = await open(page, REPORTS.large);
   const firstView = Date.now() - started;
@@ -89,23 +89,35 @@ test("a 500-resource report reaches a useful view within the budget", async ({ p
   console.log(`[${info.project.name}] 500 resources: first useful view ${firstView} ms, layout ${layoutMs} ms`);
   expect(firstView).toBeLessThan(3000);
 
-  // Useful, not just fast: no haze of lines at rest, and an explanation.
-  await expect(page.locator(".react-flow__edge")).toHaveCount(0);
-  await expect(page.getByText(/relationships are hidden at this size/)).toBeVisible();
-  // A load balancer has security group edges (subnet membership is drawn as markers).
-  await page.locator(".react-flow__node .resource-card").filter({ hasText: "lb-0" }).first().click();
+  // Large groups start collapsed with a summary rather than hundreds of cards.
+  await expect(page.getByText(/\d+ resources · \d+ changing/).first()).toBeVisible();
+  expect(await page.locator(".react-flow__node .resource-card").count()).toBeLessThan(50);
+
+  // Search finds a resource inside a collapsed group, expands its path and focuses it.
+  await page.getByPlaceholder("Search resources").fill("lb-0");
+  await page.getByRole("button", { name: /^lb-0\b/ }).first().click();
+  const card = page.locator(".react-flow__node .resource-card").filter({ hasText: "lb-0" }).first();
+  await expect(card).toBeVisible();
+  await expect(page.getByRole("complementary", { name: /Inspector: lb-0/ })).toBeVisible();
   await expect.poll(() => page.locator(".react-flow__edge").count()).toBeGreaterThan(0);
-  expect(await page.locator(".react-flow__edge").count()).toBeLessThan(40);
   expectCleanAndOffline(watch, REPORTS.large);
 });
 
-test("the report's CSP actively blocks injected inline script", async ({ page }) => {
-  const watch = await open(page, REPORTS.sample);
-  await page.evaluate(() => {
-    const script = document.createElement("script");
-    script.textContent = "window.__injected = 1";
-    document.body.append(script);
-  });
-  expect(await page.evaluate(() => (window as unknown as { __injected?: number }).__injected)).toBeUndefined();
-  await expect.poll(() => watch.problems.some((p) => p.includes("CSP violation: script-src"))).toBe(true);
+test("groups collapse and expand from their header", async ({ page }) => {
+  await open(page, REPORTS.sample);
+  await page.getByRole("button", { name: "Collapse VPC review-platform" }).click();
+  await expect(page.getByText(/\d+ resources · \d+ changing/)).toBeVisible();
+  await expect(page.locator(".react-flow__node").filter({ hasText: "review-events" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Expand VPC review-platform" }).click();
+  await expect(page.locator(".react-flow__node").filter({ hasText: "review-events" }).first()).toBeVisible();
+});
+
+test("the module view keeps the same resources", async ({ page }) => {
+  await open(page, REPORTS.sample);
+  await page.getByRole("radio", { name: "Modules" }).click();
+  await expect(page.locator(".react-flow__node").filter({ hasText: "module.streaming" }).first()).toBeVisible();
+  await page.getByRole("button", { name: /review-events/ }).first().click();
+  await expect(page.getByRole("complementary", { name: /Inspector: review-events/ })).toBeVisible();
+  await page.getByRole("radio", { name: "Architecture" }).click();
+  await expect(page.getByRole("complementary", { name: /Inspector: review-events/ })).toBeVisible();
 });

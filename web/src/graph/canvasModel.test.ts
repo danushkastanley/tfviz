@@ -46,22 +46,22 @@ describe("buildCanvasModel", () => {
   it("omits created resources and after-only relationships from the before view", () => {
     const model = buildCanvasModel(index, "before");
     expect(model.items.has(id("module.streaming.aws_secretsmanager_secret.orders_scram[0]"))).toBe(false);
-    expect(model.edges.every((e) => e.relationship.presence !== "after")).toBe(true);
+    expect(model.edges.every((e) => e.relationships[0]?.presence !== "after")).toBe(true);
   });
 
   it("omits relationships that only existed before from the after view", () => {
     const model = buildCanvasModel(index, "after");
-    expect(model.edges.every((e) => e.relationship.presence !== "before")).toBe(true);
+    expect(model.edges.every((e) => e.relationships[0]?.presence !== "before")).toBe(true);
   });
 
   it("draws association-backed relationships as edges between the resources they connect", () => {
     const model = buildCanvasModel(index, "changes");
-    const scram = model.edges.find((e) => e.relationship.evidence.via === id("module.streaming.aws_msk_scram_secret_association.events[0]"));
+    const scram = model.edges.find((e) => e.relationships[0]?.evidence.via === id("module.streaming.aws_msk_scram_secret_association.events[0]"));
     expect(scram).toMatchObject({
       source: id("module.streaming.aws_msk_cluster.events"),
       target: id("module.streaming.aws_secretsmanager_secret.orders_scram[0]"),
     });
-    const route = model.edges.find((e) => e.relationship.evidence.via === id('aws_route_table_association.public["a"]'));
+    const route = model.edges.find((e) => e.relationships[0]?.evidence.via === id('aws_route_table_association.public["a"]'));
     expect(route).toMatchObject({ source: id("aws_route_table.public"), target: group("public-a") });
   });
 });

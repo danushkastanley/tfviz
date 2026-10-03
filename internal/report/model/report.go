@@ -29,6 +29,7 @@ type Report struct {
 	Mode          Mode                  `json:"mode"`
 	Disclosure    Disclosure            `json:"disclosure"`
 	Title         string                `json:"title"`
+	InitialView   View                  `json:"initial_view,omitempty"`
 	GeneratedAt   time.Time             `json:"generated_at"`
 	Tool          Tool                  `json:"tool"`
 	Producer      Producer              `json:"producer"`

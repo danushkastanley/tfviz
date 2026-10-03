@@ -232,3 +232,75 @@
   from { stroke-dashoffset: 200; }
   to { stroke-dashoffset: 0; }
 }
+
+/* Collapsible groups */
+.group-node__toggle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-left: -6px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.group-node__toggle:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.group-node.is-collapsed {
+  border-style: solid;
+  border-color: var(--border-strong);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-card);
+}
+
+.group-node__summary {
+  margin: -6px 0 0;
+  padding: 0 14px 0 34px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.group-node.is-collapsed.is-dimmed {
+  opacity: 0.45;
+}
+
+.canvas-breadcrumbs nav {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 6px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow-card);
+  font-size: 12px;
+}
+
+.canvas-breadcrumbs ol {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-secondary);
+}
+
+.canvas-breadcrumbs li + li::before {
+  content: "›";
+  margin-right: 6px;
+  color: var(--text-tertiary);
+}
+
+.canvas-breadcrumbs li:last-child {
+  color: var(--text-primary);
+  font-weight: 600;
+}

@@ -1,5 +1,5 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { emphasisClass, useCanvasState } from "./canvasState";
+import { emphasisClass, useCanvasActions, useCanvasState } from "./canvasState";
 import type { CanvasNode } from "./layout";
 import { ChangeBadge } from "./ChangeBadge";
 import { useReportIndex } from "../app/reportContext";
@@ -18,9 +18,10 @@ const KIND_LABEL: Record<string, string> = {
 
 export function GroupNode({ data }: NodeProps<CanvasNode>) {
   const state = useCanvasState();
+  const actions = useCanvasActions();
   const index = useReportIndex();
   if (data.item.kind !== "group") return null;
-  const { group } = data.item;
+  const { group, collapsed } = data.item;
   const resource = group.resource ? index.resources.get(group.resource) : undefined;
   const ids = resource ? [group.id, resource.id] : [group.id];
   const classes = [
@@ -28,14 +29,26 @@ export function GroupNode({ data }: NodeProps<CanvasNode>) {
     `group-${group.kind}`,
     group.classification ? `subnet-${group.classification}` : "",
     group.placement === "unresolved" ? "is-unresolved" : "",
-    resource ? "is-resource" : "",
-    resource ? emphasisClass(state, ids) : "",
+    collapsed ? "is-collapsed" : "",
+    resource || collapsed ? emphasisClass(state, ids) : "",
   ].join(" ");
 
   return (
-    <div className={classes} data-group-id={group.id}>
+    <div className={classes} data-group-id={group.id} onDoubleClick={() => actions.focusGroup(group.id)}>
       <Handle type="target" position={Position.Left} isConnectable={false} />
       <div className="group-node__header">
+        <button
+          type="button"
+          className="group-node__toggle nodrag"
+          aria-expanded={!collapsed}
+          aria-label={`${collapsed ? "Expand" : "Collapse"} ${KIND_LABEL[group.kind] ?? "group"} ${group.label}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            actions.toggleGroup(group.id);
+          }}
+        >
+          <span aria-hidden="true">{collapsed ? "▸" : "▾"}</span>
+        </button>
         {/* Subnets carry a public/private pill instead, leaving room for the name. */}
         {group.kind !== "subnet" && <span className="group-node__kind">{KIND_LABEL[group.kind] ?? group.kind}</span>}
         <span className="group-node__label">{group.label}</span>
@@ -44,6 +57,12 @@ export function GroupNode({ data }: NodeProps<CanvasNode>) {
         )}
         {resource && <ChangeBadge action={resource.change.action} compact />}
       </div>
+      {collapsed && (
+        <p className="group-node__summary">
+          {collapsed.resources} {collapsed.resources === 1 ? "resource" : "resources"}
+          {collapsed.changed > 0 ? ` · ${collapsed.changed} changing` : " · no changes"}
+        </p>
+      )}
       <Handle type="source" position={Position.Right} isConnectable={false} />
     </div>
   );

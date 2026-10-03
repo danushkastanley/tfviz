@@ -1,11 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ReactFlowProvider } from "@xyflow/react";
 import type { Report } from "../report/schema.gen";
 import { indexReport, type ViewMode } from "../report/view";
 import { Canvas } from "../graph/Canvas";
 import { CanvasStateContext } from "../graph/canvasState";
-import { selectionState } from "../graph/selection";
-import type { CanvasLayout } from "../graph/layout";
+import { ancestorGroups, selectionState } from "../graph/selection";
+import { defaultCollapsed, type Structure } from "../graph/canvasModel";
+import { layoutCanvas } from "../graph/layout";
 import { Inspector } from "../inspector/Inspector";
 import { Header } from "./Header";
 import { Navigator } from "./Navigator";
@@ -16,37 +17,75 @@ import { useReducedMotion, useThemePreference } from "./preferences";
 export function App({ report }: { report: Report }) {
   const index = useMemo(() => indexReport(report), [report]);
   const [view, setView] = useState<ViewMode>(report.mode === "plan" ? "changes" : "after");
+  const [structure, setStructure] = useState<Structure>(report.initial_view ?? "architecture");
+  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => defaultCollapsed(index, report.initial_view ?? "architecture"));
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [focusRequest, setFocusRequest] = useState<{ id: string; seq: number }>();
   const [theme, setTheme] = useThemePreference("system");
   const [reducedMotion, setReducedMotion] = useReducedMotion();
 
-  const canvasState = useMemo(() => selectionState(index, selectedId), [index, selectedId]);
-  const selectFromList = useCallback((id: string) => {
-    setSelectedId(id);
-    setFocusRequest((prev) => ({ id, seq: (prev?.seq ?? 0) + 1 }));
-  }, []);
-  const recordLayout = useCallback((layout: CanvasLayout) => {
+  const layout = useMemo(() => layoutCanvas(index, view, structure, collapsed), [index, view, structure, collapsed]);
+  const canvasState = useMemo(() => selectionState(index, selectedId, layout.lookup), [index, selectedId, layout]);
+
+  useEffect(() => {
     // Exposed for the performance budget checks in end-to-end tests.
     document.documentElement.dataset.layoutMs = layout.layoutMs.toFixed(1);
     document.documentElement.dataset.layoutNodes = String(layout.nodes.length);
+  }, [layout]);
+
+  const changeStructure = useCallback(
+    (next: Structure) => {
+      setStructure(next);
+      setCollapsed(defaultCollapsed(index, next));
+    },
+    [index],
+  );
+
+  const toggleGroup = useCallback((groupId: string) => {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
   }, []);
+
+  // Selecting from the list expands any collapsed group on the way, then
+  // brings the resource into view. Selection persists across views.
+  const selectFromList = useCallback(
+    (id: string) => {
+      const path = ancestorGroups(index, id, structure);
+      setCollapsed((prev) => (path.some((g) => prev.has(g)) ? new Set([...prev].filter((g) => !path.includes(g))) : prev));
+      setSelectedId(id);
+      setFocusRequest((prev) => ({ id, seq: (prev?.seq ?? 0) + 1 }));
+    },
+    [index, structure],
+  );
 
   return (
     <ReportIndexContext.Provider value={index}>
       <div className={`app${reducedMotion ? " motion-reduced" : ""}`}>
-        <Header report={report} view={view} onViewChange={setView} theme={theme} onThemeChange={setTheme} />
+        <Header
+          report={report}
+          view={view}
+          onViewChange={setView}
+          structure={structure}
+          onStructureChange={changeStructure}
+          theme={theme}
+          onThemeChange={setTheme}
+        />
         <Navigator index={index} selectedId={selectedId} onSelect={selectFromList} />
         <main className="canvas" aria-label="Diagram">
           <ReactFlowProvider>
             <CanvasStateContext.Provider value={canvasState}>
               <Canvas
                 index={index}
-                view={view}
+                layout={layout}
+                layoutKey={`${structure}-${view}`}
                 focusRequest={focusRequest}
                 reducedMotion={reducedMotion}
                 onSelect={setSelectedId}
-                onLayout={recordLayout}
+                onToggleGroup={toggleGroup}
               />
             </CanvasStateContext.Provider>
           </ReactFlowProvider>

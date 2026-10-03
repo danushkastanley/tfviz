@@ -16,7 +16,9 @@ import (
 // Options are the caller-supplied report details. Time is injected so
 // output is reproducible.
 type Options struct {
-	Title       string
+	Title string
+	// View is the structure the interface opens in; empty means architecture.
+	View        model.View
 	Source      model.SourceKind
 	GeneratedAt time.Time
 	ToolVersion string
@@ -31,6 +33,7 @@ func Report(snap *input.Snapshot, opts Options) *model.Report {
 		Mode:          model.ModeState,
 		Disclosure:    model.DisclosureInternal,
 		Title:         title(opts.Title, snap),
+		InitialView:   opts.View,
 		GeneratedAt:   opts.GeneratedAt.UTC(),
 		Tool:          model.Tool{Name: "tfviz", Version: opts.ToolVersion},
 		Producer:      producer(snap),

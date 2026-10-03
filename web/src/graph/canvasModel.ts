@@ -1,17 +1,29 @@
 import type { Group, Relationship, Resource } from "../report/schema.gen";
-import { relationshipInView, resourceInView, type ReportIndex, type ViewMode } from "../report/view";
+import type { ReportIndex, ViewMode } from "../report/view";
+import { applyCollapse } from "./collapse";
+import { architectureModel, moduleModel } from "./structureModels";
+
+/** The structure the canvas is organised by. */
+export type Structure = "architecture" | "modules";
+
+/** Summary shown on a collapsed group. */
+export interface CollapsedSummary {
+  resources: number;
+  changed: number;
+}
 
 /** What each canvas element represents. */
 export type CanvasItem =
-  | { kind: "group"; group: Group }
+  | { kind: "group"; group: Group; collapsed?: CollapsedSummary }
   | { kind: "resource"; resource: Resource }
   | { kind: "proxy"; resource: Resource; relationship: Relationship };
 
+/** One drawn edge; several relationships share an edge when groups collapse. */
 export interface CanvasModelEdge {
   id: string;
   source: string;
   target: string;
-  relationship: Relationship;
+  relationships: Relationship[];
 }
 
 /** View-specific structure, independent of geometry. */
@@ -22,85 +34,44 @@ export interface CanvasModel {
   /** Resource and proxy ids per group; "" holds unplaced leaves. */
   members: ReadonlyMap<string, readonly string[]>;
   edges: readonly CanvasModelEdge[];
+  /** For anything hidden inside a collapsed group: that group's id. */
+  representative: ReadonlyMap<string, string>;
+  /** Group ids by the resource that defines them (VPCs and subnets). */
+  groupOfResource: ReadonlyMap<string, string>;
 }
 
-/**
- * Builds the architecture view for one side of the change. Resources that
- * define a group (a VPC or subnet) are drawn as that group; association
- * resources become edges. A resource in several subnets appears once, with a
- * small proxy marker in each other subnet instead of a duplicate card.
- */
-export function buildCanvasModel(index: ReportIndex, view: ViewMode): CanvasModel {
-  const { report, groupOfResource } = index;
-  const items = new Map<string, CanvasItem>();
-  const members = new Map<string, string[]>();
-  const push = (map: Map<string, string[]>, key: string, id: string) => {
-    const list = map.get(key);
-    if (list) list.push(id);
-    else map.set(key, [id]);
-  };
+/** Structure before collapsing: the builders produce this. */
+export interface OpenModel {
+  /** Every resource in this view (any role), by its primary group, for summaries. */
+  placed: Map<string, Resource[]>;
+  items: Map<string, CanvasItem>;
+  childGroups: Map<string, string[]>;
+  members: Map<string, string[]>;
+  edges: CanvasModelEdge[];
+  groupOfResource: ReadonlyMap<string, string>;
+}
 
-  const rels = report.relationships.filter((rel) => relationshipInView(rel, view));
-  const resources = report.resources.filter(
-    (r) => resourceInView(r, view) && r.role === "entity" && !groupOfResource.has(r.id),
-  );
-  const visible = new Set(resources.map((r) => r.id));
-  const groups = report.groups.filter((g) => g.view === "architecture");
-  const groupById = new Map(groups.map((g) => [g.id, g]));
-  const placement = new Map(resources.map((r) => [r.id, effectivePlacement(r, rels, groupOfResource, groupById)]));
+export function buildCanvasModel(
+  index: ReportIndex,
+  view: ViewMode,
+  structure: Structure = "architecture",
+  collapsed: ReadonlySet<string> = new Set(),
+): CanvasModel {
+  const open = structure === "architecture" ? architectureModel(index, view) : moduleModel(index, view);
+  return applyCollapse(open, collapsed);
+}
 
-  for (const resource of resources) {
-    items.set(resource.id, { kind: "resource", resource });
-    push(members, placement.get(resource.id) ?? "", resource.id);
-  }
-
-  const edges: CanvasModelEdge[] = [];
-  for (const rel of rels) {
-    const source = endpoint(rel.source, visible, groupOfResource);
-    const target = endpoint(rel.target, visible, groupOfResource);
-    if (!source || !target || source === target) continue;
-    const targetGroup = groupOfResource.get(rel.target);
-    if (rel.type === "subnet_membership" && targetGroup && visible.has(rel.source)) {
-      if (placement.get(rel.source) !== targetGroup) {
-        const proxyId = `p-${rel.id}`;
-        items.set(proxyId, { kind: "proxy", resource: index.resources.get(rel.source) as Resource, relationship: rel });
-        push(members, targetGroup, proxyId);
-      }
-      continue;
+/** Groups whose contents are large enough to start collapsed in big reports. */
+export function defaultCollapsed(index: ReportIndex, structure: Structure): Set<string> {
+  const open = structure === "architecture" ? architectureModel(index, "changes") : moduleModel(index, "changes");
+  const collapsed = new Set<string>();
+  if (index.report.resources.length <= 300) return collapsed;
+  const size = (id: string): number =>
+    (open.members.get(id)?.length ?? 0) + (open.childGroups.get(id) ?? []).reduce((n, child) => n + size(child), 0);
+  for (const [id, item] of open.items) {
+    if (item.kind === "group" && item.group.kind !== "account" && item.group.kind !== "region" && size(id) > 60) {
+      collapsed.add(id);
     }
-    edges.push({ id: rel.id, source, target, relationship: rel });
   }
-
-  const childGroups = new Map<string, string[]>();
-  for (const group of groups) {
-    if (group.kind === "unplaced" && !members.has(group.id)) continue;
-    items.set(group.id, { kind: "group", group });
-    push(childGroups, group.parent && groupById.has(group.parent) ? group.parent : "", group.id);
-  }
-  return { items, childGroups, members, edges };
-}
-
-function endpoint(resourceId: string, visible: ReadonlySet<string>, groupOfResource: ReadonlyMap<string, string>) {
-  if (visible.has(resourceId)) return resourceId;
-  return groupOfResource.get(resourceId);
-}
-
-/**
- * A single-subnet resource that moves between subnets is placed in the
- * subnet it occupies in this view, not always in its post-change subnet.
- */
-function effectivePlacement(
-  resource: Resource,
-  rels: readonly Relationship[],
-  groupOfResource: ReadonlyMap<string, string>,
-  groupById: ReadonlyMap<string, Group>,
-): string {
-  const primary = resource.groups.architecture;
-  if (groupById.get(primary)?.kind !== "subnet") return primary;
-  const subnets = rels
-    .filter((rel) => rel.source === resource.id && rel.type === "subnet_membership")
-    .map((rel) => groupOfResource.get(rel.target))
-    .filter((g): g is string => g !== undefined);
-  if (subnets.includes(primary) || subnets.length !== 1) return primary;
-  return subnets[0] as string;
+  return collapsed;
 }
