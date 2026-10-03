@@ -121,3 +121,16 @@ test("the module view keeps the same resources", async ({ page }) => {
   await page.getByRole("radio", { name: "Architecture" }).click();
   await expect(page.getByRole("complementary", { name: /Inspector: review-events/ })).toBeVisible();
 });
+
+test("a safe-share report shows no original names anywhere in the page", async ({ page }) => {
+  const watch = await open(page, REPORTS.safeShare);
+  await expect(page.getByText("Safe-share", { exact: true })).toBeVisible();
+  await page.getByRole("checkbox", { name: "Show unchanged resources" }).check();
+  const text = await page.locator("body").innerText();
+  for (const original of ["review-orders", "review-events", "review-platform", "aws-review", "111122223333", "fixture.invalid"]) {
+    expect(text).not.toContain(original);
+  }
+  await page.getByRole("button", { name: /^MSK cluster 1/ }).first().click();
+  await expect(page.getByRole("complementary", { name: /Inspector: MSK cluster 1/ })).toBeVisible();
+  expectCleanAndOffline(watch, REPORTS.safeShare);
+});

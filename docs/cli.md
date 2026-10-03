@@ -51,11 +51,20 @@ A state report shows Terraform's recorded snapshot. It does not prove that the i
 | `--title <text>` | plan, state | Report title. |
 | `--view architecture\|modules` | plan, state | The structure the report opens in. Viewers can switch at any time. Defaults to `architecture`. |
 | `--force` | plan, state | Replace the output file if it exists. Without it, an existing file is never touched. |
+| `--safe-share` | plan, state | Replace identifying details with consistent stand-ins. See [Sharing reports](#sharing-reports). |
 | `--offline` | plan, state | Refuse any input that would need network access (`s3://`). |
 | `--aws-profile`, `--aws-region`, `--s3-version`, `--expected-bucket-owner` | state | Credentials and object selection for `s3://` inputs. See [s3.md](s3.md). |
 | `--strict` | plan, state | Fail if anything cannot be fully interpreted: unsupported resource types, unrecognised actions, a plan the producer reported as incomplete, skipped deposed objects, or a newer JSON format. No report is written. |
 
 `tfviz version` prints the version.
+
+## Sharing reports
+
+A normal report shows approved names, IDs, ARNs and network details, because reviewers need them. Treat it like any other infrastructure artefact, with your usual access and retention controls.
+
+`--safe-share` replaces identifying details with stand-ins that stay consistent within the report: names, Terraform addresses, module names, resource IDs, ARNs, account IDs, DNS names, IP addresses, CIDR ranges and bucket names. The title becomes generic, and summaries that embed several identifiers (routes and security group rules) are withheld. Service types, topology, regions, availability zones, descriptive settings (such as engine or instance class) and change categories stay. The mapping between stand-ins and real values is never written to the report.
+
+Safe-share reduces disclosure; it does not make a report anonymous. The shape of an architecture can itself be confidential, so share safe-share reports deliberately.
 
 ## Exit codes
 
