@@ -10,7 +10,6 @@ const (
 	CodeMalformed     Code = "malformed"
 	CodeUnsupported   Code = "unsupported"
 	CodeStreamingUI   Code = "streaming_ui"
-	CodeRawState      Code = "raw_state"
 	CodeEncrypted     Code = "encrypted"
 	CodeWrongKind     Code = "wrong_kind"
 	CodeTooManyThings Code = "too_many_resources"

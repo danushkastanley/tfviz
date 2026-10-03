@@ -40,6 +40,8 @@ func TestGeneratesPlanAndStateReports(t *testing.T) {
 		{"plan", "opentofu-1.13/plan.json"},
 		{"state", "terraform-1.16/state.json"},
 		{"state", "opentofu-1.13/state.json"},
+		{"state", "terraform-1.16/prior.tfstate"},
+		{"state", "opentofu-1.13/prior.tfstate"},
 	} {
 		out := filepath.Join(dir, strings.ReplaceAll(tt.input, "/", "-")+".html")
 		res := run(t, nil, tt.command, "--input", producer(tt.input), "--output", out)
@@ -95,7 +97,7 @@ func TestExitCodes(t *testing.T) {
 		{"stdout output", []string{"plan", "--input", plan, "--output", "-"}, ExitUnsupported, "must be a file path"},
 		{"refuses overwrite", []string{"plan", "--input", plan, "--output", existing}, ExitUnsupported, "--force"},
 		{"wrong kind", []string{"state", "--input", plan, "--output", filepath.Join(dir, "b.html")}, ExitUnsupported, "is a plan"},
-		{"raw state", []string{"state", "--input", producer("terraform-1.16/prior.tfstate"), "--output", filepath.Join(dir, "c.html")}, ExitUnsupported, "raw state"},
+		{"raw state as plan", []string{"plan", "--input", producer("terraform-1.16/prior.tfstate"), "--output", filepath.Join(dir, "c.html")}, ExitUnsupported, "not a plan"},
 		{"missing file", []string{"plan", "--input", filepath.Join(dir, "nope.json"), "--output", filepath.Join(dir, "d.html")}, ExitFailure, "cannot read"},
 		{"directory input", []string{"plan", "--input", dir, "--output", filepath.Join(dir, "e.html")}, ExitUnsupported, "regular file"},
 		{"strict", []string{"plan", "--input", plan, "--output", filepath.Join(dir, "f.html"), "--strict"}, ExitUnsupported, "unsupported resource"},
