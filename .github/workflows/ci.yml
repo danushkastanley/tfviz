@@ -33,6 +33,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: web/pnpm-lock.yaml
       - run: make test
+      - name: Check third-party notices are current
+        run: make notices && git diff --exit-code THIRD_PARTY_NOTICES.md
 
   e2e:
     name: Offline report (Chromium, Firefox, WebKit)

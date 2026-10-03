@@ -17,11 +17,17 @@ Read [docs/implementation-plan.md](docs/implementation-plan.md) before you make 
 - `make test`: runs Go vet and tests, then web typecheck, lint and unit tests.
 - `make build`: builds the web bundle and copies it into `internal/report/html/dist` (embedded by the Go renderer), then builds the binary into `bin/`.
 - `make e2e`: renders reports with the Go exporter and opens them under `file://` in Chromium, Firefox and WebKit. First run: `pnpm --dir web exec playwright install chromium firefox webkit`.
+- `make notices`: regenerates THIRD_PARTY_NOTICES.md (CI checks it is current).
+- `make snapshot`: builds release archives locally with GoReleaser, without publishing.
 - `make fixtures`: regenerates producer JSON with Terraform and OpenTofu. It uses fake credentials and makes no AWS calls.
 
 ## Decisions
 
 Material deviations from the plan are recorded in `docs/decisions/` (ADRs).
+
+## Releases
+
+Tags `v*.*.*` create a **draft** GitHub release. Never publish a release or push a tag without the maintainer's explicit approval.
 
 ## Git
 

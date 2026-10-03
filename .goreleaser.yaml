@@ -1,0 +1,50 @@
+# Release configuration. The release workflow builds the web bundle
+# (make web) before running GoReleaser, so the binary embeds the interface.
+version: 2
+
+project_name: tfviz
+
+builds:
+  - id: tfviz
+    main: ./cmd/tfviz
+    binary: tfviz
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    # macOS and Linux first; Windows follows once its file and browser
+    # behaviour is tested (plan §17).
+    goos: [darwin, linux]
+    goarch: [amd64, arm64]
+
+archives:
+  - id: tfviz
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+      - SECURITY.md
+      - THIRD_PARTY_NOTICES.md
+      - docs/*.md
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+  algorithm: sha256
+
+sboms:
+  - id: archives
+    artifacts: archive
+
+release:
+  # Releases are created as drafts: a maintainer reviews and publishes them.
+  draft: true
+  replace_existing_draft: true
+  prerelease: auto
+
+changelog:
+  use: github
+  sort: asc
