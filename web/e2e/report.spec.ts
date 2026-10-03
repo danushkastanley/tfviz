@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { HOSTILE_TEXT, REPORTS, fileUrl } from "./paths";
+import { REPORTS, fileUrl } from "./paths";
+import { HOSTILE_TEXT } from "./syntheticPlan";
 
 interface Watch {
   problems: string[];
@@ -42,8 +43,10 @@ test("the sample report works from file:// with no network, errors or CSP violat
   await expect(page.getByRole("complementary", { name: /Inspector: review-events/ })).toBeVisible();
   await expect(page.getByText("kafka.m7g.xlarge")).toBeVisible();
 
+  const createdSecret = page.locator(".react-flow__node").filter({ hasText: "AmazonMSK_review_orders" });
+  await expect(createdSecret).toHaveCount(1);
   await page.getByRole("radio", { name: "Before" }).click();
-  await expect(page.locator('.react-flow__node[data-id="r37"]')).toHaveCount(0);
+  await expect(createdSecret).toHaveCount(0);
   expectCleanAndOffline(watch, REPORTS.sample);
 });
 
@@ -57,6 +60,7 @@ test("the inspector never shows a payload for sensitive values", async ({ page }
 test("hostile labels render as text and never execute", async ({ page }) => {
   const watch = await open(page, REPORTS.hostile);
   await expect(page.locator(".app-header h1")).toHaveText(HOSTILE_TEXT);
+  await expect(page.locator(".react-flow__node").filter({ hasText: "window.__pwned=1" }).first()).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { __pwned?: number }).__pwned)).toBeUndefined();
   expect(await page.locator("img").count()).toBe(0);
   expect(await page.title()).toBe(HOSTILE_TEXT);
@@ -88,7 +92,8 @@ test("a 500-resource report reaches a useful view within the budget", async ({ p
   // Useful, not just fast: no haze of lines at rest, and an explanation.
   await expect(page.locator(".react-flow__edge")).toHaveCount(0);
   await expect(page.getByText(/relationships are hidden at this size/)).toBeVisible();
-  await page.locator('.react-flow__node[data-id="r20"]').click();
+  // A load balancer has security group edges (subnet membership is drawn as markers).
+  await page.locator(".react-flow__node .resource-card").filter({ hasText: "lb-0" }).first().click();
   await expect.poll(() => page.locator(".react-flow__edge").count()).toBeGreaterThan(0);
   expect(await page.locator(".react-flow__edge").count()).toBeLessThan(40);
   expectCleanAndOffline(watch, REPORTS.large);

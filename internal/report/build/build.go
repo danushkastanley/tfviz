@@ -60,7 +60,18 @@ func Report(snap *input.Snapshot, opts Options) *model.Report {
 		}
 	}
 	report.Warnings = warnings(snap, g)
+	// Collections are always arrays, never null, even when empty.
+	report.Relationships = nonNil(report.Relationships)
+	report.Unresolved = nonNil(report.Unresolved)
+	report.Groups = nonNil(report.Groups)
 	return report
+}
+
+func nonNil[T any](s []T) []T {
+	if s == nil {
+		return []T{}
+	}
+	return s
 }
 
 func resource(n *graph.Node, g *graph.Graph) model.Resource {
