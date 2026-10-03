@@ -109,11 +109,14 @@ func buildRelationships(res *resolver, nodes []*Node, plan bool) ([]model.Relati
 	// DB subnet group, reuse the intermediate resource's own evidence.
 	// Candidates are gathered in insertion order before any are added, so the
 	// result never depends on map iteration order.
-	direct := c.sortedKeys()
+	direct := map[string][]relKey{}
+	for _, k := range c.sortedKeys() {
+		direct[k.source] = append(direct[k.source], k)
+	}
 	for _, in := range through {
-		for _, k := range direct {
+		for _, k := range direct[in.via.node.ID] {
 			s := c.seen[k]
-			if k.source != in.via.node.ID || k.typ != in.rule.Type || k.via != "" {
+			if k.typ != in.rule.Type || k.via != "" {
 				continue
 			}
 			if (in.after && !s.after) || (!in.after && !s.before) {
