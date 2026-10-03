@@ -61,7 +61,7 @@ export function largeReport(base: Report, resourceCount = 500): Report {
   for (const tier of ["public", "private"] as const) {
     for (const az of AZS) {
       const id = `r${n++}`;
-      const gid = `g${3 + n}`;
+      const gid = `gs${n}`;
       subnetIds.push(id);
       groups.push({ id: gid, view: "architecture", kind: "subnet", label: `${tier}-${az}`, parent: "g3", placement: "known", resource: id, classification: tier });
       resources.push(resource(id, "aws_subnet", "network", "g3", "no_op", [known("availability_zone", "Availability zone", `eu-west-1${az}`)]));
@@ -70,10 +70,13 @@ export function largeReport(base: Report, resourceCount = 500): Report {
   const subnetGroups = groups.filter((g) => g.kind === "subnet").map((g) => g.id);
 
   const entities: string[] = [];
+  let computeCount = 0;
   while (resources.length < resourceCount) {
     const id = `r${n++}`;
     const family = FAMILIES[resources.length % FAMILIES.length] as Family;
-    const group = REGIONAL.has(family) ? "g10" : family === "compute" ? (subnetGroups[resources.length % subnetGroups.length] as string) : "g3";
+    // Spread compute evenly across subnets, independent of the family cycle.
+    const subnet = () => subnetGroups[computeCount++ % subnetGroups.length] as string;
+    const group = REGIONAL.has(family) ? "g10" : family === "compute" ? subnet() : "g3";
     const action = ACTIONS[Math.floor(random() * ACTIONS.length)] as Action;
     resources.push(resource(id, `aws_${family}_thing`, family, group, action, [known("name", "Name", `${family}-${id}`), known("size", "Size", Math.floor(random() * 100))]));
     entities.push(id);

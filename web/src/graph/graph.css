@@ -16,6 +16,17 @@
   pointer-events: none;
 }
 
+.canvas-note {
+  max-width: 360px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-panel);
+  color: var(--text-secondary);
+  font-size: 12px;
+  box-shadow: var(--shadow-card);
+}
+
 /* Groups */
 .group-node {
   box-sizing: border-box;

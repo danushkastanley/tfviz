@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { Background, Controls, ReactFlow, useReactFlow, type NodeMouseHandler } from "@xyflow/react";
+import { Background, Controls, Panel, ReactFlow, useReactFlow, type NodeMouseHandler } from "@xyflow/react";
 import type { ReportIndex, ViewMode } from "../report/view";
 import { layoutCanvas, type CanvasEdge, type CanvasLayout, type CanvasNode } from "./layout";
 import { ResourceNode } from "./ResourceNode";
@@ -7,9 +7,16 @@ import { GroupNode } from "./GroupNode";
 import { ProxyNode } from "./ProxyNode";
 import { TraceEdge } from "./TraceEdge";
 import { canvasIdsFor } from "./selection";
+import { useCanvasState } from "./canvasState";
 
 const nodeTypes = { resource: ResourceNode, group: GroupNode, proxy: ProxyNode };
 const edgeTypes = { trace: TraceEdge };
+
+/**
+ * Above this many relationships, drawing them all at rest hides the diagram
+ * under a haze of lines. Dense views show only the selection's relationships.
+ */
+export const DENSE_EDGE_LIMIT = 150;
 
 interface CanvasProps {
   index: ReportIndex;
@@ -24,6 +31,12 @@ interface CanvasProps {
 export function Canvas({ index, view, focusRequest, reducedMotion, onSelect, onLayout }: CanvasProps) {
   const layout = useMemo(() => layoutCanvas(index, view), [index, view]);
   const flow = useReactFlow<CanvasNode, CanvasEdge>();
+  const { tracedEdges } = useCanvasState();
+  const dense = layout.edges.length > DENSE_EDGE_LIMIT;
+  const edges = useMemo(
+    () => (dense ? layout.edges.filter((edge) => tracedEdges.has(edge.id)) : layout.edges),
+    [dense, layout.edges, tracedEdges],
+  );
 
   useEffect(() => onLayout(layout), [layout, onLayout]);
 
@@ -48,7 +61,7 @@ export function Canvas({ index, view, focusRequest, reducedMotion, onSelect, onL
       fitView
       fitViewOptions={{ padding: 0.05 }}
       nodes={layout.nodes}
-      edges={layout.edges}
+      edges={edges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       onNodeClick={handleNodeClick}
@@ -63,6 +76,11 @@ export function Canvas({ index, view, focusRequest, reducedMotion, onSelect, onL
       aria-label="Infrastructure diagram"
     >
       <Background gap={24} size={1} />
+      {dense && (
+        <Panel position="top-left" className="canvas-note">
+          {layout.edges.length.toLocaleString("en-GB")} relationships are hidden at this size. Select a resource to trace its relationships.
+        </Panel>
+      )}
       <Controls showInteractive={false} position="bottom-right" />
     </ReactFlow>
   );
