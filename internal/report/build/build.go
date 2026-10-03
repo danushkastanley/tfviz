@@ -22,6 +22,10 @@ type Options struct {
 	Source      model.SourceKind
 	GeneratedAt time.Time
 	ToolVersion string
+	// SourceTime and SourceVersion describe the retrieved object (for
+	// example an S3 object's last modification), when known.
+	SourceTime    *time.Time
+	SourceVersion string
 }
 
 // Report builds the report model. It never copies raw attribute values:
@@ -47,11 +51,17 @@ func Report(snap *input.Snapshot, opts Options) *model.Report {
 	if g.Plan {
 		report.Mode = model.ModePlan
 	}
-	if snap.Timestamp != nil {
-		ts := snap.Timestamp.UTC()
-		report.Source.Timestamp = &ts
-		report.Source.TimestampStatus = model.TimestampKnown
+	// A plan's own timestamp says when it was made; otherwise use the
+	// retrieved object's time. Neither describes the live infrastructure.
+	for _, ts := range []*time.Time{snap.Timestamp, opts.SourceTime} {
+		if ts != nil {
+			utc := ts.UTC()
+			report.Source.Timestamp = &utc
+			report.Source.TimestampStatus = model.TimestampKnown
+			break
+		}
 	}
+	report.Source.ObjectVersion = clip(opts.SourceVersion, 1024)
 	for _, n := range g.Nodes {
 		report.Resources = append(report.Resources, resource(n, g))
 		count(&report.Summary, n.Change.Action)

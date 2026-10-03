@@ -28,12 +28,17 @@ const VIEWS: readonly { id: ViewMode; label: string }[] = [
 
 const dateFormat = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" });
 
+// The time describes the input document, never the live infrastructure.
 function freshness(report: Report): string {
   const noun = report.mode === "plan" ? "Plan" : "State snapshot";
   if (report.source.timestamp_status !== "known" || !report.source.timestamp) {
     return `${noun} time not recorded`;
   }
-  return `${noun} from ${dateFormat.format(new Date(report.source.timestamp))} UTC`;
+  const when = `${dateFormat.format(new Date(report.source.timestamp))} UTC`;
+  if (report.mode === "state" && report.source.kind === "s3") {
+    return `State object last modified ${when}`;
+  }
+  return `${noun} from ${when}`;
 }
 
 export function Header({ report, view, onViewChange, structure, onStructureChange, theme, onThemeChange }: Props) {

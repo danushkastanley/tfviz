@@ -119,6 +119,10 @@ export interface Source {
   kind: "file" | "stdin" | "s3";
   timestamp_status: "known" | "unavailable";
   timestamp?: string;
+  /**
+   * S3 object version, when the input was read from a versioned bucket.
+   */
+  object_version?: string;
 }
 /**
  * This interface was referenced by `Report`'s JSON-Schema

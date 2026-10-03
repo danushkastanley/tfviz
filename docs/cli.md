@@ -34,6 +34,12 @@ tfviz state --input terraform.tfstate --output state-report.html
 
 Both routes produce the same report. Root module outputs are never read or shown.
 
+Or straight from S3 (see [s3.md](s3.md)):
+
+```bash
+tfviz state --input s3://example-state-bucket/prod/terraform.tfstate --aws-profile work --aws-region eu-west-1 --output state-report.html
+```
+
 A state report shows Terraform's recorded snapshot. It does not prove that the infrastructure in AWS is currently identical.
 
 ## Options
@@ -45,6 +51,8 @@ A state report shows Terraform's recorded snapshot. It does not prove that the i
 | `--title <text>` | plan, state | Report title. |
 | `--view architecture\|modules` | plan, state | The structure the report opens in. Viewers can switch at any time. Defaults to `architecture`. |
 | `--force` | plan, state | Replace the output file if it exists. Without it, an existing file is never touched. |
+| `--offline` | plan, state | Refuse any input that would need network access (`s3://`). |
+| `--aws-profile`, `--aws-region`, `--s3-version`, `--expected-bucket-owner` | state | Credentials and object selection for `s3://` inputs. See [s3.md](s3.md). |
 | `--strict` | plan, state | Fail if anything cannot be fully interpreted: unsupported resource types, unrecognised actions, a plan the producer reported as incomplete, skipped deposed objects, or a newer JSON format. No report is written. |
 
 `tfviz version` prints the version.
@@ -54,7 +62,7 @@ A state report shows Terraform's recorded snapshot. It does not prove that the i
 | Code | Meaning |
 | --- | --- |
 | `0` | The report was written. A plan that changes infrastructure is still a success. |
-| `1` | Processing failed, for example an unreadable input file or an output that could not be written. |
+| `1` | Processing or retrieval failed: an unreadable input file, S3 access denied or not found, expired credentials, or an output that could not be written. |
 | `2` | Invalid arguments, unsupported input, an output that already exists without `--force`, or a `--strict` failure. |
 
 ## What tfviz prints
