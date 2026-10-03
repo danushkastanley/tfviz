@@ -3,6 +3,8 @@ import type { ViewMode } from "../report/view";
 import type { Structure } from "../graph/canvasModel";
 import { presentChange, type Action } from "../theme/changes";
 import type { ThemePreference } from "./preferences";
+import type { ExploreConfig } from "../report/load";
+import { RefreshControl } from "./RefreshControl";
 
 interface Props {
   report: Report;
@@ -12,6 +14,7 @@ interface Props {
   onStructureChange: (structure: Structure) => void;
   theme: ThemePreference;
   onThemeChange: (theme: ThemePreference) => void;
+  explore?: ExploreConfig | undefined;
 }
 
 const SUMMARY_ACTIONS: readonly (Action & keyof Report["summary"])[] = ["create", "update", "replace", "delete", "forget", "read"];
@@ -41,7 +44,7 @@ function freshness(report: Report): string {
   return `${noun} from ${when}`;
 }
 
-export function Header({ report, view, onViewChange, structure, onStructureChange, theme, onThemeChange }: Props) {
+export function Header({ report, view, onViewChange, structure, onStructureChange, theme, onThemeChange, explore }: Props) {
   return (
     <header className="app-header">
       <div className="app-header__title">
@@ -67,6 +70,7 @@ export function Header({ report, view, onViewChange, structure, onStructureChang
       )}
 
       <div className="app-header__controls">
+        {explore && <RefreshControl explore={explore} />}
         <div className="segmented" role="radiogroup" aria-label="Organise by">
           {STRUCTURES.map((s) => (
             <button key={s.id} type="button" role="radio" aria-checked={structure === s.id} onClick={() => onStructureChange(s.id)}>

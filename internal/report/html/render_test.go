@@ -61,6 +61,9 @@ func TestCSPDeniesNetworkAndEval(t *testing.T) {
 			t.Errorf("CSP is missing %q", required)
 		}
 	}
+	if !strings.Contains(csp, "img-src data:;") {
+		t.Error("images are limited to inline data: URLs")
+	}
 	for _, forbidden := range []string{"unsafe-eval", "unsafe-inline", "http:", "https:", "*"} {
 		if strings.Contains(csp, forbidden) {
 			t.Errorf("CSP contains %q", forbidden)

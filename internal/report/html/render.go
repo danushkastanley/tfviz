@@ -21,9 +21,17 @@ var pageSource string
 
 var page = template.Must(template.New("report").Parse(pageSource))
 
+// Explore configures a page served by the local explorer: it may call back
+// to its own origin to refresh, authenticated by a per-run token.
+type Explore struct {
+	RefreshPath string
+	CSRFToken   string
+}
+
 type pageData struct {
 	Title   string
 	CSP     string
+	Explore template.JS
 	Style   template.CSS
 	Script  template.JS
 	Data    template.JS
@@ -35,6 +43,16 @@ type pageData struct {
 // is the only data embedded; it is serialised with HTML-significant
 // characters escaped, so labels cannot break out of the data element.
 func Render(w io.Writer, report *model.Report, assets Assets) error {
+	return renderPage(w, report, assets, nil)
+}
+
+// RenderExplore writes the page for the local explorer. It differs from a
+// report only in allowing same-origin requests for an explicit refresh.
+func RenderExplore(w io.Writer, report *model.Report, assets Assets, explore Explore) error {
+	return renderPage(w, report, assets, &explore)
+}
+
+func renderPage(w io.Writer, report *model.Report, assets Assets, explore *Explore) error {
 	if err := assets.validate(); err != nil {
 		return err
 	}
@@ -42,9 +60,16 @@ func Render(w io.Writer, report *model.Report, assets Assets) error {
 	if err != nil {
 		return err
 	}
+	var exploreData []byte
+	if explore != nil {
+		if exploreData, err = json.Marshal(map[string]string{"refresh": explore.RefreshPath, "token": explore.CSRFToken}); err != nil {
+			return err
+		}
+	}
 	view := pageData{
 		Title:   report.Title,
-		CSP:     contentSecurityPolicy(assets),
+		CSP:     contentSecurityPolicy(assets, explore != nil),
+		Explore: template.JS(exploreData),   // #nosec G203 -- json.Marshal output of two server-generated strings.
 		Style:   template.CSS(assets.Style), // #nosec G203 -- validated bundle built from this repository.
 		Script:  template.JS(assets.Script), // #nosec G203 -- validated bundle built from this repository.
 		Data:    template.JS(data),          // #nosec G203 -- json.Marshal output with <, >, & and U+2028/9 escaped.
@@ -76,14 +101,19 @@ func marshalData(report *model.Report) ([]byte, error) {
 
 // contentSecurityPolicy allows only the exact inlined script and stylesheet
 // and denies every network fetch, frame, form, plugin and base override.
-func contentSecurityPolicy(assets Assets) string {
+func contentSecurityPolicy(assets Assets, explore bool) string {
+	connect := "connect-src 'none'"
+	if explore {
+		connect = "connect-src 'self'"
+	}
 	directives := []string{
 		"default-src 'none'",
 		"script-src " + hashSource(assets.Script),
 		"style-src " + hashSource(assets.Style),
-		"img-src 'none'",
+		// Only the inline data: icon; data URLs cannot reach the network.
+		"img-src data:",
 		"font-src 'none'",
-		"connect-src 'none'",
+		connect,
 		"object-src 'none'",
 		"base-uri 'none'",
 		"form-action 'none'",
