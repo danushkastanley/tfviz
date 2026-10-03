@@ -15,6 +15,7 @@ export default function globalSetup() {
     execFileSync(`${REPORTS.dir}tfviz`, ["plan", "--input", input, "--output", output, "--force", ...extra], { cwd: repoRoot, stdio: "inherit" });
 
   tfviz(fixturePlan, REPORTS.sample, "--title", "aws-review · proposed change");
+  tfviz(fixturePlan, REPORTS.safeShare, "--safe-share", "--title", "aws-review · proposed change");
   for (const [html, doc, extra] of [
     [REPORTS.hostile, hostilePlan(), ["--title", HOSTILE_TEXT]],
     [REPORTS.large, largePlan(), []],

@@ -44,6 +44,7 @@ export function Footer({ report, reducedMotion, onReducedMotionChange }: Props) 
         {coverage.resources_generic > 0 && ` · ${coverage.resources_generic} shown with limited detail`}
         {report.unresolved.length > 0 && ` · ${report.unresolved.length} unresolved reference${report.unresolved.length === 1 ? "" : "s"}`}
         {completeness && ` · ${completeness}`}
+        {report.disclosure === "safe_share" && " · Names, IDs and network details are replaced with stand-ins; the architecture itself may still be sensitive"}
       </p>
       <label className="toggle-row">
         <input type="checkbox" checked={reducedMotion} onChange={(e) => onReducedMotionChange(e.target.checked)} />

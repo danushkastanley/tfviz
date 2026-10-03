@@ -155,3 +155,21 @@ func TestVersionAndHelp(t *testing.T) {
 		t.Fatalf("help: %+v", res)
 	}
 }
+
+func TestSafeShare(t *testing.T) {
+	out := filepath.Join(t.TempDir(), "shared.html")
+	res := run(t, nil, "plan", "--input", producer("terraform-1.16/plan.json"), "--output", out, "--safe-share", "--title", "Orders platform")
+	if res.code != ExitOK {
+		t.Fatalf("exit %d: %s", res.code, res.stderr)
+	}
+	page, _ := os.ReadFile(out)
+	if !bytes.Contains(page, []byte(`"disclosure":"safe_share"`)) {
+		t.Fatal("report is not marked safe-share")
+	}
+	for _, leak := range []string{"Orders platform", "review-orders", "review-platform", "111122223333", "aws_db_instance.orders"} {
+		if bytes.Contains(page, []byte(leak)) {
+			t.Errorf("safe-share report contains %q", leak)
+		}
+	}
+	testutil.AssertNoCanaries(t, "safe-share report", page)
+}

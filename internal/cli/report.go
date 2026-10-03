@@ -11,17 +11,19 @@ import (
 	"github.com/danushkastanley/tfviz/internal/report/build"
 	"github.com/danushkastanley/tfviz/internal/report/html"
 	"github.com/danushkastanley/tfviz/internal/report/model"
+	"github.com/danushkastanley/tfviz/internal/report/safeshare"
 )
 
 type reportOptions struct {
-	input   string
-	output  string
-	title   string
-	view    string
-	force   bool
-	strict  bool
-	offline bool
-	s3      s3Flags
+	input     string
+	output    string
+	title     string
+	view      string
+	force     bool
+	strict    bool
+	offline   bool
+	safeShare bool
+	s3        s3Flags
 }
 
 func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOptions, error) {
@@ -40,6 +42,7 @@ func parseReportFlags(kind input.SnapshotKind, args []string, env Env) (reportOp
 	fs.BoolVar(&opts.force, "force", false, "replace the output file if it exists")
 	fs.BoolVar(&opts.strict, "strict", false, "fail if any resource, action or input cannot be fully interpreted")
 	fs.BoolVar(&opts.offline, "offline", false, "refuse any input that would need network access")
+	fs.BoolVar(&opts.safeShare, "safe-share", false, "replace names, IDs, ARNs, accounts, addresses and network details with stand-ins")
 	if kind == input.KindState {
 		fs.StringVar(&opts.s3.profile, "aws-profile", "", "AWS profile for s3:// inputs (uses the standard credential chain)")
 		fs.StringVar(&opts.s3.region, "aws-region", "", "region of the state bucket for s3:// inputs")
@@ -112,6 +115,9 @@ func generate(kind input.SnapshotKind, opts reportOptions, env Env) (string, err
 		if problems := strictProblems(report); len(problems) > 0 {
 			return "", &usageError{"--strict: " + strings.Join(problems, "; ")}
 		}
+	}
+	if opts.safeShare {
+		report = safeshare.Apply(report)
 	}
 	var page bytes.Buffer
 	if err := html.Render(&page, report, html.BundledAssets()); err != nil {
