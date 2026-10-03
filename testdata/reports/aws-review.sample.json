@@ -27,6 +27,7 @@
     "delete": 1,
     "replace": 2,
     "read": 1,
+    "forget": 0,
     "no_op": 26,
     "unsupported": 0
   },

@@ -17,6 +17,8 @@ const PRESENTATION: Record<Action, ChangePresentation> = {
   delete: { label: "Destroyed", symbol: "−", tone: "delete" },
   replace: { label: "Replaced", symbol: "±", tone: "replace" },
   read: { label: "Read during apply", symbol: "↻", tone: "read" },
+  // Not a destruction: the infrastructure stays, Terraform stops managing it.
+  forget: { label: "Removed from state (not destroyed)", symbol: "⊘", tone: "read" },
   no_op: { label: "Unchanged", symbol: "", tone: "none" },
   unsupported: { label: "Unsupported action", symbol: "?", tone: "none" },
 };
@@ -37,4 +39,4 @@ export function describeReplaceOrder(order: Change["replace_order"]): string | u
 }
 
 /** Order used for change filters and the resource list. */
-export const ACTION_ORDER: readonly Action[] = ["replace", "delete", "create", "update", "read", "unsupported", "no_op"];
+export const ACTION_ORDER: readonly Action[] = ["replace", "delete", "create", "update", "forget", "read", "unsupported", "no_op"];

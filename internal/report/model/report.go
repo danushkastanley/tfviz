@@ -105,6 +105,7 @@ type Summary struct {
 	Delete      int `json:"delete"`
 	Replace     int `json:"replace"`
 	Read        int `json:"read"`
+	Forget      int `json:"forget"`
 	NoOp        int `json:"no_op"`
 	Unsupported int `json:"unsupported"`
 }
@@ -124,6 +125,7 @@ const (
 	WarningCompletenessNotReported WarningCode = "completeness_not_reported"
 	WarningIncompletePlan          WarningCode = "incomplete_plan"
 	WarningUnresolvedRelationship  WarningCode = "unresolved_relationship"
+	WarningDeposedObjectSkipped    WarningCode = "deposed_object_skipped"
 	WarningLimitReached            WarningCode = "limit_reached"
 )
 

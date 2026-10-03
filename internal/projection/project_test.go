@@ -90,3 +90,34 @@ func TestWithheldFieldsAreOmitted(t *testing.T) {
 		t.Fatalf("withheld field exported %s", got)
 	}
 }
+
+func planResource(t *testing.T, before, after string) input.Resource {
+	t.Helper()
+	doc := `{"format_version":"1.2","resource_changes":[{"address":"x_thing.a","mode":"managed","type":"x_thing","name":"a",
+	  "provider_name":"registry.terraform.io/x/x","change":{"actions":["update"],"before":` + before + `,"after":` + after + `,
+	  "after_unknown":{},"before_sensitive":{},"after_sensitive":{}}}]}`
+	snap, err := input.Read([]byte(doc), input.KindPlan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return snap.Resources[0]
+}
+
+// Producers do not always mark secrets. A change-only field still exports
+// no payload, only whether the value changed.
+func TestChangeOnlyFieldsNeverExportUnmarkedValues(t *testing.T) {
+	f := Field{Key: "password", Label: "Password", ChangeOnly: true}
+	for _, tt := range []struct {
+		before, after string
+		status        model.ChangeStatus
+	}{
+		{`{"password":"old-secret"}`, `{"password":"new-secret"}`, model.ChangeChanged},
+		{`{"password":"same-secret"}`, `{"password":"same-secret"}`, model.ChangeUnchanged},
+	} {
+		got := Project(planResource(t, tt.before, tt.after), []Field{f}, true)[0]
+		data, _ := json.Marshal(got)
+		if strings.Contains(string(data), "secret") || got.ChangeStatus != tt.status {
+			t.Errorf("%s → %s: %s", tt.before, tt.after, data)
+		}
+	}
+}

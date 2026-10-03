@@ -34,6 +34,7 @@ func registerWorkloads() {
 	register("aws_lb_listener", Adapter{
 		Family: model.FamilyLoadBalancing, Noun: "Listener",
 		LabelFrom: []string{"tags.Name"},
+		Placement: Placement{Follow: "load_balancer_arn", FollowTargets: []string{"aws_lb"}},
 		Fields: []p.Field{
 			{Key: "port", Label: "Port"},
 			{Key: "protocol", Label: "Protocol"},
@@ -68,7 +69,7 @@ func registerWorkloads() {
 			{Key: "multi_az", Label: "Multi-AZ"},
 			{Key: "publicly_accessible", Label: "Publicly accessible"},
 			{Key: "username", Label: "Master username", Withheld: true},
-			{Key: "password", Label: "Master password", Withheld: true},
+			{Key: "password", Label: "Master password", ChangeOnly: true},
 			{Key: "endpoint", Label: "Endpoint"},
 			tagsWithheld,
 		},

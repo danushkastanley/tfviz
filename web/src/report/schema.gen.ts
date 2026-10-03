@@ -138,6 +138,7 @@ export interface Summary {
   delete: Count;
   replace: Count;
   read: Count;
+  forget: Count;
   no_op: Count;
   unsupported: Count;
 }
@@ -189,7 +190,10 @@ export interface Resource {
  * via the `definition` "Change".
  */
 export interface Change {
-  action: "no_op" | "create" | "update" | "delete" | "replace" | "read" | "unsupported";
+  /**
+   * forget removes a resource from state without destroying it.
+   */
+  action: "no_op" | "create" | "update" | "delete" | "replace" | "read" | "forget" | "unsupported";
   replace_order?: "delete_first" | "create_first";
   /**
    * @maxItems 4
@@ -310,6 +314,7 @@ export interface Warning {
     | "completeness_not_reported"
     | "incomplete_plan"
     | "unresolved_relationship"
+    | "deposed_object_skipped"
     | "limit_reached";
   message: string;
   resource?: Id;

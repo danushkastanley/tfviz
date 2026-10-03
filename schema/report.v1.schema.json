@@ -68,13 +68,14 @@
       "description": "Counts of resource changes. Replacements are counted separately, not as an addition plus a destruction.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["create", "update", "delete", "replace", "read", "no_op", "unsupported"],
+      "required": ["create", "update", "delete", "replace", "read", "forget", "no_op", "unsupported"],
       "properties": {
         "create": { "$ref": "#/$defs/Count" },
         "update": { "$ref": "#/$defs/Count" },
         "delete": { "$ref": "#/$defs/Count" },
         "replace": { "$ref": "#/$defs/Count" },
         "read": { "$ref": "#/$defs/Count" },
+        "forget": { "$ref": "#/$defs/Count" },
         "no_op": { "$ref": "#/$defs/Count" },
         "unsupported": { "$ref": "#/$defs/Count" }
       }
@@ -126,7 +127,7 @@
       "additionalProperties": false,
       "required": ["action", "producer_actions"],
       "properties": {
-        "action": { "enum": ["no_op", "create", "update", "delete", "replace", "read", "unsupported"] },
+        "action": { "description": "forget removes a resource from state without destroying it.", "enum": ["no_op", "create", "update", "delete", "replace", "read", "forget", "unsupported"] },
         "replace_order": { "enum": ["delete_first", "create_first"] },
         "producer_actions": { "type": "array", "maxItems": 4, "items": { "type": "string", "maxLength": 32 } },
         "reason": { "type": "string", "maxLength": 64 },
@@ -233,7 +234,7 @@
       "additionalProperties": false,
       "required": ["code", "message"],
       "properties": {
-        "code": { "enum": ["unsupported_action", "unsupported_resource", "unknown_format_minor", "completeness_not_reported", "incomplete_plan", "unresolved_relationship", "limit_reached"] },
+        "code": { "enum": ["unsupported_action", "unsupported_resource", "unknown_format_minor", "completeness_not_reported", "incomplete_plan", "unresolved_relationship", "deposed_object_skipped", "limit_reached"] },
         "message": { "type": "string", "maxLength": 512 },
         "resource": { "$ref": "#/$defs/Id" }
       }

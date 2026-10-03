@@ -31,6 +31,10 @@ type Field struct {
 	// Inputs, when set, makes Format a whole-resource formatter that may read
 	// only these sibling paths. Markers are checked on exactly these inputs.
 	Inputs []string
+	// ChangeOnly fields are secrets whose value is never exported but whose
+	// change matters to a reviewer, such as a rotated password. They are
+	// always reported as sensitive, with a change status only.
+	ChangeOnly bool
 	// Withheld fields are always reported as omitted: the attribute exists but
 	// is deliberately not exported (tags, descriptions, usernames, bodies).
 	Withheld bool

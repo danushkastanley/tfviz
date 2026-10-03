@@ -1,0 +1,2466 @@
+{
+  "schema_version": "1.0",
+  "mode": "state",
+  "disclosure": "internal",
+  "title": "Recorded infrastructure state",
+  "generated_at": "2026-10-03T09:00:00Z",
+  "tool": {
+    "name": "tfviz",
+    "version": "test"
+  },
+  "producer": {
+    "name": "opentofu",
+    "version": "1.13.1",
+    "format_version": "1.0"
+  },
+  "source": {
+    "kind": "stdin",
+    "timestamp_status": "unavailable"
+  },
+  "completeness": {
+    "status": "complete"
+  },
+  "summary": {
+    "create": 0,
+    "update": 0,
+    "delete": 0,
+    "replace": 0,
+    "read": 0,
+    "forget": 0,
+    "no_op": 35,
+    "unsupported": 0
+  },
+  "coverage": {
+    "resources_total": 35,
+    "resources_supported": 34,
+    "resources_generic": 1
+  },
+  "resources": [
+    {
+      "id": "r1",
+      "address": "aws_db_instance.orders",
+      "label": "review-orders",
+      "type": "aws_db_instance",
+      "family": "database",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "identifier",
+          "label": "Identifier",
+          "after": {
+            "status": "known",
+            "value": "review-orders"
+          }
+        },
+        {
+          "key": "engine",
+          "label": "Engine",
+          "after": {
+            "status": "known",
+            "value": "postgres"
+          }
+        },
+        {
+          "key": "engine_version",
+          "label": "Engine version",
+          "after": {
+            "status": "known",
+            "value": "17.4"
+          }
+        },
+        {
+          "key": "instance_class",
+          "label": "Instance class",
+          "after": {
+            "status": "known",
+            "value": "db.t4g.medium"
+          }
+        },
+        {
+          "key": "allocated_storage",
+          "label": "Storage (GiB)",
+          "after": {
+            "status": "known",
+            "value": 50
+          }
+        },
+        {
+          "key": "storage_encrypted",
+          "label": "Storage encrypted",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "multi_az",
+          "label": "Multi-AZ",
+          "after": {
+            "status": "known",
+            "value": false
+          }
+        },
+        {
+          "key": "publicly_accessible",
+          "label": "Publicly accessible",
+          "after": {
+            "status": "known",
+            "value": false
+          }
+        },
+        {
+          "key": "username",
+          "label": "Master username",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "password",
+          "label": "Master password",
+          "after": {
+            "status": "sensitive"
+          }
+        },
+        {
+          "key": "endpoint",
+          "label": "Endpoint",
+          "after": {
+            "status": "known",
+            "value": "5c5fe5f0.fixture.invalid"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2",
+      "address": "aws_db_subnet_group.main",
+      "label": "review-db",
+      "type": "aws_db_subnet_group",
+      "family": "database",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "review-db"
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "address": "aws_eip.nat",
+      "label": "Elastic IP nat",
+      "type": "aws_eip",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g10",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "public_ip",
+          "label": "Public IP",
+          "after": {
+            "status": "known",
+            "value": "203.0.113.100"
+          }
+        },
+        {
+          "key": "domain",
+          "label": "Domain",
+          "after": {
+            "status": "known",
+            "value": "vpc"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r4",
+      "address": "aws_instance.bastion",
+      "label": "aws_instance.bastion",
+      "type": "aws_instance",
+      "family": "other",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "generic",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g11",
+        "modules": "m12"
+      },
+      "metadata": []
+    },
+    {
+      "id": "r5",
+      "address": "aws_internet_gateway.main",
+      "label": "Internet gateway main",
+      "type": "aws_internet_gateway",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Gateway ID",
+          "after": {
+            "status": "known",
+            "value": "igw-06498496a56dea3fa"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r6",
+      "address": "aws_lb.public",
+      "label": "review-public",
+      "type": "aws_lb",
+      "family": "load_balancing",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "review-public"
+          }
+        },
+        {
+          "key": "load_balancer_type",
+          "label": "Type",
+          "after": {
+            "status": "known",
+            "value": "application"
+          }
+        },
+        {
+          "key": "internal",
+          "label": "Internal",
+          "after": {
+            "status": "known",
+            "value": false
+          }
+        },
+        {
+          "key": "dns_name",
+          "label": "DNS name",
+          "after": {
+            "status": "known",
+            "value": "0035790b.fixture.invalid"
+          }
+        },
+        {
+          "key": "arn",
+          "label": "ARN",
+          "after": {
+            "status": "known",
+            "value": "arn:aws:elasticloadbalancing:eu-west-1:111122223333:loadbalancer/app/review-public/28e23727f67e69d5"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r7",
+      "address": "aws_lb_listener.https",
+      "label": "Listener https",
+      "type": "aws_lb_listener",
+      "family": "load_balancing",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "port",
+          "label": "Port",
+          "after": {
+            "status": "known",
+            "value": 443
+          }
+        },
+        {
+          "key": "protocol",
+          "label": "Protocol",
+          "after": {
+            "status": "known",
+            "value": "HTTPS"
+          }
+        },
+        {
+          "key": "ssl_policy",
+          "label": "TLS policy",
+          "after": {
+            "status": "known",
+            "value": ""
+          }
+        },
+        {
+          "key": "certificate_arn",
+          "label": "Certificate",
+          "after": {
+            "status": "known",
+            "value": "arn:aws:acm:eu-west-1:111122223333:certificate/00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r8",
+      "address": "aws_lb_target_group.app",
+      "label": "review-app",
+      "type": "aws_lb_target_group",
+      "family": "load_balancing",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "review-app"
+          }
+        },
+        {
+          "key": "port",
+          "label": "Port",
+          "after": {
+            "status": "known",
+            "value": 8080
+          }
+        },
+        {
+          "key": "protocol",
+          "label": "Protocol",
+          "after": {
+            "status": "known",
+            "value": "HTTP"
+          }
+        },
+        {
+          "key": "target_type",
+          "label": "Target type",
+          "after": {
+            "status": "known",
+            "value": "ip"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r9",
+      "address": "aws_nat_gateway.main",
+      "label": "NAT gateway main",
+      "type": "aws_nat_gateway",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g7",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "NAT gateway ID",
+          "after": {
+            "status": "known",
+            "value": "nat-06f67454df66a55bd"
+          }
+        },
+        {
+          "key": "subnet_id",
+          "label": "Subnet",
+          "after": {
+            "status": "known",
+            "value": "subnet-086d34e96a6bd60cd"
+          }
+        },
+        {
+          "key": "connectivity_type",
+          "label": "Connectivity",
+          "after": {
+            "status": "known",
+            "value": "public"
+          }
+        },
+        {
+          "key": "public_ip",
+          "label": "Public IP",
+          "after": {
+            "status": "known",
+            "value": "203.0.113.56"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r10",
+      "address": "aws_route_table.private",
+      "label": "Route table private",
+      "type": "aws_route_table",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Route table ID",
+          "after": {
+            "status": "known",
+            "value": "rtb-099f03628e1f360a1"
+          }
+        },
+        {
+          "key": "routes",
+          "label": "Routes",
+          "after": {
+            "status": "known",
+            "value": [
+              "0.0.0.0/0 → nat-06f67454df66a55bd"
+            ]
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r11",
+      "address": "aws_route_table.public",
+      "label": "Route table public",
+      "type": "aws_route_table",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Route table ID",
+          "after": {
+            "status": "known",
+            "value": "rtb-05aad64eae5d2f1d8"
+          }
+        },
+        {
+          "key": "routes",
+          "label": "Routes",
+          "after": {
+            "status": "known",
+            "value": [
+              "0.0.0.0/0 → igw-06498496a56dea3fa"
+            ]
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r12",
+      "address": "aws_route_table_association.private[\"a\"]",
+      "label": "Route table association private[\"a\"]",
+      "type": "aws_route_table_association",
+      "family": "network",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": []
+    },
+    {
+      "id": "r13",
+      "address": "aws_route_table_association.private[\"b\"]",
+      "label": "Route table association private[\"b\"]",
+      "type": "aws_route_table_association",
+      "family": "network",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": []
+    },
+    {
+      "id": "r14",
+      "address": "aws_route_table_association.private[\"c\"]",
+      "label": "Route table association private[\"c\"]",
+      "type": "aws_route_table_association",
+      "family": "network",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": []
+    },
+    {
+      "id": "r15",
+      "address": "aws_route_table_association.public[\"a\"]",
+      "label": "Route table association public[\"a\"]",
+      "type": "aws_route_table_association",
+      "family": "network",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": []
+    },
+    {
+      "id": "r16",
+      "address": "aws_route_table_association.public[\"b\"]",
+      "label": "Route table association public[\"b\"]",
+      "type": "aws_route_table_association",
+      "family": "network",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": []
+    },
+    {
+      "id": "r17",
+      "address": "aws_route_table_association.public[\"c\"]",
+      "label": "Route table association public[\"c\"]",
+      "type": "aws_route_table_association",
+      "family": "network",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": []
+    },
+    {
+      "id": "r18",
+      "address": "aws_security_group.alb",
+      "label": "review-alb",
+      "type": "aws_security_group",
+      "family": "security",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "review-alb"
+          }
+        },
+        {
+          "key": "id",
+          "label": "Security group ID",
+          "after": {
+            "status": "known",
+            "value": "sg-09dd8ab2b3e7b5778"
+          }
+        },
+        {
+          "key": "ingress",
+          "label": "Ingress",
+          "after": {
+            "status": "known",
+            "value": []
+          }
+        },
+        {
+          "key": "egress",
+          "label": "Egress",
+          "after": {
+            "status": "known",
+            "value": []
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r19",
+      "address": "aws_security_group.app",
+      "label": "review-app",
+      "type": "aws_security_group",
+      "family": "security",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "review-app"
+          }
+        },
+        {
+          "key": "id",
+          "label": "Security group ID",
+          "after": {
+            "status": "known",
+            "value": "sg-0e1d8bf74df948ff2"
+          }
+        },
+        {
+          "key": "ingress",
+          "label": "Ingress",
+          "after": {
+            "status": "known",
+            "value": []
+          }
+        },
+        {
+          "key": "egress",
+          "label": "Egress",
+          "after": {
+            "status": "known",
+            "value": []
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r20",
+      "address": "aws_security_group.db",
+      "label": "review-db",
+      "type": "aws_security_group",
+      "family": "security",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "review-db"
+          }
+        },
+        {
+          "key": "id",
+          "label": "Security group ID",
+          "after": {
+            "status": "known",
+            "value": "sg-0b24e74cc14f3a6f8"
+          }
+        },
+        {
+          "key": "ingress",
+          "label": "Ingress",
+          "after": {
+            "status": "known",
+            "value": [
+              "tcp 5432 from sg-0e1d8bf74df948ff2"
+            ]
+          }
+        },
+        {
+          "key": "egress",
+          "label": "Egress",
+          "after": {
+            "status": "known",
+            "value": []
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r21",
+      "address": "aws_security_group.msk",
+      "label": "review-msk",
+      "type": "aws_security_group",
+      "family": "security",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "review-msk"
+          }
+        },
+        {
+          "key": "id",
+          "label": "Security group ID",
+          "after": {
+            "status": "known",
+            "value": "sg-0fb4fe02dd17c4be1"
+          }
+        },
+        {
+          "key": "ingress",
+          "label": "Ingress",
+          "after": {
+            "status": "known",
+            "value": []
+          }
+        },
+        {
+          "key": "egress",
+          "label": "Egress",
+          "after": {
+            "status": "known",
+            "value": []
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r22",
+      "address": "aws_ssm_parameter.feature_flag",
+      "label": "/review/feature-flag",
+      "type": "aws_ssm_parameter",
+      "family": "configuration",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g10",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "/review/feature-flag"
+          }
+        },
+        {
+          "key": "type",
+          "label": "Type",
+          "after": {
+            "status": "known",
+            "value": "String"
+          }
+        },
+        {
+          "key": "tier",
+          "label": "Tier",
+          "after": {
+            "status": "known",
+            "value": ""
+          }
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "insecure_value",
+          "label": "Value",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r23",
+      "address": "aws_subnet.private[\"a\"]",
+      "label": "private-a",
+      "type": "aws_subnet",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Subnet ID",
+          "after": {
+            "status": "known",
+            "value": "subnet-01348dc3b712672fd"
+          }
+        },
+        {
+          "key": "cidr_block",
+          "label": "IPv4 CIDR",
+          "after": {
+            "status": "known",
+            "value": "10.40.10.0/24"
+          }
+        },
+        {
+          "key": "availability_zone",
+          "label": "Availability zone",
+          "after": {
+            "status": "known",
+            "value": "eu-west-1a"
+          }
+        },
+        {
+          "key": "map_public_ip_on_launch",
+          "label": "Public IP on launch",
+          "after": {
+            "status": "known",
+            "value": false
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r24",
+      "address": "aws_subnet.private[\"b\"]",
+      "label": "private-b",
+      "type": "aws_subnet",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Subnet ID",
+          "after": {
+            "status": "known",
+            "value": "subnet-096301de550d7cb6b"
+          }
+        },
+        {
+          "key": "cidr_block",
+          "label": "IPv4 CIDR",
+          "after": {
+            "status": "known",
+            "value": "10.40.11.0/24"
+          }
+        },
+        {
+          "key": "availability_zone",
+          "label": "Availability zone",
+          "after": {
+            "status": "known",
+            "value": "eu-west-1b"
+          }
+        },
+        {
+          "key": "map_public_ip_on_launch",
+          "label": "Public IP on launch",
+          "after": {
+            "status": "known",
+            "value": false
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r25",
+      "address": "aws_subnet.private[\"c\"]",
+      "label": "private-c",
+      "type": "aws_subnet",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Subnet ID",
+          "after": {
+            "status": "known",
+            "value": "subnet-0aee97487acabbc95"
+          }
+        },
+        {
+          "key": "cidr_block",
+          "label": "IPv4 CIDR",
+          "after": {
+            "status": "known",
+            "value": "10.40.12.0/24"
+          }
+        },
+        {
+          "key": "availability_zone",
+          "label": "Availability zone",
+          "after": {
+            "status": "known",
+            "value": "eu-west-1c"
+          }
+        },
+        {
+          "key": "map_public_ip_on_launch",
+          "label": "Public IP on launch",
+          "after": {
+            "status": "known",
+            "value": false
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r26",
+      "address": "aws_subnet.public[\"a\"]",
+      "label": "public-a",
+      "type": "aws_subnet",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Subnet ID",
+          "after": {
+            "status": "known",
+            "value": "subnet-086d34e96a6bd60cd"
+          }
+        },
+        {
+          "key": "cidr_block",
+          "label": "IPv4 CIDR",
+          "after": {
+            "status": "known",
+            "value": "10.40.0.0/24"
+          }
+        },
+        {
+          "key": "availability_zone",
+          "label": "Availability zone",
+          "after": {
+            "status": "known",
+            "value": "eu-west-1a"
+          }
+        },
+        {
+          "key": "map_public_ip_on_launch",
+          "label": "Public IP on launch",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r27",
+      "address": "aws_subnet.public[\"b\"]",
+      "label": "public-b",
+      "type": "aws_subnet",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Subnet ID",
+          "after": {
+            "status": "known",
+            "value": "subnet-09f69480b14a755f5"
+          }
+        },
+        {
+          "key": "cidr_block",
+          "label": "IPv4 CIDR",
+          "after": {
+            "status": "known",
+            "value": "10.40.1.0/24"
+          }
+        },
+        {
+          "key": "availability_zone",
+          "label": "Availability zone",
+          "after": {
+            "status": "known",
+            "value": "eu-west-1b"
+          }
+        },
+        {
+          "key": "map_public_ip_on_launch",
+          "label": "Public IP on launch",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r28",
+      "address": "aws_subnet.public[\"c\"]",
+      "label": "public-c",
+      "type": "aws_subnet",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "Subnet ID",
+          "after": {
+            "status": "known",
+            "value": "subnet-036f6b1a7f340a46a"
+          }
+        },
+        {
+          "key": "cidr_block",
+          "label": "IPv4 CIDR",
+          "after": {
+            "status": "known",
+            "value": "10.40.2.0/24"
+          }
+        },
+        {
+          "key": "availability_zone",
+          "label": "Availability zone",
+          "after": {
+            "status": "known",
+            "value": "eu-west-1c"
+          }
+        },
+        {
+          "key": "map_public_ip_on_launch",
+          "label": "Public IP on launch",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r29",
+      "address": "aws_vpc.main",
+      "label": "review-platform",
+      "type": "aws_vpc",
+      "family": "network",
+      "role": "entity",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g2",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "id",
+          "label": "VPC ID",
+          "after": {
+            "status": "known",
+            "value": "vpc-0c4cf60c01f5c64b4"
+          }
+        },
+        {
+          "key": "cidr_block",
+          "label": "IPv4 CIDR",
+          "after": {
+            "status": "known",
+            "value": "10.40.0.0/16"
+          }
+        },
+        {
+          "key": "enable_dns_hostnames",
+          "label": "DNS hostnames",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "enable_dns_support",
+          "label": "DNS resolution",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "instance_tenancy",
+          "label": "Tenancy",
+          "after": {
+            "status": "known",
+            "value": "default"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r30",
+      "address": "aws_vpc_security_group_ingress_rule.alb_https",
+      "label": "Security group rule alb_https",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "family": "security",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "ports",
+          "label": "Ports",
+          "after": {
+            "status": "known",
+            "value": "tcp 443"
+          }
+        },
+        {
+          "key": "cidr_ipv4",
+          "label": "Source or destination IPv4",
+          "after": {
+            "status": "known",
+            "value": "0.0.0.0/0"
+          }
+        },
+        {
+          "key": "cidr_ipv6",
+          "label": "Source or destination IPv6",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "referenced_security_group_id",
+          "label": "Referenced security group",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r31",
+      "address": "aws_vpc_security_group_ingress_rule.msk_plaintext[0]",
+      "label": "Security group rule msk_plaintext[0]",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "family": "security",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "ports",
+          "label": "Ports",
+          "after": {
+            "status": "known",
+            "value": "tcp 9092"
+          }
+        },
+        {
+          "key": "cidr_ipv4",
+          "label": "Source or destination IPv4",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "cidr_ipv6",
+          "label": "Source or destination IPv6",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "referenced_security_group_id",
+          "label": "Referenced security group",
+          "after": {
+            "status": "known",
+            "value": "sg-0e1d8bf74df948ff2"
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r32",
+      "address": "aws_vpc_security_group_ingress_rule.msk_scram",
+      "label": "Security group rule msk_scram",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "family": "security",
+      "role": "association",
+      "mode": "managed",
+      "module": "",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m12"
+      },
+      "metadata": [
+        {
+          "key": "ports",
+          "label": "Ports",
+          "after": {
+            "status": "known",
+            "value": "tcp 9096"
+          }
+        },
+        {
+          "key": "cidr_ipv4",
+          "label": "Source or destination IPv4",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "cidr_ipv6",
+          "label": "Source or destination IPv6",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "referenced_security_group_id",
+          "label": "Referenced security group",
+          "after": {
+            "status": "known",
+            "value": "sg-0e1d8bf74df948ff2"
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r33",
+      "address": "module.streaming.aws_cloudwatch_log_group.broker",
+      "label": "/review/msk/broker",
+      "type": "aws_cloudwatch_log_group",
+      "family": "observability",
+      "role": "entity",
+      "mode": "managed",
+      "module": "module.streaming",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g10",
+        "modules": "m13"
+      },
+      "metadata": [
+        {
+          "key": "name",
+          "label": "Name",
+          "after": {
+            "status": "known",
+            "value": "/review/msk/broker"
+          }
+        },
+        {
+          "key": "retention_in_days",
+          "label": "Retention (days)",
+          "after": {
+            "status": "known",
+            "value": 14
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r34",
+      "address": "module.streaming.aws_kms_key.msk",
+      "label": "KMS key msk",
+      "type": "aws_kms_key",
+      "family": "encryption",
+      "role": "entity",
+      "mode": "managed",
+      "module": "module.streaming",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g10",
+        "modules": "m13"
+      },
+      "metadata": [
+        {
+          "key": "key_id",
+          "label": "Key ID",
+          "after": {
+            "status": "known",
+            "value": "52e6e55d-f86b-4bf7-8913-6a741d083377"
+          }
+        },
+        {
+          "key": "key_usage",
+          "label": "Usage",
+          "after": {
+            "status": "known",
+            "value": "ENCRYPT_DECRYPT"
+          }
+        },
+        {
+          "key": "enable_key_rotation",
+          "label": "Automatic rotation",
+          "after": {
+            "status": "known",
+            "value": false
+          }
+        },
+        {
+          "key": "deletion_window_in_days",
+          "label": "Deletion window (days)",
+          "after": {
+            "status": "known",
+            "value": 7
+          }
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "policy",
+          "label": "Key policy",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r35",
+      "address": "module.streaming.aws_msk_cluster.events",
+      "label": "review-events",
+      "type": "aws_msk_cluster",
+      "family": "streaming",
+      "role": "entity",
+      "mode": "managed",
+      "module": "module.streaming",
+      "provider": "hashicorp/aws",
+      "support": "supported",
+      "change": {
+        "action": "no_op",
+        "producer_actions": []
+      },
+      "groups": {
+        "architecture": "g3",
+        "modules": "m13"
+      },
+      "metadata": [
+        {
+          "key": "cluster_name",
+          "label": "Cluster name",
+          "after": {
+            "status": "known",
+            "value": "review-events"
+          }
+        },
+        {
+          "key": "arn",
+          "label": "ARN",
+          "after": {
+            "status": "known",
+            "value": "arn:aws:kafka:eu-west-1:111122223333:cluster/review-events/bbec8d6d-ff8d-4253-8531-8014160c0b3f-s1"
+          }
+        },
+        {
+          "key": "kafka_version",
+          "label": "Kafka version",
+          "after": {
+            "status": "known",
+            "value": "3.9.x"
+          }
+        },
+        {
+          "key": "number_of_broker_nodes",
+          "label": "Broker count",
+          "after": {
+            "status": "known",
+            "value": 3
+          }
+        },
+        {
+          "key": "broker_node_group_info.instance_type",
+          "label": "Broker type",
+          "after": {
+            "status": "known",
+            "value": "kafka.m7g.large"
+          }
+        },
+        {
+          "key": "broker_node_group_info.volume_size",
+          "label": "Storage per broker (GiB)",
+          "after": {
+            "status": "known",
+            "value": 500
+          }
+        },
+        {
+          "key": "encryption_info.client_broker",
+          "label": "Client–broker encryption",
+          "after": {
+            "status": "known",
+            "value": "TLS"
+          }
+        },
+        {
+          "key": "encryption_info.in_cluster",
+          "label": "In-cluster encryption",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "client_authentication.sasl.scram",
+          "label": "SASL/SCRAM",
+          "after": {
+            "status": "known",
+            "value": true
+          }
+        },
+        {
+          "key": "client_authentication.sasl.iam",
+          "label": "IAM authentication",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "client_authentication.unauthenticated",
+          "label": "Unauthenticated access",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "logging_info.cloudwatch_log_group",
+          "label": "Broker log group",
+          "after": {
+            "status": "known",
+            "value": "/review/msk/broker"
+          }
+        },
+        {
+          "key": "bootstrap_brokers_sasl_scram",
+          "label": "SCRAM bootstrap brokers",
+          "after": {
+            "status": "known",
+            "value": "b-1.review-events.fixture.invalid:9096,b-2.review-events.fixture.invalid:9096"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "e1",
+      "source": "r1",
+      "target": "r20",
+      "type": "security_group_attachment",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "vpc_security_group_ids"
+      }
+    },
+    {
+      "id": "e2",
+      "source": "r2",
+      "target": "r23",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnet_ids"
+      }
+    },
+    {
+      "id": "e3",
+      "source": "r2",
+      "target": "r24",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnet_ids"
+      }
+    },
+    {
+      "id": "e4",
+      "source": "r2",
+      "target": "r25",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnet_ids"
+      }
+    },
+    {
+      "id": "e5",
+      "source": "r6",
+      "target": "r26",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnets"
+      }
+    },
+    {
+      "id": "e6",
+      "source": "r6",
+      "target": "r27",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnets"
+      }
+    },
+    {
+      "id": "e7",
+      "source": "r6",
+      "target": "r28",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnets"
+      }
+    },
+    {
+      "id": "e8",
+      "source": "r6",
+      "target": "r18",
+      "type": "security_group_attachment",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "security_groups"
+      }
+    },
+    {
+      "id": "e9",
+      "source": "r7",
+      "target": "r6",
+      "type": "service_reference",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "load_balancer_arn"
+      }
+    },
+    {
+      "id": "e10",
+      "source": "r7",
+      "target": "r8",
+      "type": "service_reference",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "default_action.target_group_arn"
+      }
+    },
+    {
+      "id": "e11",
+      "source": "r9",
+      "target": "r26",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnet_id"
+      }
+    },
+    {
+      "id": "e12",
+      "source": "r9",
+      "target": "r3",
+      "type": "service_reference",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "allocation_id"
+      }
+    },
+    {
+      "id": "e13",
+      "source": "r10",
+      "target": "r9",
+      "type": "routing",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "route.nat_gateway_id"
+      }
+    },
+    {
+      "id": "e14",
+      "source": "r11",
+      "target": "r5",
+      "type": "routing",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "route.gateway_id"
+      }
+    },
+    {
+      "id": "e15",
+      "source": "r10",
+      "target": "r23",
+      "type": "route_association",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "subnet_id",
+        "via": "r12"
+      }
+    },
+    {
+      "id": "e16",
+      "source": "r10",
+      "target": "r24",
+      "type": "route_association",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "subnet_id",
+        "via": "r13"
+      }
+    },
+    {
+      "id": "e17",
+      "source": "r10",
+      "target": "r25",
+      "type": "route_association",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "subnet_id",
+        "via": "r14"
+      }
+    },
+    {
+      "id": "e18",
+      "source": "r11",
+      "target": "r26",
+      "type": "route_association",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "subnet_id",
+        "via": "r15"
+      }
+    },
+    {
+      "id": "e19",
+      "source": "r11",
+      "target": "r27",
+      "type": "route_association",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "subnet_id",
+        "via": "r16"
+      }
+    },
+    {
+      "id": "e20",
+      "source": "r11",
+      "target": "r28",
+      "type": "route_association",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "subnet_id",
+        "via": "r17"
+      }
+    },
+    {
+      "id": "e21",
+      "source": "r20",
+      "target": "r19",
+      "type": "security_group_rule",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "ingress.security_groups"
+      }
+    },
+    {
+      "id": "e22",
+      "source": "r21",
+      "target": "r19",
+      "type": "security_group_rule",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "referenced_security_group_id",
+        "via": "r31"
+      }
+    },
+    {
+      "id": "e23",
+      "source": "r21",
+      "target": "r19",
+      "type": "security_group_rule",
+      "presence": "both",
+      "evidence": {
+        "kind": "association_resource",
+        "field": "referenced_security_group_id",
+        "via": "r32"
+      }
+    },
+    {
+      "id": "e24",
+      "source": "r35",
+      "target": "r23",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "broker_node_group_info.client_subnets"
+      }
+    },
+    {
+      "id": "e25",
+      "source": "r35",
+      "target": "r24",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "broker_node_group_info.client_subnets"
+      }
+    },
+    {
+      "id": "e26",
+      "source": "r35",
+      "target": "r25",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "broker_node_group_info.client_subnets"
+      }
+    },
+    {
+      "id": "e27",
+      "source": "r35",
+      "target": "r21",
+      "type": "security_group_attachment",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "broker_node_group_info.security_groups"
+      }
+    },
+    {
+      "id": "e28",
+      "source": "r35",
+      "target": "r34",
+      "type": "encryption_key",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "encryption_info.encryption_at_rest_kms_key_arn"
+      }
+    },
+    {
+      "id": "e29",
+      "source": "r35",
+      "target": "r33",
+      "type": "log_destination",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "logging_info.broker_logs.cloudwatch_logs.log_group"
+      }
+    },
+    {
+      "id": "e30",
+      "source": "r1",
+      "target": "r23",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "db_subnet_group_name.subnet_ids",
+        "via": "r2"
+      }
+    },
+    {
+      "id": "e31",
+      "source": "r1",
+      "target": "r24",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "db_subnet_group_name.subnet_ids",
+        "via": "r2"
+      }
+    },
+    {
+      "id": "e32",
+      "source": "r1",
+      "target": "r25",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "db_subnet_group_name.subnet_ids",
+        "via": "r2"
+      }
+    }
+  ],
+  "unresolved": [
+    {
+      "source": "r7",
+      "type": "service_reference",
+      "field": "certificate_arn",
+      "reason": "external"
+    }
+  ],
+  "groups": [
+    {
+      "id": "g1",
+      "view": "architecture",
+      "kind": "account",
+      "label": "Account 111122223333",
+      "placement": "known"
+    },
+    {
+      "id": "g2",
+      "view": "architecture",
+      "kind": "region",
+      "label": "eu-west-1",
+      "parent": "g1",
+      "placement": "known"
+    },
+    {
+      "id": "g3",
+      "view": "architecture",
+      "kind": "vpc",
+      "label": "review-platform",
+      "parent": "g2",
+      "placement": "known",
+      "resource": "r29"
+    },
+    {
+      "id": "g4",
+      "view": "architecture",
+      "kind": "subnet",
+      "label": "private-a · eu-west-1a",
+      "parent": "g3",
+      "placement": "known",
+      "resource": "r23",
+      "classification": "private"
+    },
+    {
+      "id": "g5",
+      "view": "architecture",
+      "kind": "subnet",
+      "label": "private-b · eu-west-1b",
+      "parent": "g3",
+      "placement": "known",
+      "resource": "r24",
+      "classification": "private"
+    },
+    {
+      "id": "g6",
+      "view": "architecture",
+      "kind": "subnet",
+      "label": "private-c · eu-west-1c",
+      "parent": "g3",
+      "placement": "known",
+      "resource": "r25",
+      "classification": "private"
+    },
+    {
+      "id": "g7",
+      "view": "architecture",
+      "kind": "subnet",
+      "label": "public-a · eu-west-1a",
+      "parent": "g3",
+      "placement": "known",
+      "resource": "r26",
+      "classification": "public"
+    },
+    {
+      "id": "g8",
+      "view": "architecture",
+      "kind": "subnet",
+      "label": "public-b · eu-west-1b",
+      "parent": "g3",
+      "placement": "known",
+      "resource": "r27",
+      "classification": "public"
+    },
+    {
+      "id": "g9",
+      "view": "architecture",
+      "kind": "subnet",
+      "label": "public-c · eu-west-1c",
+      "parent": "g3",
+      "placement": "known",
+      "resource": "r28",
+      "classification": "public"
+    },
+    {
+      "id": "g10",
+      "view": "architecture",
+      "kind": "regional_services",
+      "label": "Regional services · eu-west-1",
+      "parent": "g2",
+      "placement": "known"
+    },
+    {
+      "id": "g11",
+      "view": "architecture",
+      "kind": "unplaced",
+      "label": "Placement not established",
+      "placement": "unresolved"
+    },
+    {
+      "id": "m12",
+      "view": "modules",
+      "kind": "module",
+      "label": "Root module",
+      "placement": "known"
+    },
+    {
+      "id": "m13",
+      "view": "modules",
+      "kind": "module",
+      "label": "module.streaming",
+      "parent": "m12",
+      "placement": "known"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "unsupported_resource",
+      "message": "aws_instance is not supported yet (1 resource). It is shown with limited detail and no placement."
+    }
+  ]
+}

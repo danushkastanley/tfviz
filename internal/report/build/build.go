@@ -1,0 +1,190 @@
+// Package build assembles the sanitised report model from a snapshot.
+package build
+
+import (
+	"fmt"
+	"sort"
+	"strings"
+	"time"
+
+	"github.com/danushkastanley/tfviz/internal/graph"
+	"github.com/danushkastanley/tfviz/internal/input"
+	"github.com/danushkastanley/tfviz/internal/projection"
+	"github.com/danushkastanley/tfviz/internal/report/model"
+)
+
+// Options are the caller-supplied report details. Time is injected so
+// output is reproducible.
+type Options struct {
+	Title       string
+	Source      model.SourceKind
+	GeneratedAt time.Time
+	ToolVersion string
+}
+
+// Report builds the report model. It never copies raw attribute values:
+// metadata comes only from approved fields via projection.
+func Report(snap *input.Snapshot, opts Options) *model.Report {
+	g := graph.Build(snap)
+	report := &model.Report{
+		SchemaVersion: model.SchemaVersion,
+		Mode:          model.ModeState,
+		Disclosure:    model.DisclosureInternal,
+		Title:         title(opts.Title, snap),
+		GeneratedAt:   opts.GeneratedAt.UTC(),
+		Tool:          model.Tool{Name: "tfviz", Version: opts.ToolVersion},
+		Producer:      producer(snap),
+		Source:        model.Source{Kind: opts.Source, TimestampStatus: model.TimestampUnavailable},
+		Completeness:  completeness(snap),
+		Relationships: g.Relationships,
+		Unresolved:    g.Unresolved,
+		Groups:        g.Groups,
+		Resources:     make([]model.Resource, 0, len(g.Nodes)),
+	}
+	if g.Plan {
+		report.Mode = model.ModePlan
+	}
+	if snap.Timestamp != nil {
+		ts := snap.Timestamp.UTC()
+		report.Source.Timestamp = &ts
+		report.Source.TimestampStatus = model.TimestampKnown
+	}
+	for _, n := range g.Nodes {
+		report.Resources = append(report.Resources, resource(n, g))
+		count(&report.Summary, n.Change.Action)
+		report.Coverage.ResourcesTotal++
+		if n.Supported {
+			report.Coverage.ResourcesSupported++
+		} else {
+			report.Coverage.ResourcesGeneric++
+		}
+	}
+	report.Warnings = warnings(snap, g)
+	return report
+}
+
+func resource(n *graph.Node, g *graph.Graph) model.Resource {
+	r := model.Resource{
+		ID:       n.ID,
+		Address:  clip(n.Resource.Address, 1024),
+		Label:    n.Label,
+		Type:     n.Resource.Type,
+		Family:   model.FamilyOther,
+		Role:     model.RoleEntity,
+		Mode:     model.ResourceMode(n.Resource.Mode),
+		Module:   clip(n.Resource.Module, 1024),
+		Provider: clip(n.Resource.Provider, 128),
+		Support:  model.SupportGeneric,
+		Change:   n.Change,
+		Groups:   g.Placement[n.ID],
+		Metadata: []model.MetadataField{},
+	}
+	if n.Supported {
+		r.Family, r.Role, r.Support = n.Adapter.Family, n.Adapter.Role, model.SupportSupported
+		r.Metadata = projection.Project(n.Resource, n.Adapter.Fields, g.Plan)
+	}
+	return r
+}
+
+func count(s *model.Summary, action model.Action) {
+	switch action {
+	case model.ActionCreate:
+		s.Create++
+	case model.ActionUpdate:
+		s.Update++
+	case model.ActionDelete:
+		s.Delete++
+	case model.ActionReplace:
+		s.Replace++
+	case model.ActionRead:
+		s.Read++
+	case model.ActionForget:
+		s.Forget++
+	case model.ActionNoOp:
+		s.NoOp++
+	default:
+		s.Unsupported++
+	}
+}
+
+func title(requested string, snap *input.Snapshot) string {
+	if t := strings.TrimSpace(requested); t != "" {
+		return clip(t, 200)
+	}
+	if snap.Kind == input.KindPlan {
+		return "Infrastructure plan review"
+	}
+	return "Recorded infrastructure state"
+}
+
+func producer(snap *input.Snapshot) model.Producer {
+	return model.Producer{Name: model.ProducerName(snap.Producer), Version: snap.ProducerVersion, FormatVersion: snap.FormatVersion}
+}
+
+func completeness(snap *input.Snapshot) model.Completeness {
+	switch {
+	case snap.Kind == input.KindState:
+		return model.Completeness{Status: model.CompletenessComplete}
+	case snap.Errored || (snap.Complete != nil && !*snap.Complete):
+		return model.Completeness{Status: model.CompletenessIncomplete}
+	case snap.Complete == nil:
+		return model.Completeness{Status: model.CompletenessNotReported}
+	default:
+		return model.Completeness{Status: model.CompletenessComplete}
+	}
+}
+
+func warnings(snap *input.Snapshot, g *graph.Graph) []model.Warning {
+	out := []model.Warning{}
+	switch completeness(snap).Status {
+	case model.CompletenessIncomplete:
+		out = append(out, model.Warning{Code: model.WarningIncompletePlan, Message: "The producer reported this plan as incomplete or errored. Some changes may be missing."})
+	case model.CompletenessNotReported:
+		out = append(out, model.Warning{Code: model.WarningCompletenessNotReported, Message: "The producer did not report whether this plan is complete."})
+	}
+	for _, n := range snap.Notices {
+		code := model.WarningUnknownFormatMinor
+		if n.Code == input.NoticeDeposedSkipped {
+			code = model.WarningDeposedObjectSkipped
+		}
+		out = append(out, model.Warning{Code: code, Message: n.Message})
+	}
+	generic := map[string]int{}
+	for _, n := range g.Nodes {
+		if !n.Supported {
+			generic[n.Resource.Type]++
+		}
+		if n.Change.Action == model.ActionUnsupported {
+			out = append(out, model.Warning{Code: model.WarningUnsupportedAction, Resource: n.ID,
+				Message: "This change uses an action tfviz does not recognise. Review it in the producer's own plan output."})
+		}
+	}
+	types := make([]string, 0, len(generic))
+	for t := range generic {
+		types = append(types, t)
+	}
+	sort.Strings(types)
+	for _, t := range types {
+		out = append(out, model.Warning{Code: model.WarningUnsupportedResource,
+			Message: fmt.Sprintf("%s is not supported yet (%d %s). It is shown with limited detail and no placement.", clip(t, 128), generic[t], plural(generic[t], "resource", "resources"))})
+	}
+	return out
+}
+
+func plural(n int, one, many string) string {
+	if n == 1 {
+		return one
+	}
+	return many
+}
+
+func clip(s string, limit int) string {
+	if len(s) <= limit {
+		return s
+	}
+	cut := limit
+	for cut > 0 && (s[cut]&0xC0) == 0x80 {
+		cut--
+	}
+	return s[:cut]
+}
