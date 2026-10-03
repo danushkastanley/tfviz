@@ -330,3 +330,28 @@ select {
     display: none;
   }
 }
+
+.refresh-control {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.secondary-button {
+  padding: 4px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+  cursor: pointer;
+}
+
+.secondary-button:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.refresh-control__error {
+  max-width: 320px;
+  color: var(--change-delete);
+  font-size: 12px;
+}

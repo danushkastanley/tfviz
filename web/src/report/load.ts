@@ -44,3 +44,25 @@ export function readEmbeddedReport(doc: Document): LoadResult | undefined {
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+
+export const EXPLORE_ELEMENT_ID = "tfviz-explore";
+
+/** Present only on pages served by tfviz explore. */
+export interface ExploreConfig {
+  refresh: string;
+  token: string;
+}
+
+export function readExploreConfig(doc: Document): ExploreConfig | undefined {
+  const text = doc.getElementById(EXPLORE_ELEMENT_ID)?.textContent;
+  if (!text) return undefined;
+  try {
+    const data: unknown = JSON.parse(text);
+    if (isObject(data) && typeof data.refresh === "string" && data.refresh.startsWith("/") && typeof data.token === "string") {
+      return { refresh: data.refresh, token: data.token };
+    }
+  } catch {
+    // A malformed element simply means no refresh control.
+  }
+  return undefined;
+}

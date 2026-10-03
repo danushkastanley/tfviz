@@ -40,6 +40,8 @@ func Run(args []string, env Env) int {
 		return runReport(input.KindPlan, args[1:], env)
 	case "state":
 		return runReport(input.KindState, args[1:], env)
+	case "explore":
+		return runExplore(args[1:], env)
 	case "version", "--version":
 		fmt.Fprintf(env.Stdout, "tfviz %s\n", env.Version)
 		return ExitOK
@@ -60,7 +62,8 @@ Usage:
 
 Commands:
   plan      Generate a review report from an exported plan (show -json)
-  state     Generate a report from exported state (show -json)
+  state     Generate a report from state (file, show -json or s3://)
+  explore   Explore state in your browser through a local, private server
   version   Print the version
 
 Run "tfviz <command> --help" for options.

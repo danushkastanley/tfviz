@@ -98,26 +98,9 @@ func generate(kind input.SnapshotKind, opts reportOptions, env Env) (string, err
 	if err := checkOutput(opts.output, opts.force); err != nil {
 		return "", err
 	}
-	in, err := readInput(opts, env)
+	report, err := buildReport(kind, opts, env)
 	if err != nil {
 		return "", err
-	}
-	snap, err := input.Read(in.data, kind)
-	in.data = nil // the raw, secret-bearing input is not needed beyond this point
-	if err != nil {
-		return "", err
-	}
-	report := build.Report(snap, build.Options{
-		Title: opts.title, View: model.View(opts.view), Source: in.kind, SourceTime: in.time, SourceVersion: in.version,
-		GeneratedAt: env.Now(), ToolVersion: env.Version,
-	})
-	if opts.strict {
-		if problems := strictProblems(report); len(problems) > 0 {
-			return "", &usageError{"--strict: " + strings.Join(problems, "; ")}
-		}
-	}
-	if opts.safeShare {
-		report = safeshare.Apply(report)
 	}
 	var page bytes.Buffer
 	if err := html.Render(&page, report, html.BundledAssets()); err != nil {
@@ -127,6 +110,33 @@ func generate(kind input.SnapshotKind, opts reportOptions, env Env) (string, err
 		return "", err
 	}
 	return describe(opts.output, report), nil
+}
+
+// buildReport reads the input and produces the report model, applying
+// --strict and --safe-share. It is shared by report generation and explore.
+func buildReport(kind input.SnapshotKind, opts reportOptions, env Env) (*model.Report, error) {
+	in, err := readInput(opts, env)
+	if err != nil {
+		return nil, err
+	}
+	snap, err := input.Read(in.data, kind)
+	in.data = nil // the raw, secret-bearing input is not needed beyond this point
+	if err != nil {
+		return nil, err
+	}
+	report := build.Report(snap, build.Options{
+		Title: opts.title, View: model.View(opts.view), Source: in.kind, SourceTime: in.time, SourceVersion: in.version,
+		GeneratedAt: env.Now(), ToolVersion: env.Version,
+	})
+	if opts.strict {
+		if problems := strictProblems(report); len(problems) > 0 {
+			return nil, &usageError{"--strict: " + strings.Join(problems, "; ")}
+		}
+	}
+	if opts.safeShare {
+		report = safeshare.Apply(report)
+	}
+	return report, nil
 }
 
 // strictProblems lists interpretation gaps that --strict turns into failure.

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ReactFlowProvider } from "@xyflow/react";
 import type { Report } from "../report/schema.gen";
+import type { ExploreConfig } from "../report/load";
 import { indexReport, type ViewMode } from "../report/view";
 import { Canvas } from "../graph/Canvas";
 import { CanvasStateContext } from "../graph/canvasState";
@@ -14,7 +15,7 @@ import { Footer } from "./Footer";
 import { ReportIndexContext } from "./reportContext";
 import { useReducedMotion, useThemePreference } from "./preferences";
 
-export function App({ report }: { report: Report }) {
+export function App({ report, explore }: { report: Report; explore?: ExploreConfig | undefined }) {
   const index = useMemo(() => indexReport(report), [report]);
   const [view, setView] = useState<ViewMode>(report.mode === "plan" ? "changes" : "after");
   const [structure, setStructure] = useState<Structure>(report.initial_view ?? "architecture");
@@ -73,6 +74,7 @@ export function App({ report }: { report: Report }) {
           onStructureChange={changeStructure}
           theme={theme}
           onThemeChange={setTheme}
+          explore={explore}
         />
         <Navigator index={index} selectedId={selectedId} onSelect={selectFromList} />
         <main className="canvas" aria-label="Diagram">

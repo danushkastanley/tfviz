@@ -6,7 +6,7 @@ import "./app/app.css";
 import "./graph/graph.css";
 import "./inspector/inspector.css";
 import { App } from "./app/App";
-import { readEmbeddedReport, type LoadResult } from "./report/load";
+import { readEmbeddedReport, readExploreConfig, type LoadResult } from "./report/load";
 
 async function loadReport(): Promise<LoadResult> {
   const embedded = readEmbeddedReport(document);
@@ -29,7 +29,7 @@ if (container) {
     root.render(
       <StrictMode>
         {result.ok ? (
-          <App report={result.report} />
+          <App report={result.report} explore={readExploreConfig(document)} />
         ) : (
           <div className="load-error" role="alert">
             <h1>The report could not be opened</h1>

@@ -17,7 +17,7 @@ terraform plan -out=tfplan
 terraform show -json tfplan | tfviz plan --input - --output infra-report.html
 ```
 
-Open `infra-report.html` in a browser. It works offline, with no server. See [docs/cli.md](docs/cli.md) for state reports, options and exit codes.
+Open `infra-report.html` in a browser. It works offline, with no server. You can also explore state through a private local server (`tfviz explore --state terraform.tfstate`), or read state straight from S3. See [docs/cli.md](docs/cli.md), [docs/s3.md](docs/s3.md) and [docs/support.md](docs/support.md).
 
 ## Development
 

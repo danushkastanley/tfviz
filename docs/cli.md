@@ -42,6 +42,25 @@ tfviz state --input s3://example-state-bucket/prod/terraform.tfstate --aws-profi
 
 A state report shows Terraform's recorded snapshot. It does not prove that the infrastructure in AWS is currently identical.
 
+## Explore state locally
+
+```bash
+tfviz explore --state terraform.tfstate
+tfviz explore --state s3://example-state-bucket/prod/terraform.tfstate --aws-profile work --aws-region eu-west-1
+```
+
+`explore` serves the same interface from a private server on this machine and prints a link to open. It reads the state once, and again only when you press **Refresh**. Press Ctrl+C to stop.
+
+The explorer is built so that only you, through the printed link, can use it:
+
+- It listens on `127.0.0.1` only, and refuses requests for any other host name, which defends against DNS rebinding.
+- The link carries a one-time access token. The token is exchanged for a session cookie (HttpOnly, SameSite=Strict) and removed from the address bar.
+- Responses are never cached, cannot be framed, and send no CORS headers, so other websites cannot read them.
+- Refresh needs a same-origin request carrying a token embedded in the page.
+- It serves only the sanitised report. It never serves raw input, never reads other files, and never performs AWS operations for the browser.
+
+`explore` takes `--state`, `--title`, `--view`, `--safe-share`, `--offline`, the S3 options, `--port` (default: any free port) and `--open` (open your browser).
+
 ## Options
 
 | Option | Commands | Meaning |
