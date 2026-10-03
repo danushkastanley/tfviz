@@ -113,7 +113,7 @@ func planResource(rc resourceChangeJSON) Resource {
 		}
 		r.Before = buildValue(before, sensitive, nil, other, c.AfterUnknown)
 	}
-	if r.HasAfter || c.AfterUnknown != nil {
+	if r.HasAfter || containsMark(c.AfterUnknown) {
 		var other *any
 		if r.HasBefore {
 			other = &before
