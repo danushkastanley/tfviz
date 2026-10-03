@@ -20,9 +20,19 @@ Piping avoids writing the exported JSON to disk. The export can contain plaintex
 
 ## Generate a state report
 
+From an exported state:
+
 ```bash
 terraform show -json | tfviz state --input - --output state-report.html
 ```
+
+Or directly from a version-4 state file (Terraform 0.12 and later, and OpenTofu):
+
+```bash
+tfviz state --input terraform.tfstate --output state-report.html
+```
+
+Both routes produce the same report. Root module outputs are never read or shown.
 
 A state report shows Terraform's recorded snapshot. It does not prove that the infrastructure in AWS is currently identical.
 
@@ -30,7 +40,7 @@ A state report shows Terraform's recorded snapshot. It does not prove that the i
 
 | Option | Commands | Meaning |
 | --- | --- | --- |
-| `--input <file\|->` | plan, state | Exported JSON file, or `-` for standard input. Required. |
+| `--input <file\|->` | plan, state | Exported JSON (or, for `state`, a version-4 `.tfstate` file), or `-` for standard input. Required. |
 | `--output <file>` | plan, state | HTML report to write. Required. Written atomically with permissions `0600`. |
 | `--title <text>` | plan, state | Report title. |
 | `--force` | plan, state | Replace the output file if it exists. Without it, an existing file is never touched. |
@@ -58,9 +68,9 @@ It never prints input content. Error messages explain what to do next and never 
 
 ## Inputs it rejects, with guidance
 
-- **Raw `.tfstate` files.** Export them with `terraform show -json` first.
+- **State files in formats other than version 4.** Export them with `terraform show -json` instead.
 - **Terraform's streaming `-json` log output.** Save the plan with `-out` and export it instead.
 - **Encrypted OpenTofu state or plans.** Export them with `tofu show -json` using your encryption configuration.
-- **A plan passed to `state`, or state passed to `plan`.**
+- **A plan passed to `state`, or state (exported or raw) passed to `plan`.**
 - **JSON format major versions other than 1.**
 - **Inputs over the size limits.** These are 512 MiB, nesting deeper than 128 levels, or more than 50,000 resources.

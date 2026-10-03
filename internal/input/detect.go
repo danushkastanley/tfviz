@@ -37,8 +37,10 @@ func Read(data []byte, want SnapshotKind) (*Snapshot, error) {
 		return nil, streamingUIError()
 	case probe.EncryptedData != nil:
 		return nil, newError(CodeEncrypted, "The input is an encrypted OpenTofu state or plan. Export it with `tofu show -json` using your encryption configuration, then pass that output to tfviz.")
+	case probe.Lineage != nil && probe.Version != nil && want == KindPlan:
+		return nil, newError(CodeWrongKind, "The input is a state file, not a plan. Use `tfviz state` for state.")
 	case probe.Lineage != nil && probe.Version != nil:
-		return nil, newError(CodeRawState, "The input is a raw state file. Export it with `terraform show -json terraform.tfstate` (or `tofu show -json`) and pass that output to tfviz.")
+		return readRawState(data)
 	case probe.FormatVersion == nil:
 		return nil, newError(CodeUnsupported, "The input is not a Terraform or OpenTofu JSON export. Create one with `terraform show -json` or `tofu show -json`.")
 	}

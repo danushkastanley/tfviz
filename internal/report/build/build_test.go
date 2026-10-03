@@ -168,3 +168,20 @@ func TestEmptyCollectionsAreArrays(t *testing.T) {
 		}
 	}
 }
+
+// Plan M2 exit criterion: equivalent state inputs produce equivalent topology.
+func TestRawStateMatchesExportedState(t *testing.T) {
+	for _, producer := range []string{"terraform-1.16", "opentofu-1.13"} {
+		raw, _ := render(t, fixture{producer + "-raw", producer + "/prior.tfstate", input.KindState})
+		exported, _ := render(t, fixture{producer + "-state", producer + "/state.json", input.KindState})
+		for _, r := range []*model.Report{raw, exported} {
+			r.Producer = model.Producer{}
+		}
+		a, _ := json.Marshal(raw)
+		b, _ := json.Marshal(exported)
+		if !bytes.Equal(a, b) {
+			t.Errorf("%s: raw state and show -json state produce different reports", producer)
+		}
+		testutil.AssertNoCanaries(t, producer+" raw state report", a)
+	}
+}

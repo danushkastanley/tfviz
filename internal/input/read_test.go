@@ -174,7 +174,8 @@ func TestRejectsUnsupportedInputWithGuidance(t *testing.T) {
 		kind SnapshotKind
 		code Code
 	}{
-		{"raw state", string(fixture(t, "terraform-1.16/prior.tfstate")), KindState, CodeRawState},
+		{"raw state to plan", string(fixture(t, "terraform-1.16/prior.tfstate")), KindPlan, CodeWrongKind},
+		{"raw state v3", `{"version":3,"lineage":"x","serial":1,"modules":[]}`, KindState, CodeUnsupported},
 		{"streaming UI", "{\"@level\":\"info\",\"@message\":\"Terraform 1.16.4\",\"type\":\"version\"}\n{\"@level\":\"info\",\"@message\":\"x\"}\n", KindPlan, CodeStreamingUI},
 		{"plan to state", string(fixture(t, "terraform-1.16/plan.json")), KindState, CodeWrongKind},
 		{"state to plan", string(fixture(t, "terraform-1.16/state.json")), KindPlan, CodeWrongKind},

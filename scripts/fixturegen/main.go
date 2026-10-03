@@ -91,7 +91,9 @@ func run(tool, stack, out, cache string) error {
 	if err := os.MkdirAll(out, 0o755); err != nil {
 		return err
 	}
-	if err := copyFile(statePath, filepath.Join(out, "prior.tfstate")); err != nil {
+	// Store the producer's own serialisation of the state, so the raw-state
+	// fixture is authentic producer output rather than ours.
+	if err := p.pullState(statePath, filepath.Join(out, "prior.tfstate")); err != nil {
 		return err
 	}
 	if err := p.planToFile("proposed", statePath, filepath.Join(out, "plan.json")); err != nil {
@@ -159,14 +161,6 @@ func writeJSON(path string, v any) error {
 		return err
 	}
 	return os.WriteFile(path, append(data, '\n'), 0o644)
-}
-
-func copyFile(from, to string) error {
-	data, err := os.ReadFile(from)
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(to, data, 0o644)
 }
 
 func writeVersions(path, tool, producerVersion, providerVersion string) error {

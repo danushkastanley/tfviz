@@ -173,3 +173,22 @@ func (p *producer) showToFile(source, dest string) error {
 	}
 	return os.WriteFile(dest, out, 0o644)
 }
+
+// pullState has the producer re-serialise a state file via `state pull`,
+// using a temporary local state in the private stack copy.
+func (p *producer) pullState(statePath, dest string) error {
+	local := filepath.Join(p.stack, "terraform.tfstate")
+	data, err := os.ReadFile(statePath)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(local, data, 0o600); err != nil {
+		return err
+	}
+	defer os.Remove(local)
+	out, err := p.runQuiet(true, "state", "pull")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(dest, out, 0o644)
+}
