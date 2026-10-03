@@ -1,4 +1,4 @@
-# Build output
+# Build output (dist/ is also GoReleaser's output)
 /bin/
 /dist/
 /internal/report/html/dist/

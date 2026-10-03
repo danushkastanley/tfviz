@@ -36,6 +36,16 @@ bin/tfviz plan --input testdata/producer/terraform-1.16/plan.json --output out/r
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
+## Documentation
+
+- [Installing and verifying releases](docs/install.md)
+- [Command line](docs/cli.md)
+- [Using tfviz in CI](docs/ci.md)
+- [Reading state from S3](docs/s3.md)
+- [Supported resource types](docs/support.md)
+- [Tested compatibility](docs/compatibility.md)
+- [Security model](docs/security-model.md)
+
 ## Licence
 
 Apache-2.0. See [LICENSE](LICENSE).

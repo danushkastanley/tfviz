@@ -17,6 +17,14 @@ These are in scope:
 - Local explorer access from other browser origins.
 - Unbounded resource use from crafted inputs.
 
+## How tfviz protects data
+
+See [docs/security-model.md](docs/security-model.md) for the trust boundaries, controls and known limits.
+
+## Verifying releases
+
+Release archives come with SHA-256 checksums, SBOMs and GitHub build provenance. See [docs/install.md](docs/install.md).
+
 ## Supported versions
 
 tfviz is pre-alpha. Fixes land on `main` only until the first tagged release.

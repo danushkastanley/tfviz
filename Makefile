@@ -3,7 +3,7 @@ SHELL := /bin/bash
 
 GO ?= go
 
-.PHONY: test build go-test fmt-check web web-install web-test e2e fixtures
+.PHONY: test build go-test fmt-check web web-install web-test e2e fixtures notices snapshot
 
 test: web-test go-test
 
@@ -32,6 +32,14 @@ web-test: web-install
 	pnpm --dir web run typecheck
 	pnpm --dir web run lint
 	pnpm --dir web run test
+
+# Regenerates THIRD_PARTY_NOTICES.md for the binary and embedded web bundle.
+notices: web
+	$(GO) run ./scripts/notices
+
+# Builds release archives locally without publishing anything.
+snapshot: web
+	goreleaser release --snapshot --clean --skip=sbom
 
 # Opens generated reports over file:// in Chromium, Firefox and WebKit.
 # First run: pnpm --dir web exec playwright install chromium firefox webkit
