@@ -15,6 +15,7 @@ import (
 var canaryVariables = []string{
 	"TF_VAR_db_password=CANARY-DB-PASSWORD-a41c",
 	"TF_VAR_kafka_password=CANARY-KAFKA-PASSWORD-e07b",
+	"TF_VAR_cache_auth_token=CANARY-REDIS-AUTH-TOKEN-7b19",
 }
 
 // deadProxy routes all HTTP(S) to a closed local port. It applies only to the

@@ -118,7 +118,8 @@ func TestRelationshipsUseEvidenceAndNeverInvent(t *testing.T) {
 	if rels := relationshipsFrom(t, g, "data.aws_security_group.app_lookup[0]"); len(rels) != 0 {
 		t.Errorf("a data source with unknown inputs has no evidenced relationships: %+v", rels)
 	}
-	if rels := relationshipsFrom(t, g, "aws_instance.bastion"); len(rels) != 0 {
+	platform := build(t, "terraform-1.16-platform/plan.json", input.KindPlan)
+	if rels := relationshipsFrom(t, platform, "aws_iam_role.workloads"); len(rels) != 0 {
 		t.Errorf("unsupported resources get no relationships: %+v", rels)
 	}
 }
@@ -148,7 +149,12 @@ func TestPlacement(t *testing.T) {
 	if at("aws_lb_listener.https") != vpc || at("aws_db_subnet_group.main") != vpc {
 		t.Error("listeners and DB subnet groups follow what they reference")
 	}
-	if at("aws_instance.bastion").Kind != model.GroupUnplaced {
+	if bastion := at("aws_instance.bastion"); bastion.Kind != model.GroupSubnet || bastion.Label != "public-a · eu-west-1a" {
+		t.Errorf("an instance sits in its subnet; got %+v", bastion)
+	}
+	platform := build(t, "terraform-1.16-platform/plan.json", input.KindPlan)
+	role := node(t, platform, "aws_iam_role.workloads")
+	if group(platform, platform.Placement[role.ID].Architecture).Kind != model.GroupUnplaced {
 		t.Error("unsupported resources have no placement")
 	}
 	region := group(g, vpc.Parent)

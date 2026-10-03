@@ -6,9 +6,12 @@
 # Marked sensitive (sensitive variables and provider-sensitive attributes)
 CANARY-DB-PASSWORD-a41c
 CANARY-KAFKA-PASSWORD-e07b
+CANARY-REDIS-AUTH-TOKEN-7b19
 
 # Not marked sensitive by the producer: removal relies on projection allowlists
 CANARY-SSM-INSECURE-VALUE-2b8e
 CANARY-USERDATA-TOKEN-5d1f
 CANARY-TAG-OWNER-7f3a
 CANARY-SG-DESCRIPTION-91c2
+CANARY-ECS-ENV-63aa
+CANARY-LAMBDA-ENV-0c4d

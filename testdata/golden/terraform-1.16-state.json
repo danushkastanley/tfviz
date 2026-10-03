@@ -32,8 +32,8 @@
   },
   "coverage": {
     "resources_total": 35,
-    "resources_supported": 34,
-    "resources_generic": 1
+    "resources_supported": 35,
+    "resources_generic": 0
   },
   "resources": [
     {
@@ -53,7 +53,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -168,7 +168,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -205,7 +205,7 @@
       },
       "groups": {
         "architecture": "g10",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -236,23 +236,70 @@
     {
       "id": "r4",
       "address": "aws_instance.bastion",
-      "label": "aws_instance.bastion",
+      "label": "EC2 instance bastion",
       "type": "aws_instance",
-      "family": "other",
+      "family": "compute",
       "role": "entity",
       "mode": "managed",
       "module": "",
       "provider": "hashicorp/aws",
-      "support": "generic",
+      "support": "supported",
       "change": {
         "action": "no_op",
         "producer_actions": []
       },
       "groups": {
-        "architecture": "g11",
-        "modules": "m12"
+        "architecture": "g7",
+        "modules": "m11"
       },
-      "metadata": []
+      "metadata": [
+        {
+          "key": "instance_type",
+          "label": "Instance type",
+          "after": {
+            "status": "known",
+            "value": "t4g.micro"
+          }
+        },
+        {
+          "key": "ami",
+          "label": "AMI",
+          "after": {
+            "status": "known",
+            "value": "ami-0fixture000000001"
+          }
+        },
+        {
+          "key": "availability_zone",
+          "label": "Availability zone",
+          "after": {
+            "status": "known",
+            "value": ""
+          }
+        },
+        {
+          "key": "private_ip",
+          "label": "Private IP",
+          "after": {
+            "status": "known",
+            "value": "10.40.0.56"
+          }
+        },
+        {
+          "key": "user_data",
+          "label": "User data",
+          "after": {
+            "status": "omitted"
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "after": {
+            "status": "omitted"
+          }
+        }
+      ]
     },
     {
       "id": "r5",
@@ -271,7 +318,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -308,7 +355,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -377,7 +424,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -431,7 +478,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -492,7 +539,7 @@
       },
       "groups": {
         "architecture": "g7",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -553,7 +600,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -600,7 +647,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -647,7 +694,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": []
     },
@@ -668,7 +715,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": []
     },
@@ -689,7 +736,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": []
     },
@@ -710,7 +757,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": []
     },
@@ -731,7 +778,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": []
     },
@@ -752,7 +799,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": []
     },
@@ -773,7 +820,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -841,7 +888,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -909,7 +956,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -979,7 +1026,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1047,7 +1094,7 @@
       },
       "groups": {
         "architecture": "g10",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1121,7 +1168,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1182,7 +1229,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1243,7 +1290,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1304,7 +1351,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1365,7 +1412,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1426,7 +1473,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1487,7 +1534,7 @@
       },
       "groups": {
         "architecture": "g2",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1556,7 +1603,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1615,7 +1662,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1674,7 +1721,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m12"
+        "modules": "m11"
       },
       "metadata": [
         {
@@ -1733,7 +1780,7 @@
       },
       "groups": {
         "architecture": "g10",
-        "modules": "m13"
+        "modules": "m12"
       },
       "metadata": [
         {
@@ -1778,7 +1825,7 @@
       },
       "groups": {
         "architecture": "g10",
-        "modules": "m13"
+        "modules": "m12"
       },
       "metadata": [
         {
@@ -1853,7 +1900,7 @@
       },
       "groups": {
         "architecture": "g3",
-        "modules": "m13"
+        "modules": "m12"
       },
       "metadata": [
         {
@@ -1951,6 +1998,20 @@
           }
         },
         {
+          "key": "logging_info.s3_bucket",
+          "label": "Broker log bucket",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
+          "key": "configuration_info.revision",
+          "label": "Configuration revision",
+          "after": {
+            "status": "absent"
+          }
+        },
+        {
           "key": "bootstrap_brokers_sasl_scram",
           "label": "SCRAM bootstrap brokers",
           "after": {
@@ -2015,30 +2076,30 @@
     },
     {
       "id": "e5",
-      "source": "r6",
+      "source": "r4",
       "target": "r26",
       "type": "subnet_membership",
       "presence": "both",
       "evidence": {
         "kind": "attribute",
-        "field": "subnets"
+        "field": "subnet_id"
       }
     },
     {
       "id": "e6",
-      "source": "r6",
-      "target": "r27",
-      "type": "subnet_membership",
+      "source": "r4",
+      "target": "r19",
+      "type": "security_group_attachment",
       "presence": "both",
       "evidence": {
         "kind": "attribute",
-        "field": "subnets"
+        "field": "vpc_security_group_ids"
       }
     },
     {
       "id": "e7",
       "source": "r6",
-      "target": "r28",
+      "target": "r26",
       "type": "subnet_membership",
       "presence": "both",
       "evidence": {
@@ -2049,6 +2110,28 @@
     {
       "id": "e8",
       "source": "r6",
+      "target": "r27",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnets"
+      }
+    },
+    {
+      "id": "e9",
+      "source": "r6",
+      "target": "r28",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "subnets"
+      }
+    },
+    {
+      "id": "e10",
+      "source": "r6",
       "target": "r18",
       "type": "security_group_attachment",
       "presence": "both",
@@ -2058,7 +2141,7 @@
       }
     },
     {
-      "id": "e9",
+      "id": "e11",
       "source": "r7",
       "target": "r6",
       "type": "service_reference",
@@ -2069,7 +2152,7 @@
       }
     },
     {
-      "id": "e10",
+      "id": "e12",
       "source": "r7",
       "target": "r8",
       "type": "service_reference",
@@ -2080,7 +2163,7 @@
       }
     },
     {
-      "id": "e11",
+      "id": "e13",
       "source": "r9",
       "target": "r26",
       "type": "subnet_membership",
@@ -2091,7 +2174,7 @@
       }
     },
     {
-      "id": "e12",
+      "id": "e14",
       "source": "r9",
       "target": "r3",
       "type": "service_reference",
@@ -2102,7 +2185,7 @@
       }
     },
     {
-      "id": "e13",
+      "id": "e15",
       "source": "r10",
       "target": "r9",
       "type": "routing",
@@ -2113,7 +2196,7 @@
       }
     },
     {
-      "id": "e14",
+      "id": "e16",
       "source": "r11",
       "target": "r5",
       "type": "routing",
@@ -2124,7 +2207,7 @@
       }
     },
     {
-      "id": "e15",
+      "id": "e17",
       "source": "r10",
       "target": "r23",
       "type": "route_association",
@@ -2136,7 +2219,7 @@
       }
     },
     {
-      "id": "e16",
+      "id": "e18",
       "source": "r10",
       "target": "r24",
       "type": "route_association",
@@ -2148,7 +2231,7 @@
       }
     },
     {
-      "id": "e17",
+      "id": "e19",
       "source": "r10",
       "target": "r25",
       "type": "route_association",
@@ -2160,7 +2243,7 @@
       }
     },
     {
-      "id": "e18",
+      "id": "e20",
       "source": "r11",
       "target": "r26",
       "type": "route_association",
@@ -2172,7 +2255,7 @@
       }
     },
     {
-      "id": "e19",
+      "id": "e21",
       "source": "r11",
       "target": "r27",
       "type": "route_association",
@@ -2184,7 +2267,7 @@
       }
     },
     {
-      "id": "e20",
+      "id": "e22",
       "source": "r11",
       "target": "r28",
       "type": "route_association",
@@ -2196,7 +2279,7 @@
       }
     },
     {
-      "id": "e21",
+      "id": "e23",
       "source": "r20",
       "target": "r19",
       "type": "security_group_rule",
@@ -2207,7 +2290,7 @@
       }
     },
     {
-      "id": "e22",
+      "id": "e24",
       "source": "r21",
       "target": "r19",
       "type": "security_group_rule",
@@ -2219,7 +2302,7 @@
       }
     },
     {
-      "id": "e23",
+      "id": "e25",
       "source": "r21",
       "target": "r19",
       "type": "security_group_rule",
@@ -2231,31 +2314,9 @@
       }
     },
     {
-      "id": "e24",
-      "source": "r35",
-      "target": "r23",
-      "type": "subnet_membership",
-      "presence": "both",
-      "evidence": {
-        "kind": "attribute",
-        "field": "broker_node_group_info.client_subnets"
-      }
-    },
-    {
-      "id": "e25",
-      "source": "r35",
-      "target": "r24",
-      "type": "subnet_membership",
-      "presence": "both",
-      "evidence": {
-        "kind": "attribute",
-        "field": "broker_node_group_info.client_subnets"
-      }
-    },
-    {
       "id": "e26",
       "source": "r35",
-      "target": "r25",
+      "target": "r23",
       "type": "subnet_membership",
       "presence": "both",
       "evidence": {
@@ -2266,6 +2327,28 @@
     {
       "id": "e27",
       "source": "r35",
+      "target": "r24",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "broker_node_group_info.client_subnets"
+      }
+    },
+    {
+      "id": "e28",
+      "source": "r35",
+      "target": "r25",
+      "type": "subnet_membership",
+      "presence": "both",
+      "evidence": {
+        "kind": "attribute",
+        "field": "broker_node_group_info.client_subnets"
+      }
+    },
+    {
+      "id": "e29",
+      "source": "r35",
       "target": "r21",
       "type": "security_group_attachment",
       "presence": "both",
@@ -2275,7 +2358,7 @@
       }
     },
     {
-      "id": "e28",
+      "id": "e30",
       "source": "r35",
       "target": "r34",
       "type": "encryption_key",
@@ -2286,7 +2369,7 @@
       }
     },
     {
-      "id": "e29",
+      "id": "e31",
       "source": "r35",
       "target": "r33",
       "type": "log_destination",
@@ -2297,7 +2380,7 @@
       }
     },
     {
-      "id": "e30",
+      "id": "e32",
       "source": "r1",
       "target": "r23",
       "type": "subnet_membership",
@@ -2309,7 +2392,7 @@
       }
     },
     {
-      "id": "e31",
+      "id": "e33",
       "source": "r1",
       "target": "r24",
       "type": "subnet_membership",
@@ -2321,7 +2404,7 @@
       }
     },
     {
-      "id": "e32",
+      "id": "e34",
       "source": "r1",
       "target": "r25",
       "type": "subnet_membership",
@@ -2435,32 +2518,20 @@
       "placement": "known"
     },
     {
-      "id": "g11",
-      "view": "architecture",
-      "kind": "unplaced",
-      "label": "Placement not established",
-      "placement": "unresolved"
-    },
-    {
-      "id": "m12",
+      "id": "m11",
       "view": "modules",
       "kind": "module",
       "label": "Root module",
       "placement": "known"
     },
     {
-      "id": "m13",
+      "id": "m12",
       "view": "modules",
       "kind": "module",
       "label": "module.streaming",
-      "parent": "m12",
+      "parent": "m11",
       "placement": "known"
     }
   ],
-  "warnings": [
-    {
-      "code": "unsupported_resource",
-      "message": "aws_instance is not supported yet (1 resource). It is shown with limited detail and no placement."
-    }
-  ]
+  "warnings": []
 }
