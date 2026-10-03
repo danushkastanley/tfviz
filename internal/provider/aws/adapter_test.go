@@ -42,12 +42,14 @@ func TestNoApprovedFieldIsSecretShaped(t *testing.T) {
 	}
 }
 
-func TestEveryFixtureTypeIsSupportedExceptTheDeliberateGenericOne(t *testing.T) {
-	snap := read(t, "terraform-1.16/plan.json", input.KindPlan)
-	for _, r := range snap.Resources {
-		_, ok := Lookup(r.Type)
-		if ok == (r.Type == "aws_instance") {
-			t.Errorf("%s: supported = %v", r.Type, ok)
+// IAM is deliberately not interpreted yet; every other fixture type is.
+func TestEveryFixtureTypeIsSupportedExceptIAM(t *testing.T) {
+	for _, path := range []string{"terraform-1.16/plan.json", "terraform-1.16-platform/plan.json"} {
+		for _, r := range read(t, path, input.KindPlan).Resources {
+			_, ok := Lookup(r.Type)
+			if ok == strings.HasPrefix(r.Type, "aws_iam_") {
+				t.Errorf("%s: supported = %v", r.Type, ok)
+			}
 		}
 	}
 }
@@ -61,6 +63,10 @@ func TestProjectionNeverExportsCanaries(t *testing.T) {
 		{"opentofu-1.13/plan.json", input.KindPlan},
 		{"terraform-1.16/state.json", input.KindState},
 		{"opentofu-1.13/state.json", input.KindState},
+		{"terraform-1.16-platform/plan.json", input.KindPlan},
+		{"opentofu-1.13-platform/plan.json", input.KindPlan},
+		{"terraform-1.16-platform/state.json", input.KindState},
+		{"terraform-1.16-platform/prior.tfstate", input.KindState},
 	}
 	for _, in := range inputs {
 		snap := read(t, in.path, in.kind)
@@ -151,5 +157,20 @@ func TestFormattersOmitFreeFormText(t *testing.T) {
 	}
 	if !strings.Contains(asJSON(ingress.Before), "tcp 5432 from sg-") {
 		t.Fatalf("ingress = %s", asJSON(ingress))
+	}
+}
+
+// Plan §9: an advertised type must be fixture-tested.
+func TestEverySupportedTypeAppearsInAFixture(t *testing.T) {
+	seen := map[string]bool{}
+	for _, path := range []string{"terraform-1.16/plan.json", "terraform-1.16-platform/plan.json"} {
+		for _, r := range read(t, path, input.KindPlan).Resources {
+			seen[r.Type] = true
+		}
+	}
+	for _, typ := range Types() {
+		if !seen[typ] {
+			t.Errorf("%s is supported but not in any fixture", typ)
+		}
 	}
 }

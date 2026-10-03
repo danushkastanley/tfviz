@@ -30,6 +30,10 @@ var fixtures = []fixture{
 	{"terraform-1.16-state", "terraform-1.16/state.json", input.KindState},
 	{"opentofu-1.13-plan", "opentofu-1.13/plan.json", input.KindPlan},
 	{"opentofu-1.13-state", "opentofu-1.13/state.json", input.KindState},
+	{"terraform-1.16-platform-plan", "terraform-1.16-platform/plan.json", input.KindPlan},
+	{"terraform-1.16-platform-state", "terraform-1.16-platform/state.json", input.KindState},
+	{"opentofu-1.13-platform-plan", "opentofu-1.13-platform/plan.json", input.KindPlan},
+	{"opentofu-1.13-platform-state", "opentofu-1.13-platform/state.json", input.KindState},
 }
 
 func render(t *testing.T, f fixture) (*model.Report, []byte) {
@@ -99,7 +103,7 @@ func TestReportIsDeterministic(t *testing.T) {
 // Terraform and OpenTofu exports of the same stack must describe the same
 // infrastructure; only producer details and completeness reporting differ.
 func TestProducersAgree(t *testing.T) {
-	for _, pair := range [][2]fixture{{fixtures[0], fixtures[2]}, {fixtures[1], fixtures[3]}} {
+	for _, pair := range [][2]fixture{{fixtures[0], fixtures[2]}, {fixtures[1], fixtures[3]}, {fixtures[4], fixtures[6]}, {fixtures[5], fixtures[7]}} {
 		tf, _ := render(t, pair[0])
 		tofu, _ := render(t, pair[1])
 		for _, r := range []*model.Report{tf, tofu} {
@@ -119,7 +123,7 @@ func TestSummaryAndWarnings(t *testing.T) {
 	if plan.Summary != want {
 		t.Errorf("summary = %+v, want %+v", plan.Summary, want)
 	}
-	if plan.Coverage != (model.Coverage{ResourcesTotal: 39, ResourcesSupported: 38, ResourcesGeneric: 1}) {
+	if plan.Coverage != (model.Coverage{ResourcesTotal: 39, ResourcesSupported: 39}) {
 		t.Errorf("coverage = %+v", plan.Coverage)
 	}
 	if plan.Source.TimestampStatus != model.TimestampKnown || plan.Completeness.Status != model.CompletenessComplete {
@@ -171,7 +175,7 @@ func TestEmptyCollectionsAreArrays(t *testing.T) {
 
 // Plan M2 exit criterion: equivalent state inputs produce equivalent topology.
 func TestRawStateMatchesExportedState(t *testing.T) {
-	for _, producer := range []string{"terraform-1.16", "opentofu-1.13"} {
+	for _, producer := range []string{"terraform-1.16", "opentofu-1.13", "terraform-1.16-platform", "opentofu-1.13-platform"} {
 		raw, _ := render(t, fixture{producer + "-raw", producer + "/prior.tfstate", input.KindState})
 		exported, _ := render(t, fixture{producer + "-state", producer + "/state.json", input.KindState})
 		for _, r := range []*model.Report{raw, exported} {

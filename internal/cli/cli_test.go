@@ -100,7 +100,8 @@ func TestExitCodes(t *testing.T) {
 		{"raw state as plan", []string{"plan", "--input", producer("terraform-1.16/prior.tfstate"), "--output", filepath.Join(dir, "c.html")}, ExitUnsupported, "not a plan"},
 		{"missing file", []string{"plan", "--input", filepath.Join(dir, "nope.json"), "--output", filepath.Join(dir, "d.html")}, ExitFailure, "cannot read"},
 		{"directory input", []string{"plan", "--input", dir, "--output", filepath.Join(dir, "e.html")}, ExitUnsupported, "regular file"},
-		{"strict", []string{"plan", "--input", plan, "--output", filepath.Join(dir, "f.html"), "--strict"}, ExitUnsupported, "unsupported resource"},
+		{"strict", []string{"plan", "--input", producer("terraform-1.16-platform/plan.json"), "--output", filepath.Join(dir, "f.html"), "--strict"}, ExitUnsupported, "unsupported resource"},
+		{"strict passes when fully supported", []string{"plan", "--input", plan, "--output", filepath.Join(dir, "h.html"), "--strict"}, ExitOK, "Wrote"},
 		{"bad view", []string{"plan", "--input", plan, "--output", filepath.Join(dir, "g.html"), "--view", "graph"}, ExitUnsupported, "--view"},
 		{"inapplicable option", []string{"version", "--input", plan}, ExitOK, ""},
 	}

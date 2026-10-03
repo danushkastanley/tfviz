@@ -43,3 +43,5 @@ e2e: web
 fixtures:
 	$(GO) run ./scripts/fixturegen -tool terraform -out testdata/producer/terraform-1.16
 	$(GO) run ./scripts/fixturegen -tool tofu -out testdata/producer/opentofu-1.13
+	$(GO) run ./scripts/fixturegen -tool terraform -stack testdata/stacks/aws-platform -out testdata/producer/terraform-1.16-platform
+	$(GO) run ./scripts/fixturegen -tool tofu -stack testdata/stacks/aws-platform -out testdata/producer/opentofu-1.13-platform

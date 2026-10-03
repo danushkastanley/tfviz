@@ -99,6 +99,9 @@ func registerWorkloads() {
 			{Key: "client_authentication.unauthenticated", Label: "Unauthenticated access"},
 			{Key: "logging_info.cloudwatch_log_group", Label: "Broker log group",
 				Path: []string{"logging_info", "broker_logs", "cloudwatch_logs", "log_group"}},
+			{Key: "logging_info.s3_bucket", Label: "Broker log bucket",
+				Path: []string{"logging_info", "broker_logs", "s3", "bucket"}},
+			{Key: "configuration_info.revision", Label: "Configuration revision"},
 			{Key: "bootstrap_brokers_sasl_scram", Label: "SCRAM bootstrap brokers"},
 			tagsWithheld,
 		},
@@ -107,6 +110,8 @@ func registerWorkloads() {
 			{Type: model.RelSecurityGroupAttachment, Field: "broker_node_group_info.security_groups", Targets: []string{"aws_security_group"}},
 			{Type: model.RelEncryptionKey, Field: "encryption_info.encryption_at_rest_kms_key_arn", Targets: []string{"aws_kms_key"}},
 			{Type: model.RelLogDestination, Field: "logging_info.broker_logs.cloudwatch_logs.log_group", Targets: []string{"aws_cloudwatch_log_group"}},
+			{Type: model.RelLogDestination, Field: "logging_info.broker_logs.s3.bucket", Targets: []string{"aws_s3_bucket"}},
+			{Type: model.RelServiceReference, Field: "configuration_info.arn", Targets: []string{"aws_msk_configuration"}},
 		},
 	})
 }

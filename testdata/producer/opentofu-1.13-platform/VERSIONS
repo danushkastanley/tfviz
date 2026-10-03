@@ -1,0 +1,4 @@
+producer=tofu
+producer_version=1.13.1
+provider=hashicorp/aws
+provider_version=6.67.0

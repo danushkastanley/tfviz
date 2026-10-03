@@ -107,4 +107,7 @@ func init() {
 	registerSecurity()
 	registerWorkloads()
 	registerSupporting()
+	registerCompute()
+	registerData()
+	registerMessaging()
 }
