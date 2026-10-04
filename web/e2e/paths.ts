@@ -9,6 +9,7 @@ export const REPORTS = {
   large: `${dir}large.html`,
   safeShare: `${dir}safe-share.html`,
   icons: `${dir}icons.html`,
+  state: `${dir}state.html`,
 } as const;
 
 export const fileUrl = (path: string) => pathToFileURL(path).href;

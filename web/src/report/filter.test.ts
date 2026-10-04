@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { loadSample } from "../test/sample";
-import { DEFAULT_FILTER, familiesIn, filterResources } from "./filter";
+import { defaultFilter, familiesIn, filterResources } from "./filter";
+
+const DEFAULT_FILTER = defaultFilter("plan");
 
 const resources = loadSample().resources;
 
@@ -20,6 +22,12 @@ describe("filterResources", () => {
     const streaming = filterResources(resources, { ...DEFAULT_FILTER, change: "all", family: "streaming" });
     expect(streaming.every((r) => r.family === "streaming")).toBe(true);
     expect(streaming.length).toBeGreaterThan(0);
+  });
+
+  it("opens state on every resource, because state has no changes", () => {
+    const state = resources.map((r) => ({ ...r, change: { ...r.change, action: "no_op" as const } }));
+    expect(filterResources(state, defaultFilter("state"))).toHaveLength(state.length);
+    expect(filterResources(state, defaultFilter("plan"))).toHaveLength(0);
   });
 
   it("lists the domains present", () => {

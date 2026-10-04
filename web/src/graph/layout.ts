@@ -53,7 +53,9 @@ export function layoutCanvas(
       target: edge.target,
       type: "trace",
       data: { relationships: edge.relationships, path },
-      zIndex: 2,
+      // React Flow adds the higher endpoint's z, so lines sit above group
+      // boxes and, drawn before nodes, beneath cards: they never cross labels.
+      zIndex: 0,
       selectable: false,
     });
   }
@@ -74,6 +76,6 @@ function toNode(p: Placed, item: CanvasItem): CanvasNode {
     draggable: false,
     connectable: false,
     selectable: item.kind !== "proxy",
-    zIndex: item.kind === "group" ? 0 : 1,
+    zIndex: item.kind === "group" ? 0 : 2,
   };
 }

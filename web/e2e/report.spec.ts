@@ -148,3 +148,24 @@ test("icons from --icons render offline under the CSP, with symbols as the fallb
   await expect(group.locator("img")).toHaveCount(0);
   expectCleanAndOffline(watch, REPORTS.icons);
 });
+
+test("a state report lists every resource, since state has no changes", async ({ page }) => {
+  const watch = await open(page, REPORTS.state);
+  const listed = page.locator("button[data-resource]");
+  await expect(listed.first()).toBeVisible();
+  const total = Number((await page.getByText(/resources in this report/).innerText()).match(/\d+/)?.[0]);
+  expect(await listed.count()).toBe(total);
+  await expect(page.getByRole("option", { name: "Changes only" })).toHaveCount(0);
+  await expect(page.getByText("No resources match these filters.")).toHaveCount(0);
+  expectCleanAndOffline(watch, REPORTS.state);
+});
+
+test("relationship lines are drawn beneath resource cards", async ({ page }) => {
+  await open(page, REPORTS.sample);
+  const zOf = (selector: string) => page.locator(selector).first().evaluate((el) => Number(getComputedStyle(el).zIndex));
+  const [edgeZ, cardZ, groupZ] = [await zOf(".react-flow__edges svg"), await zOf(".react-flow__node-resource"), await zOf(".react-flow__node-group")];
+  expect(edgeZ).toBeGreaterThan(groupZ);
+  expect(edgeZ).toBeLessThanOrEqual(cardZ);
+  // Our group box draws the border; React Flow's default one must not add a second.
+  expect(await page.locator(".react-flow__node-group").first().evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe("none");
+});

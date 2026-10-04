@@ -28,6 +28,22 @@
 }
 
 /* Groups */
+
+/* React Flow's base styles border its built-in "group" node type, which
+   shares our type name; our own .group-node draws the box. */
+.react-flow__node-group,
+.react-flow__node-group.selected,
+.react-flow__node-group:focus {
+  border: none;
+}
+
+.react-flow__node-group:focus-visible {
+  border: none;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-group);
+}
+
 .group-node {
   box-sizing: border-box;
   width: 100%;
