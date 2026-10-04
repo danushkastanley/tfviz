@@ -42,6 +42,17 @@ type Report struct {
 	Unresolved    []UnresolvedReference `json:"unresolved"`
 	Groups        []Group               `json:"groups"`
 	Warnings      []Warning             `json:"warnings"`
+	Icons         *Icons                `json:"icons,omitempty"`
+}
+
+// Icons come from an icon pack the user supplied with --icons. tfviz does not
+// ship provider icons; it embeds the user's copies as data URIs so the
+// report stays offline.
+type Icons struct {
+	// Images maps an opaque icon id to a data:image/svg+xml URI.
+	Images map[string]string `json:"images"`
+	// ByType maps a resource type to the id of its icon.
+	ByType map[string]string `json:"by_type"`
 }
 
 type Tool struct {

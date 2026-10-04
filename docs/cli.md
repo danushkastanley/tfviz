@@ -59,7 +59,7 @@ The explorer is built so that only you, through the printed link, can use it:
 - Refresh needs a same-origin request carrying a token embedded in the page.
 - It serves only the sanitised report. It never serves raw input, never reads other files, and never performs AWS operations for the browser.
 
-`explore` takes `--state`, `--title`, `--view`, `--safe-share`, `--offline`, the S3 options, `--port` (default: any free port) and `--open` (open your browser).
+`explore` takes `--state`, `--title`, `--view`, `--safe-share`, `--offline`, `--icons`, the S3 options, `--port` (default: any free port) and `--open` (open your browser).
 
 ## Options
 
@@ -72,6 +72,7 @@ The explorer is built so that only you, through the printed link, can use it:
 | `--force` | plan, state | Replace the output file if it exists. Without it, an existing file is never touched. |
 | `--safe-share` | plan, state | Replace identifying details with consistent stand-ins. See [Sharing reports](#sharing-reports). |
 | `--offline` | plan, state | Refuse any input that would need network access (`s3://`). |
+| `--icons <folder>` | plan, state, explore | Show official AWS service icons from a pack you downloaded. See [icons.md](icons.md). Without it, reports use tfviz's own symbols. |
 | `--aws-profile`, `--aws-region`, `--s3-version`, `--expected-bucket-owner` | state | Credentials and object selection for `s3://` inputs. See [s3.md](s3.md). |
 | `--strict` | plan, state | Fail if anything cannot be fully interpreted: unsupported resource types, unrecognised actions, a plan the producer reported as incomplete, skipped deposed objects, or a newer JSON format. No report is written. |
 

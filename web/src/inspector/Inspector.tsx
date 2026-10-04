@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Resource } from "../report/schema.gen";
 import type { ReportIndex } from "../report/view";
-import { FamilyIcon } from "../icons/FamilyIcon";
+import { ResourceIcon } from "../icons/ResourceIcon";
 import { ChangeBadge } from "../graph/ChangeBadge";
 import { describeReplaceOrder } from "../theme/changes";
 import { MetadataTable } from "./MetadataTable";
@@ -26,7 +26,7 @@ export function Inspector({ index, resource, onSelect }: Props) {
     <aside className="inspector" aria-label={`Inspector: ${resource.label}`}>
       <header className="inspector-header">
         <span className="inspector-header__icon">
-          <FamilyIcon family={resource.family} size={20} />
+          <ResourceIcon resource={resource} size={20} />
         </span>
         <div>
           <h2>{resource.label}</h2>

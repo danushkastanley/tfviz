@@ -25,6 +25,7 @@ HTML report / browser
 | Secrets revealed by relationships | A sensitive reference suppresses its relationship | Graph test |
 | Script injection from labels | Report data is serialised JSON with `<`, `>`, `&` and U+2028/9 escaped. The interface renders text only; `innerHTML` and `dangerouslySetInnerHTML` are banned by lint | Hostile-label tests in Go and in three browsers, plus fuzzing |
 | Network access from reports | The CSP allows only the inlined script and style hashes, `img-src data:`, and `connect-src 'none'` | Playwright checks for zero requests and confirms that an injected script is blocked |
+| Hostile icon files (`--icons`) | Only regular `.svg` files under the chosen folder, size-limited and checked for an `<svg>` root. They are embedded as `data:image/svg+xml` and shown only through `<img>`, where browsers run no scripts and load nothing | Loader tests, schema pattern, and a browser test under the CSP |
 | Malicious input | Size, depth and resource limits, a single document only, and errors that never echo input | Fuzz tests |
 | Other sites reading the local explorer | Loopback only, a Host check, a one-time token exchanged for a SameSite=Strict cookie, no CORS, no-store, and CSRF protection on refresh | Server tests, plus a cross-origin test in three browsers |
 | Credential exposure | S3 credentials stay inside the AWS SDK. tfviz never starts an SSO login and calls no secret-value APIs | S3 tests in an isolated environment |

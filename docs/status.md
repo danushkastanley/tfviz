@@ -13,6 +13,8 @@ This page tracks progress against [the implementation plan](implementation-plan.
 | M4: coverage, hardening, public alpha | Engineering done; alpha pending | Tier A and B adapters, safe-share, local explorer, fuzzing, performance, release pipeline, notices and docs |
 | M5: v1 after feedback | Not started | Depends on alpha feedback |
 
+Since M4: official AWS icons through a user-supplied pack (`--icons`, [ADR 0002](decisions/0002-user-supplied-provider-icons.md)).
+
 ## Release checklist (plan §19)
 
 | Criterion | State | Evidence |
@@ -38,6 +40,4 @@ This page tracks progress against [the implementation plan](implementation-plan.
 - S3 verification against a real test bucket, with SSO and a CI workload role.
 - A Jenkins run, and branded-browser checks on real devices.
 - M4 exit: three external engineers complete the workflows without help.
-- Decisions:
-  - cloud provider icon packs (the official sets lack a licence that is clearly compatible with redistribution)
-  - Azure and GCP (deferred beyond v1 in the plan)
+- Deciding when to add Azure and GCP (deferred beyond v1 in the plan).

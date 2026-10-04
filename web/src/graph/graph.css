@@ -304,3 +304,13 @@
   color: var(--text-primary);
   font-weight: 600;
 }
+
+/* Official icons from --icons are full-colour artwork: drop the neutral tile. */
+.resource-card__icon:has(.resource-icon) {
+  background: none;
+}
+
+.resource-card__icon .resource-icon {
+  width: 28px;
+  height: 28px;
+}

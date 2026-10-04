@@ -91,6 +91,7 @@ export interface Report {
   unresolved: UnresolvedReference[];
   groups: Group[];
   warnings: Warning[];
+  icons?: Icons;
 }
 /**
  * This interface was referenced by `Report`'s JSON-Schema
@@ -326,4 +327,21 @@ export interface Warning {
     | "limit_reached";
   message: string;
   resource?: Id;
+}
+/**
+ * Images from an icon pack the user supplied with --icons. tfviz does not ship provider icons.
+ *
+ * This interface was referenced by `Report`'s JSON-Schema
+ * via the `definition` "Icons".
+ */
+export interface Icons {
+  images: {
+    [k: string]: string;
+  };
+  /**
+   * Resource type to icon id.
+   */
+  by_type: {
+    [k: string]: Id;
+  };
 }

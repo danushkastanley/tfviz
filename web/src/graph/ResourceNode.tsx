@@ -1,5 +1,5 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { FamilyIcon } from "../icons/FamilyIcon";
+import { ResourceIcon } from "../icons/ResourceIcon";
 import { presentChange } from "../theme/changes";
 import { emphasisClass, useCanvasState } from "./canvasState";
 import type { CanvasNode } from "./layout";
@@ -22,7 +22,7 @@ export function ResourceNode({ data }: NodeProps<CanvasNode>) {
     <div className={classes} data-resource-id={resource.id}>
       <Handle type="target" position={Position.Left} isConnectable={false} />
       <span className="resource-card__icon">
-        <FamilyIcon family={resource.family} />
+        <ResourceIcon resource={resource} />
       </span>
       <span className="resource-card__text">
         <span className="resource-card__label">{resource.label}</span>
