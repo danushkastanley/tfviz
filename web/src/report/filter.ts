@@ -1,4 +1,4 @@
-import type { Resource } from "./schema.gen";
+import type { Report, Resource } from "./schema.gen";
 
 export type Action = Resource["change"]["action"];
 export type Family = Resource["family"];
@@ -12,7 +12,10 @@ export interface ResourceFilter {
   family: Family | "all";
 }
 
-export const DEFAULT_FILTER: ResourceFilter = { query: "", change: "changes", family: "all" };
+/** Plans open on their changes. State has none, so it opens on everything. */
+export function defaultFilter(mode: Report["mode"]): ResourceFilter {
+  return { query: "", change: mode === "plan" ? "changes" : "all", family: "all" };
+}
 
 /** Applies the navigator's search, change and domain filters. */
 export function filterResources(resources: readonly Resource[], filter: ResourceFilter): Resource[] {

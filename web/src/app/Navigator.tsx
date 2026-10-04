@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import type { ReportIndex } from "../report/view";
-import { DEFAULT_FILTER, familiesIn, filterResources, type ChangeFilter, type Family, type ResourceFilter } from "../report/filter";
+import { defaultFilter, familiesIn, filterResources, type ChangeFilter, type Family, type ResourceFilter } from "../report/filter";
 import { ACTION_ORDER, presentChange, type Action } from "../theme/changes";
 import { ResourceIcon } from "../icons/ResourceIcon";
 
@@ -31,7 +31,7 @@ const FAMILY_LABEL: Record<Family, string> = {
  * is never the only way to review a change.
  */
 export function Navigator({ index, selectedId, onSelect }: Props) {
-  const [filter, setFilter] = useState<ResourceFilter>(DEFAULT_FILTER);
+  const [filter, setFilter] = useState<ResourceFilter>(() => defaultFilter(index.report.mode));
   const listRef = useRef<HTMLUListElement>(null);
   const families = useMemo(() => familiesIn(index.report.resources), [index]);
   const update = (patch: Partial<ResourceFilter>) => setFilter((prev) => ({ ...prev, ...patch }));
@@ -65,7 +65,7 @@ export function Navigator({ index, selectedId, onSelect }: Props) {
         <label>
           <span>Show</span>
           <select value={filter.change} onChange={(e) => update({ change: e.target.value as ChangeFilter })}>
-            <option value="changes">Changes only</option>
+            {index.report.mode === "plan" && <option value="changes">Changes only</option>}
             <option value="all">All resources</option>
             {ACTION_ORDER.filter((a) => a !== "no_op" && index.report.resources.some((r) => r.change.action === a)).map((a) => (
               <option key={a} value={a}>
