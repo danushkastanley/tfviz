@@ -1,0 +1,94 @@
+{{define "main"}}
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__panel">
+      <span class="pill">{{template "icon-stack"}}CI pipelines</span>
+      <h1>Use tfviz in CI</h1>
+      <p class="lede">The pattern is the same everywhere: create the plan, pipe its JSON into tfviz, and upload only the report.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow prose">
+    <div class="callout">
+      <p>The exported plan JSON can contain plaintext secrets. Pipe it straight into tfviz rather than saving it as an artefact. If your apply step needs the binary plan, keep it separately with restricted access. These examples assume a pinned, <a href="/get-started/#install">verified</a> tfviz binary is already installed.</p>
+    </div>
+
+    <h2 id="github">GitHub Actions</h2>
+<pre><code>- name: Plan and report
+  run: |
+    set -euo pipefail
+    umask 077
+    mkdir -p artefacts
+    terraform plan -input=false -out=tfplan
+    terraform show -json tfplan | tfviz plan --input - --output artefacts/infra-report.html --force
+- uses: actions/upload-artifact@&lt;pinned-sha&gt; # pin to a commit SHA
+  with:
+    name: infra-report
+    path: artefacts/infra-report.html
+    retention-days: 14</code></pre>
+
+    <h2 id="gitlab">GitLab CI</h2>
+<pre><code>infra-report:
+  script:
+    - umask 077 &amp;&amp; mkdir -p artefacts
+    - terraform plan -input=false -out=tfplan
+    - terraform show -json tfplan | tfviz plan --input - --output artefacts/infra-report.html --force
+  artifacts:
+    paths: [artefacts/infra-report.html]
+    expire_in: 2 weeks</code></pre>
+
+    <h2 id="jenkins">Jenkins</h2>
+<pre><code>pipeline {
+  agent any
+  stages {
+    stage('Infrastructure review report') {
+      steps {
+        sh(script: '''#!/usr/bin/env bash
+set -euo pipefail
+set +x
+umask 077
+mkdir -p artefacts
+plan_path=$(mktemp)
+trap 'rm -f "$plan_path"' EXIT
+terraform plan -input=false -out="$plan_path"
+terraform show -json "$plan_path" | tfviz plan --input - --output artefacts/infra-report.html --force
+''')
+      }
+    }
+  }
+  post {
+    success {
+      archiveArtifacts(artifacts: 'artefacts/infra-report.html', fingerprint: true, allowEmptyArchive: false)
+    }
+  }
+}</code></pre>
+    <p class="note">Jenkins usually serves archived artefacts under a policy that blocks scripts. Download the report and open it locally. Don't weaken the controller's security settings just to display a diagram.</p>
+
+    <h2 id="buildkite">Buildkite</h2>
+<pre><code>steps:
+  - label: "Infrastructure review report"
+    command: |
+      set -euo pipefail
+      umask 077 &amp;&amp; mkdir -p artefacts
+      terraform plan -input=false -out=tfplan
+      terraform show -json tfplan | tfviz plan --input - --output artefacts/infra-report.html --force
+    artifact_paths: "artefacts/infra-report.html"</code></pre>
+
+    <h2 id="exit-codes">Failing the pipeline on gaps</h2>
+    <p>A plan that changes infrastructure is still a success. Add <code>--strict</code> to fail when anything can't be fully interpreted, such as an unsupported resource type or a plan the producer reported as incomplete.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Exit code</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>0</code></td><td>Report written.</td></tr>
+        <tr><td><code>1</code></td><td>Processing or retrieval failed.</td></tr>
+        <tr><td><code>2</code></td><td>Invalid arguments, unsupported input, or a <code>--strict</code> failure.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="sharing">Sharing outside the team</h2>
+    <p>Reports show approved names, IDs and network details. Apply your normal artefact access and retention controls, and use <code>--safe-share</code> for audiences who shouldn't see identifying details.</p>
+  </div>
+</section>
+{{end}}

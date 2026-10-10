@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="{{.CSP}}">
+<meta name="referrer" content="no-referrer">
+<title>{{.Page.Title}}</title>
+<meta name="description" content="{{.Page.Description}}">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tfviz">
+<meta property="og:title" content="{{.Page.Title}}">
+<meta property="og:description" content="{{.Page.Description}}">
+{{- if .Config.BaseURL}}
+<link rel="canonical" href="{{abs .Page.Path}}">
+<meta property="og:url" content="{{abs .Page.Path}}">
+<meta property="og:image" content="{{abs "/images/og.png"}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+{{- end}}
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{.CSS}}">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="/" aria-label="tfviz home">{{template "logo"}}<span>tfviz</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        {{- range .Pages}}{{if .Nav}}
+        <li><a href="{{.Path}}"{{if eq .Path $.Page.Path}} aria-current="page"{{end}}>{{.Nav}}</a></li>
+        {{- end}}{{end}}
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <a class="button button--small button--ghost" href="{{.Config.Repo}}" rel="noopener">GitHub</a>
+      <a class="button button--small button--blue" href="/get-started/">Get started</a>
+    </div>
+  </div>
+</header>
+<main id="main">
+{{template "main" .}}
+</main>
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div>
+      <a class="brand" href="/">{{template "logo"}}<span>tfviz</span></a>
+      <p>Terraform and OpenTofu plans and state as calm, private architecture diagrams.</p>
+      <p>Open source under the Apache 2.0 licence · <span class="nowrap">Version {{.Config.Version}}</span><br>No cookies, analytics or JavaScript on this site.</p>
+    </div>
+    <div>
+      <h2>Product</h2>
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Live demo</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Use it</h2>
+      <ul>
+        <li><a href="/get-started/">Get started</a></li>
+        <li><a href="/ci/">CI pipelines</a></li>
+        <li><a href="{{.Config.Repo}}/tree/main/docs" rel="noopener">Documentation</a></li>
+        <li><a href="{{.Config.Repo}}/releases" rel="noopener">Releases</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Project</h2>
+      <ul>
+        <li><a href="{{.Config.Repo}}" rel="noopener">GitHub</a></li>
+        <li><a href="{{.Config.Repo}}/issues" rel="noopener">Issues</a></li>
+        <li><a href="{{.Config.Repo}}/blob/main/SECURITY.md" rel="noopener">Report a vulnerability</a></li>
+        <li><a href="/fonts/OFL.txt">Font licence</a></li>
+      </ul>
+    </div>
+    <p class="site-footer__legal">Terraform is a trademark of HashiCorp. OpenTofu is a trademark of The Linux Foundation. AWS and its service icons are trademarks of Amazon.com, Inc. GitHub, GitLab, Jenkins and Buildkite are trademarks of their respective owners. tfviz is an independent project, not affiliated with or endorsed by any of them. Brand marks from Simple Icons; the Jenkins logo is by the Jenkins project, licensed CC BY-SA 3.0.</p>
+  </div>
+</footer>
+</body>
+</html>

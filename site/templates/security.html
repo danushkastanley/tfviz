@@ -1,0 +1,67 @@
+{{define "main"}}
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__panel">
+      <span class="pill">{{template "icon-lock"}}Security and privacy</span>
+      <h1>Secrets stay out, by design</h1>
+      <p class="lede">Plans and state can contain secrets. tfviz is built so that only an approved, sanitised model of your infrastructure ever reaches the report.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How data moves through tfviz</h2>
+      <p>Raw values never leave the reader. Everything after it works on a sanitised model.</p>
+    </div>
+    <ol class="flow">
+        <li><strong>Plan or state</strong><span>May contain secrets</span></li>
+        <li><strong>Reader</strong><span>Turns sensitive values into markers with no payload</span></li>
+        <li><strong>Projection</strong><span>Keeps only approved fields for each resource type</span></li>
+        <li><strong>Report</strong><span>Sanitised model in one offline HTML file</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="section-head"><h2>What tfviz never does</h2></div>
+    <div class="grid grid--3">
+      <article class="card card--soft"><div class="icon-tile">{{template "icon-cloud"}}</div><h3>Never sends your data</h3><p>No telemetry, no accounts and no hosted service. Reports make no network requests and run under a strict content security policy.</p></article>
+      <article class="card card--soft"><div class="icon-tile">{{template "icon-lock"}}</div><h3>Never shows secret values</h3><p>Passwords, user data, environment variables, tags, policies and secret contents are withheld. A sensitive change is shown only as changed or unchanged.</p></article>
+      <article class="card card--soft"><div class="icon-tile">{{template "icon-file"}}</div><h3>Never touches your state</h3><p>S3 access is a single read-only request for the object you name. No listing, no writes, no state locks and no secret-value APIs.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow prose">
+    <h2>Controls and evidence</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Risk</th><th>Control</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>Secrets in the report</td><td>Payload-free sensitive markers, per-type allowlists, and a deny guard for secret-shaped names</td><td>Planted canary secrets are searched for in every report, stdout and stderr</td></tr>
+        <tr><td>Secrets revealed through relationships</td><td>A sensitive reference suppresses its relationship</td><td>Graph tests</td></tr>
+        <tr><td>Script injection from labels</td><td>Escaped, embedded JSON and text-only rendering</td><td>Hostile-label tests in three browsers, plus fuzzing</td></tr>
+        <tr><td>Network access from reports</td><td>Hash-based CSP with <code>connect-src 'none'</code></td><td>Browser tests check zero requests</td></tr>
+        <tr><td>Other sites reading the local explorer</td><td>Loopback only, Host check, one-time token, SameSite=Strict cookie, no CORS</td><td>Server tests and a cross-origin browser test</td></tr>
+        <tr><td>Identifying details when sharing</td><td><code>--safe-share</code> stand-ins; the mapping is never written</td><td>Safe-share leak tests</td></tr>
+        <tr><td>Supply chain</td><td>Pinned dependencies, licence allowlists, checksums, SBOMs and build provenance</td><td>CI and the release workflow</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Limits</h2>
+    <ul>
+      <li><strong>Normal reports are sensitive.</strong> They show approved names, IDs, ARNs and network details by design, so protect them like other infrastructure artefacts.</li>
+      <li><strong>Safe-share is not anonymity.</strong> The shape of your architecture may itself be confidential.</li>
+      <li><strong>Names can carry secrets.</strong> No heuristic can prove that an arbitrary name is harmless.</li>
+      <li><strong>Snapshots are not live.</strong> State and plans describe a recorded moment. Relationships are recorded associations, not observed traffic.</li>
+      <li><strong>tfviz can't clean your producer files.</strong> The exported JSON and Terraform's own plan files can contain plaintext secrets. Pipe the JSON instead of saving it.</li>
+    </ul>
+
+    <h2>Report a vulnerability</h2>
+    <p>Please report security issues privately, as described in <a href="{{.Config.Repo}}/blob/main/SECURITY.md" rel="noopener">SECURITY.md</a>. Never attach a real plan, state file or unredacted report to a public issue.</p>
+  </div>
+</section>
+{{end}}

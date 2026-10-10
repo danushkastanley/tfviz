@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;self&#39;; img-src &#39;self&#39;; font-src &#39;self&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<title>Security and privacy · tfviz</title>
+<meta name="description" content="How tfviz keeps secrets out of reports, what it never does, and where the limits are.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tfviz">
+<meta property="og:title" content="Security and privacy · tfviz">
+<meta property="og:description" content="How tfviz keeps secrets out of reports, what it never does, and where the limits are.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.649450fb27.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="/" aria-label="tfviz home"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Demo</a></li>
+        <li><a href="/ci/">CI</a></li>
+        <li><a href="/security/" aria-current="page">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <a class="button button--small button--ghost" href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a>
+      <a class="button button--small button--blue" href="/get-started/">Get started</a>
+    </div>
+  </div>
+</header>
+<main id="main">
+
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__panel">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5.5c0 4.2-2.9 7.6-7 9.5-4.1-1.9-7-5.3-7-9.5V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>Security and privacy</span>
+      <h1>Secrets stay out, by design</h1>
+      <p class="lede">Plans and state can contain secrets. tfviz is built so that only an approved, sanitised model of your infrastructure ever reaches the report.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How data moves through tfviz</h2>
+      <p>Raw values never leave the reader. Everything after it works on a sanitised model.</p>
+    </div>
+    <ol class="flow">
+        <li><strong>Plan or state</strong><span>May contain secrets</span></li>
+        <li><strong>Reader</strong><span>Turns sensitive values into markers with no payload</span></li>
+        <li><strong>Projection</strong><span>Keeps only approved fields for each resource type</span></li>
+        <li><strong>Report</strong><span>Sanitised model in one offline HTML file</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="section-head"><h2>What tfviz never does</h2></div>
+    <div class="grid grid--3">
+      <article class="card card--soft"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.6-8 6 6 0 0 1 11.4 1.5A3.3 3.3 0 0 1 17.5 18H7Z"/></svg></div><h3>Never sends your data</h3><p>No telemetry, no accounts and no hosted service. Reports make no network requests and run under a strict content security policy.</p></article>
+      <article class="card card--soft"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5.5c0 4.2-2.9 7.6-7 9.5-4.1-1.9-7-5.3-7-9.5V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Never shows secret values</h3><p>Passwords, user data, environment variables, tags, policies and secret contents are withheld. A sensitive change is shown only as changed or unchanged.</p></article>
+      <article class="card card--soft"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div><h3>Never touches your state</h3><p>S3 access is a single read-only request for the object you name. No listing, no writes, no state locks and no secret-value APIs.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow prose">
+    <h2>Controls and evidence</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Risk</th><th>Control</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>Secrets in the report</td><td>Payload-free sensitive markers, per-type allowlists, and a deny guard for secret-shaped names</td><td>Planted canary secrets are searched for in every report, stdout and stderr</td></tr>
+        <tr><td>Secrets revealed through relationships</td><td>A sensitive reference suppresses its relationship</td><td>Graph tests</td></tr>
+        <tr><td>Script injection from labels</td><td>Escaped, embedded JSON and text-only rendering</td><td>Hostile-label tests in three browsers, plus fuzzing</td></tr>
+        <tr><td>Network access from reports</td><td>Hash-based CSP with <code>connect-src 'none'</code></td><td>Browser tests check zero requests</td></tr>
+        <tr><td>Other sites reading the local explorer</td><td>Loopback only, Host check, one-time token, SameSite=Strict cookie, no CORS</td><td>Server tests and a cross-origin browser test</td></tr>
+        <tr><td>Identifying details when sharing</td><td><code>--safe-share</code> stand-ins; the mapping is never written</td><td>Safe-share leak tests</td></tr>
+        <tr><td>Supply chain</td><td>Pinned dependencies, licence allowlists, checksums, SBOMs and build provenance</td><td>CI and the release workflow</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Limits</h2>
+    <ul>
+      <li><strong>Normal reports are sensitive.</strong> They show approved names, IDs, ARNs and network details by design, so protect them like other infrastructure artefacts.</li>
+      <li><strong>Safe-share is not anonymity.</strong> The shape of your architecture may itself be confidential.</li>
+      <li><strong>Names can carry secrets.</strong> No heuristic can prove that an arbitrary name is harmless.</li>
+      <li><strong>Snapshots are not live.</strong> State and plans describe a recorded moment. Relationships are recorded associations, not observed traffic.</li>
+      <li><strong>tfviz can't clean your producer files.</strong> The exported JSON and Terraform's own plan files can contain plaintext secrets. Pipe the JSON instead of saving it.</li>
+    </ul>
+
+    <h2>Report a vulnerability</h2>
+    <p>Please report security issues privately, as described in <a href="https://github.com/danushkastanley/tfviz/blob/main/SECURITY.md" rel="noopener">SECURITY.md</a>. Never attach a real plan, state file or unredacted report to a public issue.</p>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div>
+      <a class="brand" href="/"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+      <p>Terraform and OpenTofu plans and state as calm, private architecture diagrams.</p>
+      <p>Open source under the Apache 2.0 licence · <span class="nowrap">Version 0.1.0-alpha.1</span><br>No cookies, analytics or JavaScript on this site.</p>
+    </div>
+    <div>
+      <h2>Product</h2>
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Live demo</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Use it</h2>
+      <ul>
+        <li><a href="/get-started/">Get started</a></li>
+        <li><a href="/ci/">CI pipelines</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/tree/main/docs" rel="noopener">Documentation</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/releases" rel="noopener">Releases</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Issues</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/blob/main/SECURITY.md" rel="noopener">Report a vulnerability</a></li>
+        <li><a href="/fonts/OFL.txt">Font licence</a></li>
+      </ul>
+    </div>
+    <p class="site-footer__legal">Terraform is a trademark of HashiCorp. OpenTofu is a trademark of The Linux Foundation. AWS and its service icons are trademarks of Amazon.com, Inc. GitHub, GitLab, Jenkins and Buildkite are trademarks of their respective owners. tfviz is an independent project, not affiliated with or endorsed by any of them. Brand marks from Simple Icons; the Jenkins logo is by the Jenkins project, licensed CC BY-SA 3.0.</p>
+  </div>
+</footer>
+</body>
+</html>
