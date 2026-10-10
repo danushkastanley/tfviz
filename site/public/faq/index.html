@@ -14,7 +14,7 @@
 <meta property="og:description" content="Answers to common questions about tfviz, privacy, supported providers and sharing reports.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.13ac5b1239.css">
+<link rel="stylesheet" href="/assets/site.6801043607.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -51,43 +51,43 @@
 <section class="section">
   <div class="wrap narrow">
     <div class="faq">
-      <details open>
+      <details name="faq" open>
         <summary>Does tfviz send my plan or state anywhere?</summary>
         <p>No. tfviz runs on your machine or in your pipeline and writes one HTML file. It has no telemetry, accounts or hosted service, and the report makes no network requests. The only network call tfviz ever makes is the S3 read you ask for with an <code>s3://</code> input, and <code>--offline</code> refuses even that.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Can a report leak secrets?</summary>
         <p>tfviz is designed so it can't. Only approved fields reach the report. Sensitive values become markers with no payload, and tests search every report for planted secrets. Names you choose yourself, such as a resource named after a password, can't be detected, so treat reports like other infrastructure artefacts.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Which clouds are supported?</summary>
         <p>AWS today, with 42 resource types. Resources from other providers still appear, with limited detail and no placement. Azure and Google Cloud are planned after the alpha.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Does it work with OpenTofu?</summary>
         <p>Yes. It's tested with OpenTofu 1.13 and Terraform 1.16, and both produce identical reports for the same stack. For encrypted OpenTofu state, export it with <code>tofu show -json</code> using your encryption configuration.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Why isn't my report showing AWS icons?</summary>
         <p>tfviz doesn't ship them. AWS allows its icons in architecture diagrams but not bundled in software. Download the pack from AWS and pass its folder with <code>--icons</code>, and tfviz embeds the icons each report needs.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Is a state report proof of what's running?</summary>
         <p>No. State is Terraform's recorded snapshot, and a plan is a proposal. tfviz never queries your live infrastructure, so a report can't prove AWS matches it.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Can I share a report outside my team?</summary>
         <p>Use <code>--safe-share</code>. It replaces names, IDs, ARNs, account numbers and network addresses with consistent stand-ins, and keeps service types and topology. The architecture itself may still be sensitive.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Why does the report look blank in Jenkins?</summary>
         <p>Jenkins serves archived files under a policy that blocks scripts. Download the report and open it locally rather than weakening the controller's security.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>Is it free?</summary>
         <p>Yes. tfviz is open source under the Apache 2.0 licence.</p>
       </details>
-      <details>
+      <details name="faq">
         <summary>How do I give feedback?</summary>
         <p><a href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Open an issue on GitHub</a>. If you need to show a problem, use <code>--safe-share</code>. Never attach a real plan, state file or unredacted report.</p>
       </details>

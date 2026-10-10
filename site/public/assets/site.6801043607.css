@@ -187,13 +187,22 @@ th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
 
 /* FAQ */
 .faq { display: grid; gap: 12px; }
-.faq details { border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.faq details { border: 1px solid var(--line); border-radius: 14px; background: #fff; transition: border-color 200ms, background-color 200ms; }
 .faq details[open] { border-color: #dbe4ff; background: linear-gradient(180deg, #f7f9ff, #fff); }
 .faq summary { display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 18px 22px; color: var(--ink); font-weight: 600; cursor: pointer; list-style: none; }
 .faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: ""; flex: none; width: 10px; height: 10px; margin-top: -4px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform 150ms; }
+.faq summary::after { content: ""; flex: none; width: 10px; height: 10px; margin-top: -4px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform 240ms cubic-bezier(0.2, 0, 0, 1), margin-top 240ms cubic-bezier(0.2, 0, 0, 1); }
 .faq details[open] summary::after { margin-top: 4px; transform: rotate(-135deg); }
 .faq details p { margin: 0; padding: 0 22px 20px; color: var(--muted); }
+/* Opening fades the answer in everywhere. Browsers that can animate details
+   content to auto height also ease it open and closed. */
+.faq details[open] p { animation: faq-reveal 260ms cubic-bezier(0.2, 0, 0, 1); }
+@keyframes faq-reveal { from { opacity: 0; transform: translateY(-4px); } }
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+  .faq { interpolate-size: allow-keywords; }
+  .faq details::details-content { block-size: 0; overflow: clip; transition: block-size 280ms cubic-bezier(0.2, 0, 0, 1), content-visibility 280ms allow-discrete; }
+  .faq details[open]::details-content { block-size: auto; }
+}
 
 /* Call to action */
 .cta { padding: 72px 24px; border-radius: var(--radius-lg); background: var(--wash); text-align: center; }
@@ -231,5 +240,5 @@ th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
 }
