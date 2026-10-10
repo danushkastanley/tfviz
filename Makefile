@@ -3,7 +3,7 @@ SHELL := /bin/bash
 
 GO ?= go
 
-.PHONY: test build go-test fmt-check web web-install web-test e2e fixtures notices snapshot
+.PHONY: test build go-test fmt-check web web-install web-test e2e fixtures notices snapshot site site-check site-assets
 
 test: web-test go-test
 
@@ -53,3 +53,17 @@ fixtures:
 	$(GO) run ./scripts/fixturegen -tool tofu -out testdata/producer/opentofu-1.13
 	$(GO) run ./scripts/fixturegen -tool terraform -stack testdata/stacks/aws-platform -out testdata/producer/terraform-1.16-platform
 	$(GO) run ./scripts/fixturegen -tool tofu -stack testdata/stacks/aws-platform -out testdata/producer/opentofu-1.13-platform
+
+# Renders the website (site/) into site/public and the host configuration.
+site:
+	$(GO) run ./scripts/site
+
+# Fails if the committed site output is out of date.
+site-check:
+	$(GO) run ./scripts/site -check
+
+# Regenerates the site's demo reports and screenshots, then the site.
+# Needs the unzipped AWS Architecture Icons pack: make site-assets ICONS=~/aws-icons
+site-assets: web
+	pnpm --dir web exec node scripts/site-assets.mjs --icons "$(ICONS)"
+	$(GO) run ./scripts/site

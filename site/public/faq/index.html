@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;self&#39;; img-src &#39;self&#39;; font-src &#39;self&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<title>Questions · tfviz</title>
+<meta name="description" content="Answers to common questions about tfviz, privacy, supported providers and sharing reports.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tfviz">
+<meta property="og:title" content="Questions · tfviz">
+<meta property="og:description" content="Answers to common questions about tfviz, privacy, supported providers and sharing reports.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.13ac5b1239.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="/" aria-label="tfviz home"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Demo</a></li>
+        <li><a href="/ci/">CI</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/" aria-current="page">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <a class="button button--small button--ghost" href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a>
+      <a class="button button--small button--blue" href="/get-started/">Get started</a>
+    </div>
+  </div>
+</header>
+<main id="main">
+
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__panel">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.5 2.5M15.2 15.2l2.5 2.5M6.3 17.7l2.5-2.5M15.2 8.8l2.5-2.5"/></svg>FAQ</span>
+      <h1>Frequently asked questions</h1>
+      <p class="lede">Privacy, providers, sharing and how tfviz fits into your workflow.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow">
+    <div class="faq">
+      <details open>
+        <summary>Does tfviz send my plan or state anywhere?</summary>
+        <p>No. tfviz runs on your machine or in your pipeline and writes one HTML file. It has no telemetry, accounts or hosted service, and the report makes no network requests. The only network call tfviz ever makes is the S3 read you ask for with an <code>s3://</code> input, and <code>--offline</code> refuses even that.</p>
+      </details>
+      <details>
+        <summary>Can a report leak secrets?</summary>
+        <p>tfviz is designed so it can't. Only approved fields reach the report. Sensitive values become markers with no payload, and tests search every report for planted secrets. Names you choose yourself, such as a resource named after a password, can't be detected, so treat reports like other infrastructure artefacts.</p>
+      </details>
+      <details>
+        <summary>Which clouds are supported?</summary>
+        <p>AWS today, with 42 resource types. Resources from other providers still appear, with limited detail and no placement. Azure and Google Cloud are planned after the alpha.</p>
+      </details>
+      <details>
+        <summary>Does it work with OpenTofu?</summary>
+        <p>Yes. It's tested with OpenTofu 1.13 and Terraform 1.16, and both produce identical reports for the same stack. For encrypted OpenTofu state, export it with <code>tofu show -json</code> using your encryption configuration.</p>
+      </details>
+      <details>
+        <summary>Why isn't my report showing AWS icons?</summary>
+        <p>tfviz doesn't ship them. AWS allows its icons in architecture diagrams but not bundled in software. Download the pack from AWS and pass its folder with <code>--icons</code>, and tfviz embeds the icons each report needs.</p>
+      </details>
+      <details>
+        <summary>Is a state report proof of what's running?</summary>
+        <p>No. State is Terraform's recorded snapshot, and a plan is a proposal. tfviz never queries your live infrastructure, so a report can't prove AWS matches it.</p>
+      </details>
+      <details>
+        <summary>Can I share a report outside my team?</summary>
+        <p>Use <code>--safe-share</code>. It replaces names, IDs, ARNs, account numbers and network addresses with consistent stand-ins, and keeps service types and topology. The architecture itself may still be sensitive.</p>
+      </details>
+      <details>
+        <summary>Why does the report look blank in Jenkins?</summary>
+        <p>Jenkins serves archived files under a policy that blocks scripts. Download the report and open it locally rather than weakening the controller's security.</p>
+      </details>
+      <details>
+        <summary>Is it free?</summary>
+        <p>Yes. tfviz is open source under the Apache 2.0 licence.</p>
+      </details>
+      <details>
+        <summary>How do I give feedback?</summary>
+        <p><a href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Open an issue on GitHub</a>. If you need to show a problem, use <code>--safe-share</code>. Never attach a real plan, state file or unredacted report.</p>
+      </details>
+    </div>
+    <p class="note centre">Something else? <a href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Ask on GitHub</a>.</p>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div>
+      <a class="brand" href="/"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+      <p>Terraform and OpenTofu plans and state as calm, private architecture diagrams.</p>
+      <p>Open source under the Apache 2.0 licence · <span class="nowrap">Version 0.1.0-alpha.1</span><br>No cookies, analytics or JavaScript on this site.</p>
+    </div>
+    <div>
+      <h2>Product</h2>
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Live demo</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Use it</h2>
+      <ul>
+        <li><a href="/get-started/">Get started</a></li>
+        <li><a href="/ci/">CI pipelines</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/tree/main/docs" rel="noopener">Documentation</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/releases" rel="noopener">Releases</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Issues</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/blob/main/SECURITY.md" rel="noopener">Report a vulnerability</a></li>
+        <li><a href="/fonts/OFL.txt">Font licence</a></li>
+      </ul>
+    </div>
+    <p class="site-footer__legal">Terraform is a trademark of HashiCorp. OpenTofu is a trademark of The Linux Foundation. AWS and its service icons are trademarks of Amazon.com, Inc. tfviz is an independent project, not affiliated with or endorsed by any of them.</p>
+  </div>
+</footer>
+</body>
+</html>

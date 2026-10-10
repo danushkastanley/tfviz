@@ -19,6 +19,7 @@ Read [docs/implementation-plan.md](docs/implementation-plan.md) before you make 
 - `make e2e`: renders reports with the Go exporter and opens them under `file://` in Chromium, Firefox and WebKit. First run: `pnpm --dir web exec playwright install chromium firefox webkit`.
 - `make notices`: regenerates THIRD_PARTY_NOTICES.md (CI checks it is current).
 - `make snapshot`: builds release archives locally with GoReleaser, without publishing.
+- `make site`: renders the website in `site/` into `site/public` (committed; CI runs `make site-check`). `make site-assets ICONS=<pack>` refreshes its screenshots and demo reports. See `site/README.md`.
 - `make fixtures`: regenerates producer JSON with Terraform and OpenTofu. It uses fake credentials and makes no AWS calls.
 
 ## Decisions

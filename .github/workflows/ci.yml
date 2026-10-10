@@ -35,6 +35,8 @@ jobs:
       - run: make test
       - name: Check third-party notices are current
         run: make notices && git diff --exit-code THIRD_PARTY_NOTICES.md
+      - name: Check the website output is current
+        run: make site-check
 
   e2e:
     name: Offline report (Chromium, Firefox, WebKit)

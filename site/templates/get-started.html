@@ -1,0 +1,62 @@
+{{define "main"}}
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__panel">
+      <span class="pill">{{template "icon-terminal"}}Get started</span>
+      <h1>Your first report in minutes</h1>
+      <p class="lede">Install one binary, verify it, and generate your first report. You don't need Node.js, a server or an account.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow prose">
+    <h2 id="install">1. Download and verify</h2>
+    <p>Releases provide binaries for macOS and Linux, on arm64 and amd64. Pin a version and check it before you run it.</p>
+<pre><code>VERSION={{.Config.Version}}
+OS=darwin ARCH=arm64          # or linux / amd64
+base={{.Config.Repo}}/releases/download/v${VERSION}
+curl -fsSLO "${base}/tfviz_${VERSION}_${OS}_${ARCH}.tar.gz"
+curl -fsSLO "${base}/tfviz_${VERSION}_checksums.txt"
+grep " tfviz_${VERSION}_${OS}_${ARCH}.tar.gz$" "tfviz_${VERSION}_checksums.txt" | shasum -a 256 -c -
+gh attestation verify "tfviz_${VERSION}_${OS}_${ARCH}.tar.gz" --repo danushkastanley/tfviz</code></pre>
+    <p>Then extract it and put <code>tfviz</code> on your <code>PATH</code>:</p>
+<pre><code>tar -xzf "tfviz_${VERSION}_${OS}_${ARCH}.tar.gz" tfviz
+sudo install -m 0755 tfviz /usr/local/bin/tfviz
+tfviz version</code></pre>
+    <p class="note">Each release includes a SHA-256 checksum file, an SBOM for every archive and GitHub build provenance. Don't pipe a remote install script into a shell. Windows builds will follow.</p>
+
+    <h2 id="plan">2. Review a plan</h2>
+<pre><code>terraform plan -out=tfplan
+terraform show -json tfplan | tfviz plan --input - --output review.html</code></pre>
+    <p>Open <code>review.html</code> in any modern browser. It works offline, straight from disk. With OpenTofu, replace <code>terraform</code> with <code>tofu</code>.</p>
+
+    <h2 id="state">3. Look at state</h2>
+<pre><code># a local state file
+tfviz state --input terraform.tfstate --output state.html
+
+# or the exact object in S3, with your usual AWS profile
+aws sso login --profile work
+tfviz state --input s3://example-state-bucket/prod/terraform.tfstate \
+  --aws-profile work --aws-region eu-west-1 --output state.html</code></pre>
+    <p>For S3, tfviz needs only <code>s3:GetObject</code> on that object, plus <code>kms:Decrypt</code> if it's encrypted with SSE-KMS. See the <a href="{{.Config.Repo}}/blob/main/docs/s3.md" rel="noopener">S3 guide</a> for a least-privilege policy.</p>
+
+    <h2 id="explore">4. Explore privately</h2>
+<pre><code>tfviz explore --state terraform.tfstate</code></pre>
+    <p>This serves the same interface on <code>127.0.0.1</code> only and prints a private link. Press Refresh after you apply, and Ctrl+C to stop.</p>
+
+    <h2 id="options">Useful options</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>--safe-share</code></td><td>Replace identifying details with consistent stand-ins before sharing.</td></tr>
+        <tr><td><code>--icons &lt;folder&gt;</code></td><td>Use the official AWS icons from the pack you downloaded.</td></tr>
+        <tr><td><code>--view modules</code></td><td>Open in the module view instead of the architecture view.</td></tr>
+        <tr><td><code>--strict</code></td><td>Fail if anything can't be fully interpreted.</td></tr>
+        <tr><td><code>--offline</code></td><td>Refuse any input that would need the network.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Every option is in the <a href="{{.Config.Repo}}/blob/main/docs/cli.md" rel="noopener">command-line reference</a>. Next, <a href="/ci/">add tfviz to your pipeline</a>.</p>
+  </div>
+</section>
+{{end}}

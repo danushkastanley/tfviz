@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;self&#39;; img-src &#39;self&#39;; font-src &#39;self&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<title>tfviz: see your Terraform plan before you apply it</title>
+<meta name="description" content="Turn Terraform and OpenTofu plans and state into a calm, interactive architecture diagram. One offline HTML file, with secrets left out by design.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tfviz">
+<meta property="og:title" content="tfviz: see your Terraform plan before you apply it">
+<meta property="og:description" content="Turn Terraform and OpenTofu plans and state into a calm, interactive architecture diagram. One offline HTML file, with secrets left out by design.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.13ac5b1239.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="/" aria-label="tfviz home"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Demo</a></li>
+        <li><a href="/ci/">CI</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <a class="button button--small button--ghost" href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a>
+      <a class="button button--small button--blue" href="/get-started/">Get started</a>
+    </div>
+  </div>
+</header>
+<main id="main">
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero__panel">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.5 2.5M15.2 15.2l2.5 2.5M6.3 17.7l2.5-2.5M15.2 8.8l2.5-2.5"/></svg>Open source · Now in alpha</span>
+      <h1>See your Terraform plan before you apply it</h1>
+      <p class="lede">tfviz turns Terraform and OpenTofu plans and state into a calm, interactive architecture diagram. You get one offline HTML file, with secrets left out by design.</p>
+      <p class="actions centre-actions">
+        <a class="button button--dark" href="/get-started/">Get started</a>
+        <a class="button" href="/demo/">Open the live demo</a>
+      </p>
+      <div class="hero__shot">
+        <img src="/images/hero-light.webp" width="2880" height="1800" alt="A tfviz plan review. The resource list shows changes grouped as replaced, destroyed, added and modified. The diagram shows an AWS account, region, VPC and subnets with a Kafka cluster selected and its relationships traced. The side panel shows the broker type changing.">
+      </div>
+    </div>
+    <p class="works-with"><span>Works with</span><span>Terraform</span><span>OpenTofu</span><span>AWS</span><span>GitHub Actions</span><span>GitLab CI</span><span>Jenkins</span><span>Buildkite</span></p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="6.5" y="7" width="5" height="4" rx="1"/><rect x="12.5" y="13" width="5" height="4" rx="1"/><path d="M9 11v4h3.5"/></svg>Why tfviz</span>
+      <h2>Review infrastructure, not attribute diffs</h2>
+      <p>A plan is hundreds of lines of changed attributes. tfviz shows what's actually changing, where it lives and what it touches.</p>
+    </div>
+    <div class="grid grid--3">
+      <article class="card card--soft">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="6.5" y="7" width="5" height="4" rx="1"/><rect x="12.5" y="13" width="5" height="4" rx="1"/><path d="M9 11v4h3.5"/></svg></div>
+        <h3>Changes where they live</h3>
+        <p>Every resource sits in its account, region, VPC and subnet, marked as added, modified, replaced or destroyed. Follow a change to everything it touches.</p>
+      </article>
+      <article class="card card--soft">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5.5c0 4.2-2.9 7.6-7 9.5-4.1-1.9-7-5.3-7-9.5V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Private by construction</h3>
+        <p>Only approved fields reach the report. Passwords, user data, tags and policies never do. A changed secret shows as “Sensitive value changed”, never the value.</p>
+      </article>
+      <article class="card card--soft">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div>
+        <h3>One file, anywhere</h3>
+        <p>The report is a single HTML file that opens from disk. There's no server, no account and no telemetry. Attach it to a pull request or keep it as a CI artefact.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 9 3 3-3 3M13 15h4"/></svg>Quick start</span>
+      <h2>Your first report in three commands</h2>
+      <p>OpenTofu works the same way: replace <code>terraform</code> with <code>tofu</code>.</p>
+    </div>
+    <ol class="steps">
+      <li><span class="step-number">1</span><h3>Plan as usual</h3><p class="note">Nothing changes in how you work.</p><pre><code>terraform plan -out=tfplan</code></pre></li>
+      <li><span class="step-number">2</span><h3>Pipe the plan to tfviz</h3><p class="note">The exported JSON never touches your disk.</p><pre><code>terraform show -json tfplan \
+  | tfviz plan --input - \
+      --output review.html</code></pre></li>
+      <li><span class="step-number">3</span><h3>Open the report</h3><p class="note">Any modern browser, fully offline.</p><pre><code>open review.html</code></pre></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5.5c0 4.2-2.9 7.6-7 9.5-4.1-1.9-7-5.3-7-9.5V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>Privacy first</span>
+      <h2>Secrets stay out of the picture</h2>
+      <p class="muted">tfviz reads your plan, keeps only the fields each resource type is approved to show, and turns sensitive values into markers with no payload. Tests search every report for planted secrets on every change.</p>
+      <ul class="ticks">
+        <li>Passwords, user data, environment variables and policies are withheld</li>
+        <li>No telemetry, no accounts and no network requests from reports</li>
+        <li><code>--safe-share</code> replaces names, IDs, ARNs and addresses for wider audiences</li>
+      </ul>
+      <a class="link-arrow" href="/security/">How tfviz handles your data</a>
+    </div>
+    <div class="stage"><img src="/images/secrets-dark.webp" width="2880" height="1800" loading="lazy" alt="A database selected in a dark-themed tfviz report. Its instance class change is shown. Its master password is listed only as Sensitive value changed, and its tags as Not included in reports."></div>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>Features</span>
+      <h2>Built for the review, not the dashboard</h2>
+      <p>Everything a reviewer needs before approving a change, and nothing that needs a server.</p>
+    </div>
+    <div class="grid grid--3">
+      <a class="card" href="/features/#plans"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="6.5" y="7" width="5" height="4" rx="1"/><rect x="12.5" y="13" width="5" height="4" rx="1"/><path d="M9 11v4h3.5"/></svg></div><h3>Plan reviews</h3><p>Architecture and module views, with Changes, Before and After.</p></a>
+      <a class="card" href="/features/#trace"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="9" cy="18" r="2.5"/><path d="M8.3 7.1 15.6 7.5M7 8.4l1.4 7.2M16.4 10l-5.6 6"/></svg></div><h3>Relationship tracing</h3><p>Select a resource to see what it touches, with the evidence for each link.</p></a>
+      <a class="card" href="/features/#state"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.6-8 6 6 0 0 1 11.4 1.5A3.3 3.3 0 0 1 17.5 18H7Z"/></svg></div><h3>State from file or S3</h3><p>Read state locally or straight from S3 with your usual AWS credentials.</p></a>
+      <a class="card" href="/features/#explore"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 9 3 3-3 3M13 15h4"/></svg></div><h3>Private local explorer</h3><p>The same interface served only to you, with Refresh after you apply.</p></a>
+      <a class="card" href="/features/#safe-share"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"/><path d="m4 20 16-16"/></svg></div><h3>Safe sharing</h3><p>Consistent stand-ins for identifying details, so reports can leave the team.</p></a>
+      <a class="card" href="/features/#icons"><div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.5 2.5M15.2 15.2l2.5 2.5M6.3 17.7l2.5-2.5M15.2 8.8l2.5-2.5"/></svg></div><h3>Official AWS icons</h3><p>Use the icon pack you download from AWS, embedded in each report.</p></a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="cta">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.5 2.5M15.2 15.2l2.5 2.5M6.3 17.7l2.5-2.5M15.2 8.8l2.5-2.5"/></svg>Help shape the alpha</span>
+      <h2>Try tfviz on a real stack</h2>
+      <p>Run it on your own infrastructure and tell us what's missing or wrong. Every report stays on your machine.</p>
+      <p class="actions centre-actions">
+        <a class="button button--dark" href="/get-started/">Install tfviz</a>
+        <a class="button" href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Share feedback</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div>
+      <a class="brand" href="/"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+      <p>Terraform and OpenTofu plans and state as calm, private architecture diagrams.</p>
+      <p>Open source under the Apache 2.0 licence · <span class="nowrap">Version 0.1.0-alpha.1</span><br>No cookies, analytics or JavaScript on this site.</p>
+    </div>
+    <div>
+      <h2>Product</h2>
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Live demo</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Use it</h2>
+      <ul>
+        <li><a href="/get-started/">Get started</a></li>
+        <li><a href="/ci/">CI pipelines</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/tree/main/docs" rel="noopener">Documentation</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/releases" rel="noopener">Releases</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Issues</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/blob/main/SECURITY.md" rel="noopener">Report a vulnerability</a></li>
+        <li><a href="/fonts/OFL.txt">Font licence</a></li>
+      </ul>
+    </div>
+    <p class="site-footer__legal">Terraform is a trademark of HashiCorp. OpenTofu is a trademark of The Linux Foundation. AWS and its service icons are trademarks of Amazon.com, Inc. tfviz is an independent project, not affiliated with or endorsed by any of them.</p>
+  </div>
+</footer>
+</body>
+</html>

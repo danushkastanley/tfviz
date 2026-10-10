@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;self&#39;; img-src &#39;self&#39;; font-src &#39;self&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="referrer" content="no-referrer">
+<title>Use tfviz in CI · tfviz</title>
+<meta name="description" content="Generate a review report in GitHub Actions, GitLab CI, Jenkins or Buildkite, and upload only the report.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tfviz">
+<meta property="og:title" content="Use tfviz in CI · tfviz">
+<meta property="og:description" content="Generate a review report in GitHub Actions, GitLab CI, Jenkins or Buildkite, and upload only the report.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.13ac5b1239.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="/" aria-label="tfviz home"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Demo</a></li>
+        <li><a href="/ci/" aria-current="page">CI</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <a class="button button--small button--ghost" href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a>
+      <a class="button button--small button--blue" href="/get-started/">Get started</a>
+    </div>
+  </div>
+</header>
+<main id="main">
+
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__panel">
+      <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>CI pipelines</span>
+      <h1>Use tfviz in CI</h1>
+      <p class="lede">The pattern is the same everywhere: create the plan, pipe its JSON into tfviz, and upload only the report.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow prose">
+    <div class="callout">
+      <p>The exported plan JSON can contain plaintext secrets. Pipe it straight into tfviz rather than saving it as an artefact. If your apply step needs the binary plan, keep it separately with restricted access. These examples assume a pinned, <a href="/get-started/#install">verified</a> tfviz binary is already installed.</p>
+    </div>
+
+    <h2 id="github">GitHub Actions</h2>
+<pre><code>- name: Plan and report
+  run: |
+    set -euo pipefail
+    umask 077
+    mkdir -p artefacts
+    terraform plan -input=false -out=tfplan
+    terraform show -json tfplan | tfviz plan --input - --output artefacts/infra-report.html --force
+- uses: actions/upload-artifact@&lt;pinned-sha&gt; # pin to a commit SHA
+  with:
+    name: infra-report
+    path: artefacts/infra-report.html
+    retention-days: 14</code></pre>
+
+    <h2 id="gitlab">GitLab CI</h2>
+<pre><code>infra-report:
+  script:
+    - umask 077 &amp;&amp; mkdir -p artefacts
+    - terraform plan -input=false -out=tfplan
+    - terraform show -json tfplan | tfviz plan --input - --output artefacts/infra-report.html --force
+  artifacts:
+    paths: [artefacts/infra-report.html]
+    expire_in: 2 weeks</code></pre>
+
+    <h2 id="jenkins">Jenkins</h2>
+<pre><code>pipeline {
+  agent any
+  stages {
+    stage('Infrastructure review report') {
+      steps {
+        sh(script: '''#!/usr/bin/env bash
+set -euo pipefail
+set +x
+umask 077
+mkdir -p artefacts
+plan_path=$(mktemp)
+trap 'rm -f "$plan_path"' EXIT
+terraform plan -input=false -out="$plan_path"
+terraform show -json "$plan_path" | tfviz plan --input - --output artefacts/infra-report.html --force
+''')
+      }
+    }
+  }
+  post {
+    success {
+      archiveArtifacts(artifacts: 'artefacts/infra-report.html', fingerprint: true, allowEmptyArchive: false)
+    }
+  }
+}</code></pre>
+    <p class="note">Jenkins usually serves archived artefacts under a policy that blocks scripts. Download the report and open it locally. Don't weaken the controller's security settings just to display a diagram.</p>
+
+    <h2 id="buildkite">Buildkite</h2>
+<pre><code>steps:
+  - label: "Infrastructure review report"
+    command: |
+      set -euo pipefail
+      umask 077 &amp;&amp; mkdir -p artefacts
+      terraform plan -input=false -out=tfplan
+      terraform show -json tfplan | tfviz plan --input - --output artefacts/infra-report.html --force
+    artifact_paths: "artefacts/infra-report.html"</code></pre>
+
+    <h2 id="exit-codes">Failing the pipeline on gaps</h2>
+    <p>A plan that changes infrastructure is still a success. Add <code>--strict</code> to fail when anything can't be fully interpreted, such as an unsupported resource type or a plan the producer reported as incomplete.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Exit code</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>0</code></td><td>Report written.</td></tr>
+        <tr><td><code>1</code></td><td>Processing or retrieval failed.</td></tr>
+        <tr><td><code>2</code></td><td>Invalid arguments, unsupported input, or a <code>--strict</code> failure.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="sharing">Sharing outside the team</h2>
+    <p>Reports show approved names, IDs and network details. Apply your normal artefact access and retention controls, and use <code>--safe-share</code> for audiences who shouldn't see identifying details.</p>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div>
+      <a class="brand" href="/"><svg class="brand__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path class="brand__lines" d="M9 11h14M9 16h9M9 21h11" stroke-width="2.4" stroke-linecap="round"/></svg><span>tfviz</span></a>
+      <p>Terraform and OpenTofu plans and state as calm, private architecture diagrams.</p>
+      <p>Open source under the Apache 2.0 licence · <span class="nowrap">Version 0.1.0-alpha.1</span><br>No cookies, analytics or JavaScript on this site.</p>
+    </div>
+    <div>
+      <h2>Product</h2>
+      <ul>
+        <li><a href="/features/">Features</a></li>
+        <li><a href="/demo/">Live demo</a></li>
+        <li><a href="/security/">Security</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Use it</h2>
+      <ul>
+        <li><a href="/get-started/">Get started</a></li>
+        <li><a href="/ci/">CI pipelines</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/tree/main/docs" rel="noopener">Documentation</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/releases" rel="noopener">Releases</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/danushkastanley/tfviz" rel="noopener">GitHub</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/issues" rel="noopener">Issues</a></li>
+        <li><a href="https://github.com/danushkastanley/tfviz/blob/main/SECURITY.md" rel="noopener">Report a vulnerability</a></li>
+        <li><a href="/fonts/OFL.txt">Font licence</a></li>
+      </ul>
+    </div>
+    <p class="site-footer__legal">Terraform is a trademark of HashiCorp. OpenTofu is a trademark of The Linux Foundation. AWS and its service icons are trademarks of Amazon.com, Inc. tfviz is an independent project, not affiliated with or endorsed by any of them.</p>
+  </div>
+</footer>
+</body>
+</html>
