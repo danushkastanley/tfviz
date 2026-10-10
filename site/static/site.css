@@ -113,8 +113,12 @@ pre code { white-space: inherit; padding: 0; background: none; color: inherit; f
 .hero .lede { margin: 0 auto 28px; }
 .hero__shot { max-width: 1080px; margin: 56px auto 0; }
 .hero__shot img { border: 1px solid rgba(255, 255, 255, 0.9); border-bottom: 0; border-radius: 16px 16px 0 0; box-shadow: var(--shadow-shot); }
-.works-with { display: flex; flex-wrap: wrap; gap: 10px 34px; align-items: center; justify-content: center; padding: 34px 0 8px; color: #8a8f9e; font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
-.works-with span:first-child { color: var(--muted); font-weight: 500; }
+.works-with { padding: 40px 0 8px; text-align: center; }
+.works-with__label { margin-bottom: 18px; color: var(--muted); font-size: 0.85rem; font-weight: 500; }
+.works-with ul { display: flex; flex-wrap: wrap; gap: 14px 40px; align-items: center; justify-content: center; margin: 0; padding: 0; list-style: none; }
+.works-with li { display: inline-flex; gap: 9px; align-items: center; color: #7b8090; font-size: 1.02rem; font-weight: 600; letter-spacing: -0.015em; white-space: nowrap; }
+.logo-mark { width: 22px; height: 22px; flex: none; }
+.works-with__aws { font-weight: 800; letter-spacing: -0.01em; }
 
 /* Sections */
 .section { padding: 96px 0; }
@@ -236,6 +240,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
   .hero__panel { padding-top: 52px; }
   .stage { padding: 14px; }
   .site-header__actions .button--ghost { display: none; }
+  .works-with ul { gap: 12px 24px; }
   .site-footer__inner { grid-template-columns: 1fr; }
 }
 

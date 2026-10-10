@@ -53,7 +53,7 @@ func renderPages(files map[string][]byte, cfg config, css string) error {
 	for _, p := range pages {
 		t, err := template.New("layout.html").Funcs(template.FuncMap{
 			"abs": func(path string) string { return strings.TrimSuffix(cfg.BaseURL, "/") + path },
-		}).ParseFiles(layout, filepath.Join(root, "templates", "icons.html"), filepath.Join(root, "templates", p.Template+".html"))
+		}).ParseFiles(layout, filepath.Join(root, "templates", "icons.html"), filepath.Join(root, "templates", "logos.html"), filepath.Join(root, "templates", p.Template+".html"))
 		if err != nil {
 			return err
 		}
