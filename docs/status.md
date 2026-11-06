@@ -13,7 +13,7 @@ This page tracks progress against [the implementation plan](implementation-plan.
 | M4: coverage, hardening, public alpha | Engineering done; alpha pending | Tier A and B adapters, safe-share, local explorer, fuzzing, performance, release pipeline, notices and docs |
 | M5: v1 after feedback | Not started | Depends on alpha feedback |
 
-Since M4: official AWS icons through a user-supplied pack (`--icons`, [ADR 0002](decisions/0002-user-supplied-provider-icons.md)).
+Since M4: official AWS icons through a user-supplied pack (`--icons`, [ADR 0002](decisions/0002-user-supplied-provider-icons.md)). Relationship lines are routed around cards ([ADR 0003](decisions/0003-orthogonal-edge-routing.md)).
 
 ## Release checklist (plan §19)
 

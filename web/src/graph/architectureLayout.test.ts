@@ -3,7 +3,6 @@ import { indexReport } from "../report/view";
 import { groupId, loadSample } from "../test/sample";
 import { buildCanvasModel } from "./canvasModel";
 import { layoutArchitecture, type Placed } from "./architectureLayout";
-import { edgePath } from "./edgePath";
 import { largeReport } from "../../e2e/largeReport";
 
 const index = indexReport(loadSample());
@@ -79,15 +78,5 @@ describe("layoutArchitecture at scale", () => {
         for (let j = i + 1; j < sorted.length && (sorted[j] as Placed).y < (sorted[i] as Placed).y + (sorted[i] as Placed).height; j++)
           expect(overlaps(sorted[i] as Placed, sorted[j] as Placed)).toBe(false);
     }
-  });
-});
-
-describe("edgePath", () => {
-  it("draws nothing between a group and something it contains", () => {
-    expect(edgePath({ x: 0, y: 0, width: 500, height: 500 }, { x: 10, y: 10, width: 50, height: 50 })).toBeUndefined();
-  });
-
-  it("connects facing sides", () => {
-    expect(edgePath({ x: 0, y: 0, width: 100, height: 50 }, { x: 0, y: 300, width: 100, height: 50 })).toMatch(/^M 50 50 C/);
   });
 });
