@@ -1,5 +1,5 @@
 {
-  "base_url": "",
-  "version": "0.1.0-alpha.1",
+  "base_url": "https://tfviz.com",
+  "version": "0.1.0-alpha.2",
   "repo": "https://github.com/danushkastanley/tfviz"
 }

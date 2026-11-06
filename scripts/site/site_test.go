@@ -111,3 +111,31 @@ func TestStylesheetIsFingerprinted(t *testing.T) {
 		t.Error("the home page does not reference the fingerprinted stylesheet")
 	}
 }
+
+// Cloudflare deploys whatever is in public, so OS metadata must be excluded.
+func TestCloudflareSkipsFolderMetadata(t *testing.T) {
+	if got := string(built(t)["public/.assetsignore"]); !strings.Contains(got, ".DS_Store") {
+		t.Errorf(".assetsignore = %q, want it to exclude .DS_Store", got)
+	}
+}
+
+// The 404 page is served for any unknown path, so it must never be indexed
+// or claim a canonical URL of its own.
+func TestNotFoundPageIsNotIndexed(t *testing.T) {
+	wd, _ := os.Getwd()
+	if err := os.Chdir(filepath.Join("..", "..")); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(wd) })
+	files, err := build(config{BaseURL: "https://example.test", Version: "0.0.0-test", Repo: "https://github.com/danushkastanley/tfviz"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	notFound := string(files["public/404.html"])
+	if !strings.Contains(notFound, `<meta name="robots" content="noindex">`) || strings.Contains(notFound, `rel="canonical"`) {
+		t.Error("404.html must be noindex with no canonical link")
+	}
+	if !strings.Contains(string(files["public/index.html"]), `<link rel="canonical" href="https://example.test/">`) {
+		t.Error("index.html lost its canonical link")
+	}
+}

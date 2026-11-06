@@ -4,6 +4,14 @@
 {
   "name": "tfviz-site",
   "compatibility_date": "2026-10-10",
+  // Serve only on the real domain, not on a workers.dev or preview URL.
+  // Deploying creates the DNS records and certificates for both names.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "tfviz.com", "custom_domain": true },
+    { "pattern": "www.tfviz.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./public",
     "not_found_handling": "404-page",
