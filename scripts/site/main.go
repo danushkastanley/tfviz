@@ -77,11 +77,17 @@ func build(cfg config) (map[string][]byte, error) {
 	}
 	files["vercel.json"] = vercel
 	files["public/robots.txt"] = robots(cfg)
+	files["public/.assetsignore"] = assetsIgnore
 	if cfg.BaseURL != "" {
 		files["public/sitemap.xml"] = sitemap(cfg)
 	}
 	return files, nil
 }
+
+// assetsIgnore stops Wrangler uploading files that are on disk in public but
+// are not part of the site, such as macOS folder metadata. Wrangler does not
+// upload this file itself.
+var assetsIgnore = []byte(".DS_Store\n")
 
 // copyStatic copies site/static into public, except the stylesheet, which
 // is published under a content hash.
@@ -130,7 +136,7 @@ func compare(files map[string][]byte) error {
 		}
 	}
 	_ = filepath.WalkDir(filepath.Join(root, "public"), func(path string, d fs.DirEntry, err error) error {
-		if err == nil && !d.IsDir() {
+		if err == nil && !d.IsDir() && d.Name() != ".DS_Store" {
 			rel, _ := filepath.Rel(root, path)
 			if _, ok := files[filepath.ToSlash(rel)]; !ok {
 				stale = append(stale, filepath.ToSlash(rel)+" (should not exist)")

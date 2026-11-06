@@ -57,16 +57,11 @@ From `site/`, after `npx wrangler login`:
 npx wrangler deploy
 ```
 
-This deploys an assets-only Worker: no Worker code runs. Cloudflare applies `public/_headers`, serves `404.html` for unknown paths and redirects `/features` to `/features/`.
+This deploys an assets-only Worker: no Worker code runs. Cloudflare applies `public/_headers`, serves `404.html` for unknown paths and redirects `/features` to `/features/`. The Worker is attached to `tfviz.com` and `www.tfviz.com` as custom domains, and deploying creates their DNS records and certificates. `public/.assetsignore` keeps stray files such as `.DS_Store` out of the upload.
 
-## Choosing the domain
+## Domain
 
-When the domain is ready:
-
-1. Set `base_url` in `site.json`, for example `"https://tfviz.dev"`.
-2. Run `make site` and commit.
-
-This adds canonical links, Open Graph URLs and image, and `sitemap.xml`. Until then they are left out rather than pointing at a guess.
+The site lives at `https://tfviz.com`, set as `base_url` in `site.json`. That drives canonical links, Open Graph URLs and image, and `sitemap.xml`. Pages declare the bare domain as canonical, so `www` needs no separate redirect.
 
 Check the headers after the first deploy:
 
