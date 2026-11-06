@@ -3,7 +3,8 @@ import type { Relationship } from "../report/schema.gen";
 import type { ReportIndex, ViewMode } from "../report/view";
 import { buildCanvasModel, type CanvasItem, type Structure } from "./canvasModel";
 import { layoutArchitecture, type Placed } from "./architectureLayout";
-import { edgePath, type Rect } from "./edgePath";
+import type { Rect } from "./edgePath";
+import { createEdgeRouter } from "./edgeRouter";
 import type { CanvasLookup } from "./selection";
 
 export type CanvasNodeData = { item: CanvasItem };
@@ -31,21 +32,26 @@ export function layoutCanvas(
   const placed = layoutArchitecture(model, index);
 
   const absolute = new Map<string, Rect>();
+  const obstacles: Rect[] = [];
   const nodes: CanvasNode[] = [];
   // The layout emits parents before children, as React Flow requires.
   for (const p of placed) {
     const item = model.items.get(p.id);
     if (!item) continue;
     const origin = p.parent ? absolute.get(p.parent) : undefined;
-    absolute.set(p.id, { x: (origin?.x ?? 0) + p.x, y: (origin?.y ?? 0) + p.y, width: p.width, height: p.height });
+    const rect = { x: (origin?.x ?? 0) + p.x, y: (origin?.y ?? 0) + p.y, width: p.width, height: p.height };
+    absolute.set(p.id, rect);
+    // Cards are obstacles; open groups are not, since lines must cross into them.
+    if (item.kind !== "group" || item.collapsed) obstacles.push(rect);
     nodes.push(toNode(p, item));
   }
 
+  const route = createEdgeRouter(obstacles);
   const edges: CanvasEdge[] = [];
   for (const edge of model.edges) {
     const source = absolute.get(edge.source);
     const target = absolute.get(edge.target);
-    const path = source && target ? edgePath(source, target) : undefined;
+    const path = source && target ? route(source, target) : undefined;
     if (!path) continue;
     edges.push({
       id: edge.id,
@@ -54,7 +60,7 @@ export function layoutCanvas(
       type: "trace",
       data: { relationships: edge.relationships, path },
       // React Flow adds the higher endpoint's z, so lines sit above group
-      // boxes and, drawn before nodes, beneath cards: they never cross labels.
+      // boxes and, drawn before nodes, beneath cards.
       zIndex: 0,
       selectable: false,
     });
