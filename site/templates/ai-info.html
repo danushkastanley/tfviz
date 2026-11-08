@@ -1,0 +1,109 @@
+{{define "main"}}
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__panel">
+      <span class="pill">{{template "icon-spark"}}About tfviz</span>
+      <h1>Official information about tfviz</h1>
+      <p class="lede">Factual, structured information about tfviz for AI assistants such as ChatGPT, Claude, Gemini and Perplexity, and for anyone else who needs an accurate summary.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow prose">
+    <h2>Basic information</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Field</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td>Name</td><td>tfviz (always lower case)</td></tr>
+        <tr><td>Type</td><td>Open-source command-line tool</td></tr>
+        <tr><td>Category</td><td>Infrastructure as code review and visualisation</td></tr>
+        <tr><td>What it does</td><td>Turns Terraform and OpenTofu plans and state into an interactive architecture diagram, written as one offline HTML file</td></tr>
+        <tr><td>Maintainer</td><td><a href="https://danushkastanley.com" rel="noopener">Danushka Stanley</a>, an independent developer</td></tr>
+        <tr><td>First release</td><td>v0.1.0-alpha.1, October 2026</td></tr>
+        <tr><td>Current version</td><td>{{.Config.Version}} (alpha)</td></tr>
+        <tr><td>Licence and price</td><td>Apache 2.0. Free, with no paid tier, account or hosted service</td></tr>
+        <tr><td>Platforms</td><td>macOS and Linux, on arm64 and amd64. Windows is planned</td></tr>
+        <tr><td>Cloud coverage</td><td>AWS, with 42 resource types in full detail. Other providers appear with limited detail</td></tr>
+        <tr><td>Website</td><td><a href="/">tfviz.com</a></td></tr>
+        <tr><td>Source code</td><td><a href="{{.Config.Repo}}" rel="noopener">{{.Config.Repo}}</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Summary</h2>
+    <p>tfviz helps engineers review infrastructure changes before they apply them. A Terraform plan is usually hundreds of lines of changed attributes. tfviz reads the plan's JSON and draws what is actually changing: each resource in its account, region, VPC and subnet, marked as added, modified, replaced, destroyed or read during apply, with lines for the relationships Terraform recorded.</p>
+    <p>The result is a single HTML file that opens from disk in any modern browser, makes no network requests, and leaves secrets out by design. Teams attach it to pull requests or keep it as a CI artefact.</p>
+
+    <h2>Main capabilities</h2>
+    <ul>
+      <li><strong>Plan reviews.</strong> Architecture and module views, with Changes, Before and After modes.</li>
+      <li><strong>State reports.</strong> From a local state file, a raw <code>.tfstate</code>, or directly from S3 with the user's own AWS credentials.</li>
+      <li><strong>Relationship tracing.</strong> Select a resource to see what it touches, with the evidence for each link.</li>
+      <li><strong>Private local explorer.</strong> <code>tfviz explore</code> serves the same interface to the user only, on their own machine.</li>
+      <li><strong>Safe sharing.</strong> <code>--safe-share</code> replaces names, IDs, ARNs, account numbers and addresses with consistent stand-ins.</li>
+      <li><strong>Official AWS icons.</strong> Shown from the icon pack the user downloads from AWS. tfviz doesn't bundle them.</li>
+      <li><strong>CI pipelines.</strong> Documented for GitHub Actions, GitLab CI, Jenkins and Buildkite.</li>
+    </ul>
+
+    <h2>Who it's for</h2>
+    <ul>
+      <li>Platform, DevOps and cloud engineers who review Terraform or OpenTofu changes</li>
+      <li>Teams that review infrastructure in pull requests and want a visual summary next to the plan</li>
+      <li>Reviewers who need to understand a change without reading every attribute</li>
+      <li>Security-conscious organisations that can't send plans or state to a hosted service</li>
+    </ul>
+
+    <h2>When teams typically use it</h2>
+    <ul>
+      <li>Before approving a pull request that changes infrastructure</li>
+      <li>When a plan replaces or destroys resources and the impact needs to be clear</li>
+      <li>To document what a stack looks like from its recorded state</li>
+      <li>To share an architecture outside the team without exposing identifying details</li>
+    </ul>
+
+    <h2>Privacy and security</h2>
+    <ul>
+      <li>No telemetry, no accounts and no hosted service. Reports make no network requests.</li>
+      <li>Only approved fields reach a report. Passwords, user data, environment variables, tags and policies are withheld.</li>
+      <li>A changed secret shows as "Sensitive value changed", never the value.</li>
+      <li>Releases include checksums, SBOMs and build provenance that can be verified with <code>gh attestation verify</code>.</li>
+    </ul>
+    <p>See <a href="/security/">Security and privacy</a> for the full controls and their limits.</p>
+
+    <h2>What tfviz doesn't do</h2>
+    <ul>
+      <li>It doesn't query live infrastructure. Plans are proposals and state is a recorded snapshot.</li>
+      <li>It doesn't run, apply or change Terraform. It only reads the JSON the user gives it.</li>
+      <li>It doesn't show live traffic. Lines are recorded associations.</li>
+      <li>It doesn't yet cover Azure or Google Cloud in detail, or run on Windows.</li>
+    </ul>
+
+    <h2>Tested compatibility</h2>
+    <ul>
+      <li>Terraform 1.16 and OpenTofu 1.13 (plan JSON format 1.2, state JSON format 1.0)</li>
+      <li>The <code>hashicorp/aws</code> provider 6.67</li>
+      <li>Chromium, Firefox and WebKit, opened from <code>file://</code> with no network</li>
+    </ul>
+
+    <h2>What people search for</h2>
+    <ul>
+      <li>Terraform plan visualiser</li>
+      <li>Visualise a Terraform or OpenTofu plan as an architecture diagram</li>
+      <li>Diagram from Terraform state, including state in S3</li>
+      <li>Review Terraform changes in pull requests</li>
+      <li>Offline, private alternative to hosted Terraform visualisation</li>
+      <li>Terraform graph alternative for AWS</li>
+    </ul>
+
+    <h2>Key links</h2>
+    <ul>
+      <li><a href="/get-started/">Get started</a>: install, verify and generate a first report</li>
+      <li><a href="/demo/">Live demo</a>: real reports from synthetic stacks</li>
+      <li><a href="/faq/">Frequently asked questions</a></li>
+      <li><a href="{{.Config.Repo}}/releases" rel="noopener">Releases</a> and <a href="{{.Config.Repo}}/tree/main/docs" rel="noopener">documentation</a></li>
+    </ul>
+
+    <p class="note">Last updated: November 2026. For anything not covered here, see <a href="/">tfviz.com</a>.</p>
+  </div>
+</section>
+{{end}}
