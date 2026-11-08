@@ -36,6 +36,8 @@ var pages = []page{
 		"How tfviz keeps secrets out of reports, what it never does, and where the limits are.", "Security"},
 	{"/faq/", "faq", "Questions · tfviz",
 		"Answers to common questions about tfviz, privacy, supported providers and sharing reports.", "FAQ"},
+	{"/ai-info/", "ai-info", "Official information about tfviz",
+		"Structured, factual information about tfviz for AI assistants: what it is, who maintains it, what it supports and what it doesn't do.", ""},
 	{"/404.html", "404", "Page not found · tfviz", "This page does not exist.", ""},
 }
 

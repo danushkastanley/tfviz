@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -137,5 +138,37 @@ func TestNotFoundPageIsNotIndexed(t *testing.T) {
 	}
 	if !strings.Contains(string(files["public/index.html"]), `<link rel="canonical" href="https://example.test/">`) {
 		t.Error("index.html lost its canonical link")
+	}
+}
+
+// The AI information page states facts that assistants repeat, so the ones
+// that change must come from their sources rather than drift.
+func TestAIInfoPageStaysAccurate(t *testing.T) {
+	wd, _ := os.Getwd()
+	if err := os.Chdir(filepath.Join("..", "..")); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(wd) })
+	files, err := build(config{BaseURL: "https://example.test", Version: "9.8.7-test", Repo: "https://github.com/danushkastanley/tfviz"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	page := string(files["public/ai-info/index.html"])
+	if !strings.Contains(page, "9.8.7-test (alpha)") {
+		t.Error("ai-info must show the configured version")
+	}
+	support, err := os.ReadFile("docs/support.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	types := len(regexp.MustCompile("(?m)^\\| `aws_").FindAll(support, -1))
+	if want := "with " + strconv.Itoa(types) + " resource types"; !strings.Contains(page, want) {
+		t.Errorf("ai-info must say %q to match docs/support.md", want)
+	}
+	if !strings.Contains(string(files["public/sitemap.xml"]), "<loc>https://example.test/ai-info/</loc>") {
+		t.Error("sitemap.xml must list /ai-info/")
+	}
+	if !strings.Contains(string(files["public/index.html"]), `href="/ai-info/"`) {
+		t.Error("the footer must link to /ai-info/")
 	}
 }
