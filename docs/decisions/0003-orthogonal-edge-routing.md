@@ -30,7 +30,7 @@ Edges are routed orthogonally around cards by a small in-house router in `web/sr
 - Layout plus routing takes about 1.5 ms for the 22-edge sample. A fully expanded 500-resource stack with 1,475 edges takes about 200 ms in Node. The 500-resource report opens collapsed, and its layout stays at about 1 ms in the end-to-end budget test.
 - Edges that share a lane overlap rather than running side by side. Selecting a resource still traces its own relationships. Separating parallel lines (nudging) is a possible follow-up.
 - Edges to an open group, such as a subnet, attach to the group's border.
-- The website's screenshots predate this change until `make site-assets` is run again.
+- The website's screenshots predate this change until they are regenerated. The website now lives in a separate repository.
 
 ## Migration and rollback
 
